@@ -4,12 +4,12 @@ Title: Collision Risk Model for Wind and Wildlife
 Version: 0.1.0.9001
 Date: 2024-10-07
 Authors@R: c(
-   person("Elizabeth", "Stark", ,"estark@symbolix.com.au", role = c("aut", "cre")),
-   person("Muir", "Stuart", role = c("aut")
-   )
+  person("Elizabeth", "Stark", ,"estark@symbolix.com.au", role = c("aut", "cre")),
+  person("Muir", "Stuart", role = c("aut"))
+  )
 Maintainer: Elizabeth Stark <estark@symbolix.com.au>
 Description: This package contains a stochastic avian - wind turbine collision risk model that enables distance sampling and per-turbine calculations.
-License: GPL (>=3) | file LICENSE
+License: GPL (>= 3)
 Requires: 
   stats
 Imports:
