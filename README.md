@@ -3,10 +3,11 @@
 
 # collision
 
+collision
+<img src="man/figures/logo.png" align="right" height="120" alt="" />
+
 <!-- badges: start -->
 <!-- badges: end -->
-
-The goal of collision is to …
 
 ## Installation
 
