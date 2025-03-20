@@ -21,7 +21,7 @@ devtools::install_github("SymbolixAU/collision")
 
 ## Note on status
 
-This package is under active development towards v1.0 milestone
+This package is under active development towards v0.1.0 milestone
 
 ## About
 

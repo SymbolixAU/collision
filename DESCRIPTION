@@ -5,7 +5,8 @@ Version: 0.1.0.9001
 Date: 2024-10-07
 Authors@R: c(
   person("Elizabeth", "Stark", ,"estark@symbolix.com.au", role = c("aut", "cre")),
-  person("Muir", "Stuart", role = c("aut"))
+  person("Muir", "Stuart", role = c("aut")),
+   person("Biosis", role="cph", comment = "Package uses and adapts turbine geometry methods sourced with permission from Biosis' Collision Risk Model")
   )
 Maintainer: Elizabeth Stark <estark@symbolix.com.au>
 Description: This package contains a stochastic avian - wind turbine collision risk model that enables distance sampling and per-turbine calculations.
@@ -15,7 +16,8 @@ Requires:
 Imports:
   Distance,
   methods
-Suggests: tinytest
+Suggests: 
+  tinytest
 Encoding: UTF-8
 RoxygenNote: 7.3.1
 Depends: 
