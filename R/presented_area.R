@@ -6,8 +6,9 @@
 #' @param side area of side-view in metres squared
 #' 
 #' @examples
+#' \dontrun{
 #' rotate_areas(1,2)
-#' 
+#' }
 #' 
 rotate_areas <- function(front, side){
   
@@ -15,7 +16,7 @@ rotate_areas <- function(front, side){
   
   theta <- 0:179 * pi / 180 
   #units(theta) <- "radians"
-  stopifnot(units(front) == units(side))
+  #stopifnot(units(front) == units(side))
   
   area_i <- 
     sapply(
@@ -113,8 +114,9 @@ pa_rotor <- function(tilt_deg, max_chord, min_chord,
                      blade_thickness_wide, blade_thickness_narrow, 
                      blade_length){
   
+#  tilt_rad <- tilt_deg |> units::set_units("rad")
+  tilt_rad <- tilt_deg * pi / 180
   
-  tilt_rad <- tilt_deg |> units::set_units("rad")
   pa_blade_normal <- abs( cos(tilt_rad) ) * blade_length *
     0.5 * (max_chord + min_chord)
   

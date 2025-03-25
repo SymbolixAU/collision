@@ -17,6 +17,27 @@ prob_collision_dynamic(
   edr
 )
 }
+\arguments{
+\item{rpm}{rotor speed (RPM)}
+
+\item{blade_length}{blade length}
+
+\item{max_width_nacelle}{"Maximum W and Hub Dia (m)" diam of nosecone == nacelle room width (back view)}
+
+\item{rotor_diam}{rotor diameter (m)}
+
+\item{blade_thickness_wide}{the thickness of the blade (side on) at its widest point}
+
+\item{blade_thickness_narrow}{the thickness of the blade (side on) at its thinnest point}
+
+\item{hh}{hub height}
+
+\item{bird_length}{Length of archetype bird (metres)}
+
+\item{bird_speed}{numeric; Average flight speed (m/sec)}
+
+\item{edr}{effective detection radius (m)}
+}
 \description{
-TODO
+Probability of collision with leading edge of blade
 }

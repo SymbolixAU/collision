@@ -9,19 +9,11 @@ define_bird(species, bird_length, bird_speed)
 \arguments{
 \item{species}{char; species identifier}
 
-\item{bird_length}{Length of archetype fixedbird (metres), or distribution
+\item{bird_length}{Length of archetype bird (metres), or distribution
 information using \link{set_random}}
 
 \item{bird_speed}{numeric; Average flight speed (m/sec), or
 distribution information using \link{set_random}}
-
-\item{prop_day}{numeric; Proportion of a 24 hour day that species is active. 
-A single number or distribution information using \link{set_random}.}
-
-\item{obs_scale_factor}{numeric; A scale factor (0,1] for the proportion of
-the flight activity contained within the daily
-observation times. A single number or distribution 
-information using \link{set_random}. Default 1.}
 }
 \value{
 list where items define the value or stochastic distribution f

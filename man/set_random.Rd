@@ -15,8 +15,6 @@ is.randInput(x)
 \item{...}{Additional parameters passed to the function \code{distr}. Do *not* set \code{n} (number of samples) here. This is set in \link{sample_input} to separate the simulation settings and statistical distribution definition.}
 
 \item{x}{object to check}
-
-\item{param_unit}{units for the output parameter when sampled. Defaults to `m`}
 }
 \description{
 Stochastic input definitions using the analysts choice of base

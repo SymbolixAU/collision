@@ -35,10 +35,13 @@ prob_collision_static(
 
 \item{blade_length}{blade length}
 
-\item{max_nac_h}{"Maximum L (m)"  max nacelle length (side view)}
+\item{max_nac_h}{max nacelle length (side view)}
 
-\item{max_nac_l}{"Maximum H (m)"  max nacelle height (side view)
-#' @param max_width_nacelle "Maximum W and Hub Dia (m)" diam of nosecone == nacelle room width (back view)}
+\item{max_nac_l}{max nacelle height (side view)}
+
+\item{max_width_nacelle}{nacelle room width (back view)}
+
+\item{rotor_diam}{rotor diameter (m)}
 
 \item{tilt_deg}{Blade tilt in degrees}
 

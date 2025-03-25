@@ -6,7 +6,6 @@
 #'
 #' @param distr string. The name of the R function to return random deviates (e.g. \code{runif}, \code{rnorm}). See vignettes for examples of fitting to an empirical distribution.
 #' @param ... Additional parameters passed to the function \code{distr}. Do *not* set \code{n} (number of samples) here. This is set in \link{sample_input} to separate the simulation settings and statistical distribution definition.
-#' @param param_unit units for the output parameter when sampled. Defaults to `m`
 #'
 #' @seealso  \link{sample_input} to sample a value according to the definition.
 #'

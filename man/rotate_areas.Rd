@@ -15,7 +15,8 @@ rotate_areas(front, side)
 Rotate shape through 180 degrees. Internal function
 }
 \examples{
+\dontrun{
 rotate_areas(1,2)
-
+}
 
 }

@@ -24,7 +24,7 @@ vertical_flux_plane_area <- function(
     hh,
     rotor_diam
 ){
-
+  
   2.0 * edr * (hh + 0.5*rotor_diam)
   
 }
@@ -45,9 +45,10 @@ vertical_flux_plane_area <- function(
 #' @param d_top diameter of tower at top
 #' @param hh hub height
 #' @param blade_length blade length
-#' @param max_nac_h "Maximum L (m)"  max nacelle length (side view)
-#' @param max_nac_l "Maximum H (m)"  max nacelle height (side view)
-#' #' @param max_width_nacelle "Maximum W and Hub Dia (m)" diam of nosecone == nacelle room width (back view)
+#' @param max_nac_h  max nacelle length (side view)
+#' @param max_nac_l  max nacelle height (side view)
+#' @param max_width_nacelle nacelle room width (back view)
+#' @param rotor_diam rotor diameter (m)
 #' @param tilt_deg Blade tilt in degrees
 #' @param max_chord the chord of the blade at its widest point
 #' @param min_chord the chord of the blade at its tip (thinnest point)
@@ -106,8 +107,18 @@ prob_collision_static <- function(
 
 
 #' Probability of collision with leading edge of blade
-#' 
-#' TODO
+#'
+#' @param rpm rotor speed (RPM)
+#' @param blade_length blade length
+#' @param max_width_nacelle "Maximum W and Hub Dia (m)" diam of nosecone == nacelle room width (back view)
+#' @param rotor_diam rotor diameter (m)
+#' @param blade_thickness_wide the thickness of the blade (side on) at its widest point
+#' @param blade_thickness_narrow the thickness of the blade (side on) at its thinnest point
+#' @param hh hub height
+#' @param edr effective detection radius (m)
+#' @param bird_length Length of archetype bird (metres)
+#' @param bird_speed numeric; Average flight speed (m/sec)
+#'
 #' 
 #' @export
 prob_collision_dynamic <- function(
@@ -122,10 +133,6 @@ prob_collision_dynamic <- function(
     bird_speed,
     edr
 ){
-  
-  # rotor_diam <- blade_to_diameter(blade_length=blade_length, 
-  #                                     max_width_nacelle=max_width_nacelle)
-  
   
   
   flux_plane_area <- vertical_flux_plane_area(edr = edr, hh = hh,

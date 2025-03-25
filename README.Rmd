@@ -39,6 +39,8 @@ This package is under active development towards v0.1.0 milestone
 
 This package was developed by contribution of code and maths from [Symbolix](www.symbolix.com.au) and [Biosis](www.biosis.com.au), and also draws from open source code (TODO ADD IN REFS). It is made available under a GPL-3 licence.
 
+The main deviation of this package from other examples is the flexibility it affords the analyst.  In Australia, CRM is required for diverse species under varied conditions both on and offshore. This package provides a structured workflow but aims to be flexible enough to support different time-scales of survey (e.g. to enable modelling of short term migrants) or spatial modelling (e.g. different relative risk per turbine). Basic usage is below but the vignettes will work through specific examples. 
+
 The number of collisions per year is calculated as: 
 
 $N_{C}= N_{I} \times P(C|I) \times (1 - \alpha)$, where
@@ -56,6 +58,20 @@ It estimates:
 * Site activity rate from distance corrected data
 * Number of interactions per year with turbines (this can be extended to include spatial probability), i.e. number of flights per year through the rotor swept area
 * Probability of collision with turbine blades for interacting flights. This uses Band 2009 stage 2 calculation or the Biosis CRM.
+
+## Getting started
+
+
+TODO - Front end
+
+
+### One bird and one turbine calculation
+
+
+
+
+
+
 
 ## History and provenance
 

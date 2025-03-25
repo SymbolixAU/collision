@@ -19,16 +19,10 @@
 #'    or each parameter
 #'
 #' @param species char; species identifier
-#' @param bird_length Length of archetype fixedbird (metres), or distribution
+#' @param bird_length Length of archetype bird (metres), or distribution
 #'    information using \link{set_random}
 #' @param bird_speed numeric; Average flight speed (m/sec), or
 #'                   distribution information using \link{set_random}
-#' @param prop_day numeric; Proportion of a 24 hour day that species is active. 
-#'          A single number or distribution information using \link{set_random}.
-#' @param obs_scale_factor numeric; A scale factor (0,1] for the proportion of
-#'                         the flight activity contained within the daily
-#'                         observation times. A single number or distribution 
-#'                         information using \link{set_random}. Default 1.
 #' 
 #' @examples
 #' lst_bird <- define_bird(
