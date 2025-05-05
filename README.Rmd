@@ -26,9 +26,12 @@ collision <img src="man/figures/logo.png" align="right" height="120" alt="" />
 
 You can install the development version of collision from [GitHub](https://github.com/) with:
 
+NOTE: while this package is in closed testing, you will need to be invited to the repo (contact the package author with your request and your github account details) and you will need to set the environment variable "GITHUB_PAT" - see https://github.com/settings/tokens  for more information
+
 ``` r
 # install.packages("remotes")
-devtools::install_github("SymbolixAU/collision")
+Sys.setenv("GITHUB_PAT" = "<your token goes here>")
+remotes::install_github("SymbolixAU/collision", build_vignettes = TRUE)
 ```
 
 ## Note on status
@@ -61,8 +64,6 @@ It estimates:
 
 ## Getting started
 
-
-TODO - Front end
 
 
 ### One bird and one turbine calculation

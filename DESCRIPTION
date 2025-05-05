@@ -24,3 +24,4 @@ Depends:
     R (>= 3.5.0)
 URL: https://github.com/SymbolixAU/collision
 BugReports: https://github.com/SymbolixAU/collision/issues
+LazyData: true

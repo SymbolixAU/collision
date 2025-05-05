@@ -103,4 +103,5 @@ lst_turbine <- define_turbine(
   tilt_deg = 6,
   prop_operational = set_random("runif", min = 0.96, max = 0.99)
 )
+
 }
