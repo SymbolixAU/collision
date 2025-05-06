@@ -1,0 +1,67 @@
+---
+title: "One bird, one turbine example"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{One bird, one turbine example}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(collision)
+
+# for Band Comparison
+library(stochLAB)
+
+library(knitr)
+```
+
+## The set up
+
+One of the key differences in this package and previous Band-based models is the geometric calculation for the core probability of a collision, given a bird is passing through the turbine zone.
+
+**TODO** smales et all description of the geometry
+
+## A worked example - deterministic
+
+Step one is to set up a turbine - here's an example based basically on a Vestas 90, set up using the `define_turbine` function:
+
+```{r}
+
+str(v90_single) 
+
+```
+
+```{r}
+
+
+
+lst_birds <- list(
+  "raptor" = define_bird(
+    species = 'biggus raptorus',
+    bird_length = set_random("rnorm", mean = 90, sd = 5), # (metres)
+    bird_speed = set_random("rnorm", mean = 16.67, sd = 3) # m/s
+  ),
+  "little_peep" = define_bird(
+    species = 'littlus birdii',
+    bird_length = set_random("rnorm", mean = 40, sd = 2), # (metres)
+    bird_speed = set_random("rnorm", mean = 21, sd = 3) # m/s
+  )
+)
+
+lapply(lst_birds[[1]], sample_input)
+
+
+
+```
+
+
