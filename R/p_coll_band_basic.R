@@ -94,7 +94,7 @@ p_collision_band <- function(
   
   K <- 1 # 1D model
   no_blades <- 3 # because it is
-  rotation_period <- 3600./rpm
+  rotation_period <- 60./rpm
   
 
   bird_aspect_ratio <- bird_length / bird_wing_span
