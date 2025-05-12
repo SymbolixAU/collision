@@ -44,7 +44,8 @@ numeric; Number between 0 and 1 representing the probability
 of collision given interaction
 }
 \description{
-Uses Band 2012 option 1. Simple implementation for testing and comparison.
+Uses Band 2012 option 1. Simple implementation and internal function for 
+testing and verification only
 }
 \details{
 Calculate probability of collision given interaction
@@ -64,7 +65,7 @@ a direct reproduction of the publicly available Excel spreadsheet models.
 }
 \examples{
 
-
+\dontrun{
 p_collision <- p_collision_band(
   max_chord = 3.51,
   pitch_deg = 20, 
@@ -75,5 +76,8 @@ p_collision <- p_collision_band(
   flapping = 0,
   bird_speed = 6
 )
+}
+
+
 
 }

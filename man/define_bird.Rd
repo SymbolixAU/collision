@@ -4,7 +4,15 @@
 \alias{define_bird}
 \title{make a list of bird parameters for input into CRM}
 \usage{
-define_bird(species, bird_length, bird_speed)
+define_bird(
+  species,
+  bird_length,
+  bird_speed,
+  prop_day,
+  prop_year,
+  avoidance_dynamic,
+  avoidance_static
+)
 }
 \arguments{
 \item{species}{char; species identifier}
@@ -14,6 +22,15 @@ information using \link{set_random}}
 
 \item{bird_speed}{numeric; Average flight speed (m/sec), or
 distribution information using \link{set_random}}
+
+\item{prop_day}{proportion of the day the bird is active onsite}
+
+\item{prop_year}{proportion of the year (relative to the time period of the survey)
+the bird is active onsite}
+
+\item{avoidance_dynamic}{avoidance rate relative to the leading edge of the blade}
+
+\item{avoidance_static}{avoidance rate relative to a static turbine}
 }
 \value{
 list where items define the value or stochastic distribution f
@@ -40,7 +57,11 @@ Each input to this function must be either
 lst_bird <- define_bird(
   species = 'biggus raptorus',
   bird_length = set_random("rnorm", mean = 90, sd = 5), # (metres)
-  bird_speed = set_random("rnorm", mean = 16.67, sd = 3) # m/s
+  bird_speed = set_random("rnorm", mean = 16.67, sd = 3), # m/s
+  prop_day = 0.5,
+  prop_year = set_random("runif", min = 0.5, max = 0.6),
+  avoidance_dynamic = 0.95,
+  avoidance_static = 0.999
 )
 
 }

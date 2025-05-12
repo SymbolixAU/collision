@@ -9,6 +9,5 @@
 #'  @examples
 #'  
 #'  rpm_to_radpersec(1) # 0.1047
-#'  
-#'  @noRd
+#'  @export
 rpm_to_radpersec <- function(rpm){ rpm * 2. * pi / 60.}

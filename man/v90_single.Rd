@@ -6,26 +6,6 @@
 \title{Single turbine example data}
 \format{
 A object of class 'list' and custom class 'turbineInput':
-\describe{
-\item {model_id} character; Label for turbine model
-\item { blade_length} blade length (m)
-\item {blade_thickness_narrow}the thickness of the blade (side on) at its thinnest point (m)
-\item {blade_thickness_wide} the thickness of the blade (side on) at its widest point (m)
-\item {d_base} diameter of tower at base (m)
-\item {d_rotormin} diameter of tower at base of rotor (m)
-\item {d_top} diameter of tower at top (m)
-\item {hh} hub height (m)
-\item {max_chord} the chord of the blade at its widest point (m)
-\item {min_chord} the chord of the blade at its tip (thinnest point) (m)
-\item {max_nac_h} max nacelle length (side view) (m)
-\item {max_nac_l}  max nacelle height (side view) (m)
-\item {max_width_nacelle} diam of nosecone == nacelle room width (back view) (m)
-\item {rotor_diam} if unspecified, defaults to 2*blade_length + max_width_nacelle (m)
-\item {rpm} rotational speed of turbine  (rpm)
-\item {tilt_deg} Blade tilt in degrees
-\item {prop_operational} numeric; Proportion of a 24 hour day that turbines
-are operational. 
-}
 }
 \usage{
 v90_single
@@ -34,5 +14,8 @@ v90_single
 A example of class `turbineInput` containing example turbine dimensions
 based off a Vestas V90 example. This version has all fixed (i.e. no stochastic)
 input values and is useful for vignettes and tests
+}
+\details{
+Created with [define_turbine()]
 }
 \keyword{datasets}

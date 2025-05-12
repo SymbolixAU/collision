@@ -6,25 +6,20 @@
 #' 
 #' @format
 #' A object of class 'list' and custom class 'turbineInput':
-#' \describe{
-#' \item {model_id} character; Label for turbine model
-#' \item { blade_length} blade length (m)
-#' \item {blade_thickness_narrow}the thickness of the blade (side on) at its thinnest point (m)
-#' \item {blade_thickness_wide} the thickness of the blade (side on) at its widest point (m)
-#' \item {d_base} diameter of tower at base (m)
-#' \item {d_rotormin} diameter of tower at base of rotor (m)
-#' \item {d_top} diameter of tower at top (m)
-#' \item {hh} hub height (m)
-#' \item {max_chord} the chord of the blade at its widest point (m)
-#' \item {min_chord} the chord of the blade at its tip (thinnest point) (m)
-#' \item {max_nac_h} max nacelle length (side view) (m)
-#' \item {max_nac_l}  max nacelle height (side view) (m)
-#' \item {max_width_nacelle} diam of nosecone == nacelle room width (back view) (m)
-#' \item {rotor_diam} if unspecified, defaults to 2*blade_length + max_width_nacelle (m)
-#' \item {rpm} rotational speed of turbine  (rpm)
-#' \item {tilt_deg} Blade tilt in degrees
-#' \item {prop_operational} numeric; Proportion of a 24 hour day that turbines
-#' are operational. 
-#' }
+#'
+#' @details Created with [define_turbine()]
 #' 
 "v90_single"
+
+
+#' Wedge-tailed Eagle data
+#' 
+#' A non-stochastic example of bird data for vignettes and testing
+#' Based off the Australian / Tasmanian Wedge-tailed Eagle
+#' 
+#' @format A object of class 'list' and custom class 'birdInput'
+#' 
+#' @details
+#' Created with [define_bird()]
+#' 
+"wte"

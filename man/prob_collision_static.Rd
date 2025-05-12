@@ -68,3 +68,30 @@ Presented areas are the sum of static  components, where
  static components are the tower below rotor height, tower above rotor height, 
  rotor and nacelle/nosecone
 }
+\examples{
+
+
+# all in metres
+prob_collision_static(
+ d_base = 5.0,
+ d_rotormin = 3.5,
+ d_top = 3,
+ hh = 10,
+ blade_length = 60,
+ max_nac_h = 4,
+ max_nac_l = 13,
+ max_width_nacelle = 4,
+ rotor_diam = 124,
+ tilt_deg = 6,
+ max_chord = 3.5,
+ min_chord = 0.4,
+ blade_thickness_wide = 2.5,
+ blade_thickness_narrow = 0.1,
+ prop_at_height = 0.5,
+ prop_below_height = 0.2, 
+ edr = 800
+)
+
+
+
+}

@@ -5,7 +5,11 @@ set.seed(123)
 
 expect_error(
   define_bird(bird_length = "long", 
-              bird_speed=20),
+              bird_speed=20,
+              prop_day = 1,
+              prop_year = 1,
+              avoidance_dynamic = 0.9,
+              avoidance_static = 0.99),
   'Class must be one of "RandInput", "numeric"'
 )
 expect_error(
@@ -33,7 +37,11 @@ expect_error(
 lst_chk <- define_bird(
   species = 'test',
   bird_length = set_random("runif", min = 1, max = 2.3), # (metres)
-  bird_speed = 16.67 # Ave
+  bird_speed = 16.67, # Ave
+  prop_day = 1,
+  prop_year = 1,
+  avoidance_dynamic = 0.9,
+  avoidance_static = 0.99
 )
 
 lst_samp <- lapply(lst_chk, sample_input)
@@ -48,7 +56,11 @@ expect_identical(
              params = list(min = 1, max = 2.3)
         ), class = "randInput"
       ), 
-      bird_speed = 16.67
+      bird_speed = 16.67,
+      prop_day = 1, 
+      prop_year = 1, 
+      avoidance_dynamic = 0.9, 
+      avoidance_static = 0.99
     ), class = "birdInput")
 )
 

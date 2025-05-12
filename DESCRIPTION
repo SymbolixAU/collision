@@ -17,7 +17,11 @@ Imports:
   Distance,
   methods
 Suggests: 
-  tinytest
+  tinytest,
+  knitr,
+  rmarkdown,
+  stochLAB,
+  qpdf
 Encoding: UTF-8
 RoxygenNote: 7.3.2
 Depends: 
@@ -25,3 +29,4 @@ Depends:
 URL: https://github.com/SymbolixAU/collision
 BugReports: https://github.com/SymbolixAU/collision/issues
 LazyData: true
+VignetteBuilder: knitr

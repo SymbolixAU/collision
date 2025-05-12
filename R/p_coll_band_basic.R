@@ -1,6 +1,7 @@
 #' Probability of collision given interaction from Band
 #'
-#' Uses Band 2012 option 1. Simple implementation for testing and comparison.
+#' Uses Band 2012 option 1. Simple implementation and internal function for 
+#' testing and verification only
 #'
 #' Calculate probability of collision given interaction
 #'
@@ -37,7 +38,7 @@
 #' of collision given interaction
 #' @examples
 #'
-#'
+#' \dontrun{
 #' p_collision <- p_collision_band(
 #'   max_chord = 3.51,
 #'   pitch_deg = 20, 
@@ -48,24 +49,10 @@
 #'   flapping = 0,
 #'   bird_speed = 6
 #' )
-#'
-#'  p_collision_band(
-#'            bird_speed = 13.1,
-#'            bird_length = 0.85,
-#'            wing_span = 1.01,
-#'            #prop_upwind = 0.5,
-#'            #flap_glide = 1,
-#'            rpm = 15,
-#'            rotor_diam = 120*2,
-#'            max_chord = 5,
-#'            blade_pitch = 15
-#'         #   n_blades = 3,
-#'          #  chord_prof = chord_prof_5MW
-#'            )
+#'}
 #'
 #'
 #'
-#' @export
 p_collision_band <- function(
     max_chord,
     pitch_deg,

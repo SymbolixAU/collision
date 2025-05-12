@@ -23,31 +23,53 @@
 #'    information using \link{set_random}
 #' @param bird_speed numeric; Average flight speed (m/sec), or
 #'                   distribution information using \link{set_random}
+#' @param prop_day proportion of the day the bird is active onsite
+#' @param prop_year proportion of the year (relative to the time period of the survey)
+#'                  the bird is active onsite
+#' @param avoidance_dynamic avoidance rate relative to the leading edge of the blade
+#' @param avoidance_static avoidance rate relative to a static turbine
 #' 
 #' @examples
 #' lst_bird <- define_bird(
 #'   species = 'biggus raptorus',
 #'   bird_length = set_random("rnorm", mean = 90, sd = 5), # (metres)
-#'   bird_speed = set_random("rnorm", mean = 16.67, sd = 3) # m/s
+#'   bird_speed = set_random("rnorm", mean = 16.67, sd = 3), # m/s
+#'   prop_day = 0.5,
+#'   prop_year = set_random("runif", min = 0.5, max = 0.6),
+#'   avoidance_dynamic = 0.95,
+#'   avoidance_static = 0.999
 #' )
 #' 
 #' @export
 define_bird <- function(
     species,
     bird_length,
-    bird_speed
+    bird_speed,
+    prop_day, 
+    prop_year,
+    avoidance_dynamic,
+    avoidance_static
 ) {
   
   sapply( 
     list(bird_length,
-         bird_speed), 
+         bird_speed,
+         prop_day, 
+         prop_year,
+         avoidance_dynamic,
+         avoidance_static
+         ), 
     check_input_class 
   )
   
   l <- list(
     species = species,
     bird_length = bird_length,
-    bird_speed = bird_speed
+    bird_speed = bird_speed, 
+    prop_day = prop_day, 
+    prop_year = prop_year,
+    avoidance_dynamic = avoidance_dynamic,
+    avoidance_static = avoidance_static
   )
   
   class(l) <- "birdInput"

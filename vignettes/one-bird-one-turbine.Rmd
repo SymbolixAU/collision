@@ -41,24 +41,40 @@ str(v90_single)
 
 ```
 
+
+Now we need a bird (see `define_bird`)
+
 ```{r}
 
 
 
-lst_birds <- list(
-  "raptor" = define_bird(
-    species = 'biggus raptorus',
-    bird_length = set_random("rnorm", mean = 90, sd = 5), # (metres)
-    bird_speed = set_random("rnorm", mean = 16.67, sd = 3) # m/s
-  ),
-  "little_peep" = define_bird(
-    species = 'littlus birdii',
-    bird_length = set_random("rnorm", mean = 40, sd = 2), # (metres)
-    bird_speed = set_random("rnorm", mean = 21, sd = 3) # m/s
-  )
-)
 
-lapply(lst_birds[[1]], sample_input)
+```
+
+
+
+
+
+
+
+
+
+```{r}
+
+# 
+# lst_birds <- list(
+#   "raptor" = define_bird(
+#     species = 'biggus raptorus',
+#     bird_length = set_random("rnorm", mean = 90, sd = 5), # (metres)
+#     bird_speed = set_random("rnorm", mean = 16.67, sd = 3) # m/s
+#   ),
+#   "little_peep" = define_bird(
+#     species = 'littlus birdii',
+#     bird_length = set_random("rnorm", mean = 40, sd = 2), # (metres)
+#     bird_speed = set_random("rnorm", mean = 21, sd = 3) # m/s
+#   )
+# )
+
 
 
 

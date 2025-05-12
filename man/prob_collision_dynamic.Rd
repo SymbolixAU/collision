@@ -41,3 +41,20 @@ prob_collision_dynamic(
 \description{
 Probability of collision with leading edge of blade
 }
+\examples{
+# example code
+prob_collision_dynamic(
+ rpm = 15,
+ blade_length = 60,
+ max_width_nacelle = 4,
+ rotor_diam = 124,
+ blade_thickness_wide = 2.5,
+ blade_thickness_narrow = 0.1,
+ hh = 10,
+ bird_length = 0.9,
+ bird_speed = 12,
+ edr = 800
+)
+
+
+}

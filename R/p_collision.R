@@ -60,6 +60,31 @@ vertical_flux_plane_area <- function(
 #' 
 #' 
 #' 
+#' @examples
+#'
+#' 
+#' # all in metres
+#' prob_collision_static(
+#'  d_base = 5.0,
+#'  d_rotormin = 3.5,
+#'  d_top = 3,
+#'  hh = 10,
+#'  blade_length = 60,
+#'  max_nac_h = 4,
+#'  max_nac_l = 13,
+#'  max_width_nacelle = 4,
+#'  rotor_diam = 124,
+#'  tilt_deg = 6,
+#'  max_chord = 3.5,
+#'  min_chord = 0.4,
+#'  blade_thickness_wide = 2.5,
+#'  blade_thickness_narrow = 0.1,
+#'  prop_at_height = 0.5,
+#'  prop_below_height = 0.2, 
+#'  edr = 800
+#' )
+#' 
+#' 
 #' 
 #' @export
 #'
@@ -119,6 +144,21 @@ prob_collision_static <- function(
 #' @param bird_length Length of archetype bird (metres)
 #' @param bird_speed numeric; Average flight speed (m/sec)
 #'
+#' @examples
+#' # example code
+#' prob_collision_dynamic(
+#'  rpm = 15,
+#'  blade_length = 60,
+#'  max_width_nacelle = 4,
+#'  rotor_diam = 124,
+#'  blade_thickness_wide = 2.5,
+#'  blade_thickness_narrow = 0.1,
+#'  hh = 10,
+#'  bird_length = 0.9,
+#'  bird_speed = 12,
+#'  edr = 800
+#' )
+#'
 #' 
 #' @export
 prob_collision_dynamic <- function(
@@ -151,5 +191,6 @@ prob_collision_dynamic <- function(
   
   return(presented_area/flux_plane_area)
 }
+
 
 
