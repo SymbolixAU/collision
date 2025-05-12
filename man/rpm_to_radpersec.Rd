@@ -6,16 +6,14 @@
 \usage{
 rpm_to_radpersec(rpm)
 }
+\arguments{
+\item{rpm}{rotor speed in RPM}
+}
 \description{
 Convert rotational speed in rpm to radians per second.
-}
-\details{
 ROT rpm x (1/60sec) x (2pi rad) = ROT' rad / sec
+}
+\examples{
+rpm_to_radpersec(1) # 0.1047
  
- @param rpm rotor speed in RPM
- 
- @examples
- 
- rpm_to_radpersec(1) # 0.1047
- @export
 }

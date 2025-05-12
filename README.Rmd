@@ -19,6 +19,7 @@ collision <img src="man/figures/logo.png" align="right" height="120" alt="" />
 
 <!-- badges: start -->
 
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
 
@@ -36,7 +37,13 @@ remotes::install_github("SymbolixAU/collision", build_vignettes = TRUE)
 
 ## Note on status
 
-This package is under active development towards v0.1.0 milestone
+This package is under active development towards v0.1.0 milestone. Active branches:
+
+* `main` : Documented, tested versions for the internal P(C|I) functions (static and dynamic). See https://github.com/SymbolixAU/collision/issues/2 for most recent Pull Request work
+* `issue1` : older code, used as repository for code to be pulled in, documented and tested
+
+See issues for other tasks or to contribute. Branches will be names according to the issue
+
 
 ## About
 

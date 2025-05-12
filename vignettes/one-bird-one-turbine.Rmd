@@ -7,6 +7,8 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
   chunk_output_type: console
+template:
+  math-rendering: mathml
 ---
 
 ```{r, include = FALSE}
@@ -31,7 +33,15 @@ One of the key differences in this package and previous Band-based models is the
 
 **TODO** smales et all description of the geometry
 
+
+
+
 ## A worked example - deterministic
+
+To calculate the probability of collision (of one bird with one turbine) will consider a bird with no avoidance behaviour, and compare the `collision` approach to the basic Band approach,where flights at rotor swept height are assumed to be uniformly dsitributed. 
+
+We've coded an internal function `collision:::p_collision_band` for testing purposes (note the three colons - this function is just for testing) but for the purposes of this vignette we will also use the `stochLAB::get_avg_prob_collision()` package. 
+
 
 Step one is to set up a turbine - here's an example based basically on a Vestas 90, set up using the `define_turbine` function:
 
@@ -46,38 +56,102 @@ Now we need a bird (see `define_bird`)
 
 ```{r}
 
-
+str(wte)
 
 
 ```
 
 
+## One bird one turbine
+
+Our approach considers both the static ($P(C)_{s}$) and dynamic components ($P(C)_{dyn}$)
+
+Without avoidance, and isolated from the overall collision rate calculation, the total probability of collision, given interaction is the 
 
 
+$$P(C|I) = P(C|I)_{static} + P(C|I)_{dynamic} $$
 
+because the two options are mutually exclusive.  
 
-
+Let's calculate the collision probability for a Wedge-tailed Eagle and the V90.
 
 
 ```{r}
 
-# 
-# lst_birds <- list(
-#   "raptor" = define_bird(
-#     species = 'biggus raptorus',
-#     bird_length = set_random("rnorm", mean = 90, sd = 5), # (metres)
-#     bird_speed = set_random("rnorm", mean = 16.67, sd = 3) # m/s
-#   ),
-#   "little_peep" = define_bird(
-#     species = 'littlus birdii',
-#     bird_length = set_random("rnorm", mean = 40, sd = 2), # (metres)
-#     bird_speed = set_random("rnorm", mean = 21, sd = 3) # m/s
-#   )
-# )
+p_coll_static <- prob_collision_static(
+  d_base = v90_single$d_base,
+  d_rotormin = v90_single$d_rotormin,
+  d_top = v90_single$d_top,
+  hh = v90_single$hh,
+  blade_length = v90_single$blade_length,
+  max_nac_h = v90_single$max_nac_h,
+  max_nac_l = v90_single$max_nac_l,
+  max_width_nacelle = v90_single$max_width_nacelle,
+  rotor_diam = v90_single$rotor_diam,
+  tilt_deg = v90_single$tilt_deg,
+  max_chord = v90_single$max_chord,
+  min_chord = v90_single$min_chord,
+  blade_thickness_wide = v90_single$blade_thickness_wide,
+  blade_thickness_narrow = v90_single$blade_thickness_narrow,
+  prop_at_height = 0.75,
+  prop_below_height = 0.2, 
+  edr = v90_single$rotor_diam/2
+)
 
+p_coll_dyn <- prob_collision_dynamic(
+  rpm = v90_single$rpm, #s_rot,
+  blade_length = v90_single$blade_length,
+  max_width_nacelle = v90_single$max_width_nacelle,
+  rotor_diam = v90_single$rotor_diam,
+  blade_thickness_wide = v90_single$blade_thickness_wide,
+  blade_thickness_narrow = v90_single$blade_thickness_narrow,
+  hh = v90_single$hh,
+  bird_length = wte$bird_length,
+  bird_speed = wte$bird_speed,
+  edr = v90_single$rotor_diam/2
+)
 
-
+p_coll_dyn + p_coll_static
 
 ```
 
+### Hang on - what's that `edr`?
 
+Note we set our effective detection radius (`edr`) to half the rotor diameter. Normally this parameter is calculated via distance sampling (TODO BUCKLAND REF). As the effective detection increases, this probability of collision given interaction also decreases. 
+
+But don't stress! 
+
+As the effective detection radius increases, this also influences the flight density calculation. We will come back to this in a different vignette. For now, we want to compare with Band (as far as possible) so let's use a default thats the flux window associated with the turbine itself.
+
+### Back to Business - whats' Band say?
+
+```{r}
+
+stochLAB::get_avg_prob_collision(
+  flight_speed = wte$bird_speed, #m/s
+  body_lt = wte$bird_length,
+  wing_span = 2.12,
+  prop_upwind = 0.5,
+  flap_glide = 1,
+  rotor_speed = v90_single$rpm  ,
+  rotor_radius = v90_single$rotor_diam / 2.0,
+  blade_width = v90_single$blade_thickness_wide,
+  blade_pitch =  30 * pi / 180, #In radian
+  n_blades = 3,
+  chord_prof = chord_prof_5MW
+)
+
+
+# using the 2007 smaller profile from the spreadsheet
+collision:::p_collision_band(
+  max_chord = v90_single$blade_thickness_wide,
+  pitch_deg = 30, 
+  rotor_diam = v90_single$rotor_diam,
+  rpm = v90_single$rpm,
+  bird_length = wte$bird_length,
+  bird_wing_span = 2.12,
+  bird_flapping = 0,
+  bird_speed = wte$bird_speed
+)
+
+```
