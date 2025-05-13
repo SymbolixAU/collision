@@ -204,7 +204,7 @@ bird_transit_sec <- function(max_width_nacelle,
                                           blade_thickness_narrow,
                                           rotor_diam)
   
-  return( (transit_length_m + bird_length) / bird_speed )
+  return( (transit_length_m + 2.*bird_length) / bird_speed )
   
 }
 
