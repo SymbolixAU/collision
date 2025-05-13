@@ -245,7 +245,7 @@ pa_dynamic <- function(s_rot,
                                           rotor_diam) 
   
   
-  bird_transit_sec <-  (transit_length_m + bird_length) / bird_speed 
+  bird_transit_sec <-  (transit_length_m + 2.*bird_length) / bird_speed 
   
   
   rotor_swept_areapsec <- 0.125 * n_blades * s_rot * rotor_diam**2
