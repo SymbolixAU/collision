@@ -7,6 +7,9 @@ collision
 <img src="man/figures/logo.png" align="right" height="120" alt="" />
 
 <!-- badges: start -->
+
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
 ## Installation
@@ -14,14 +17,32 @@ collision
 You can install the development version of collision from
 [GitHub](https://github.com/) with:
 
+NOTE: while this package is in closed testing, you will need to be
+invited to the repo (contact the package author with your request and
+your github account details) and you will need to set the environment
+variable “GITHUB_PAT” - see <https://github.com/settings/tokens> for
+more information
+
 ``` r
 # install.packages("remotes")
-devtools::install_github("SymbolixAU/collision")
+Sys.setenv("GITHUB_PAT" = "<your token goes here>")
+remotes::install_github("SymbolixAU/collision", build_vignettes = TRUE)
 ```
 
 ## Note on status
 
-This package is under active development towards v1.0 milestone
+This package is under active development towards v0.1.0 milestone.
+Active branches:
+
+- `main` : Documented, tested versions for the internal P(C\|I)
+  functions (static and dynamic). See
+  <https://github.com/SymbolixAU/collision/issues/2> for most recent
+  Pull Request work
+- `issue1` : older code, used as repository for code to be pulled in,
+  documented and tested
+
+See issues for other tasks or to contribute. Branches will be names
+according to the issue
 
 ## About
 
@@ -29,6 +50,15 @@ This package was developed by contribution of code and maths from
 [Symbolix](www.symbolix.com.au) and [Biosis](www.biosis.com.au), and
 also draws from open source code (TODO ADD IN REFS). It is made
 available under a GPL-3 licence.
+
+The main deviation of this package from other examples is the
+flexibility it affords the analyst. In Australia, CRM is required for
+diverse species under varied conditions both on and offshore. This
+package provides a structured workflow but aims to be flexible enough to
+support different time-scales of survey (e.g. to enable modelling of
+short term migrants) or spatial modelling (e.g. different relative risk
+per turbine). Basic usage is below but the vignettes will work through
+specific examples.
 
 The number of collisions per year is calculated as:
 
@@ -56,6 +86,10 @@ It estimates:
   the rotor swept area
 - Probability of collision with turbine blades for interacting flights.
   This uses Band 2009 stage 2 calculation or the Biosis CRM.
+
+## Getting started
+
+### One bird and one turbine calculation
 
 ## History and provenance
 
