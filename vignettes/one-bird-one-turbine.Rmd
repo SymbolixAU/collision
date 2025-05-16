@@ -21,6 +21,9 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(collision)
 
+# for distance modelling
+library(Distance)
+
 # for Band Comparison
 library(stochLAB)
 
@@ -127,19 +130,19 @@ As the effective detection radius increases, this also influences the flight den
 
 ```{r}
 
-stochLAB::get_avg_prob_collision(
-  flight_speed = wte$bird_speed, #m/s
-  body_lt = wte$bird_length,
-  wing_span = 2.12,
-  prop_upwind = 0.5,
-  flap_glide = 1,
-  rotor_speed = v90_single$rpm  ,
-  rotor_radius = v90_single$rotor_diam / 2.0,
-  blade_width = v90_single$blade_thickness_wide,
-  blade_pitch =  30 * pi / 180, #In radian
-  n_blades = 3,
-  chord_prof = chord_prof_5MW
-)
+# stochLAB::get_avg_prob_collision(
+#   flight_speed = wte$bird_speed, #m/s
+#   body_lt = wte$bird_length,
+#   wing_span = 2.12,
+#   prop_upwind = 0.5,
+#   flap_glide = 1,
+#   rotor_speed = v90_single$rpm  ,
+#   rotor_radius = v90_single$rotor_diam / 2.0,
+#   blade_width = v90_single$blade_thickness_wide,
+#   blade_pitch =  30 * pi / 180, #In radian
+#   n_blades = 3,
+#   chord_prof = chord_prof_5MW
+# )
 
 
 # using the 2007 smaller profile from the spreadsheet
@@ -154,4 +157,99 @@ collision:::p_collision_band(
   bird_speed = wte$bird_speed
 )
 
+```
+
+### Calculating flight activity rate
+
+Use the provided survey data to fit a (very simple) distance model. **NOTE** Please see [Distance](http://distancesampling.org/R/) and the references therein for a complete primer on doing and interpreting Distance analysis. 
+
+The package dataset:
+
+```{r}
+summary(df_obs_survey)
+```
+
+is a combined dataset of 100 point count surveys, including the count (`n_individuals`) of raptors (and associated distance at first observation (`distance`)). If none were seen we have an `NA` record for the observation.
+
+It's very important that this data include surveys with no sightings as well as positive detections. 
+
+In addition it must include:
+
+* Distance to the bird at first sighting in metres. If transect sampling, this is usually the perpendicular (right-angle) distance from the transect line.
+* Duration of the surveys in minutes
+* Count of individuals in each observation (for flock sightings)
+
+We fit a distance model and extract the effective detection radius (EDR)
+
+```{r}
+ds_model <- ds(df_obs_survey)
+
+plot(ds_model)
+
+print(edr_from_distmodel(ds_model)) # in metres
+print(eda_from_distmodel(ds_model)) # in metres^2
+print(w_from_distmodel(ds_model)) # truncation distance / max distance in m
+```
+
+From this we can calculate the actitvity rate for the study area. This is in units of 
+`flights per sq.km per year`.
+
+Note that I can specify the distance model or the EDA. The results are equivalent
+
+```{r}
+
+activity_rate <- activity_rate_distcorr(
+  ds_model = ds_model,
+  obs_size = df_obs_survey$n_individuals,
+  survey_mins = df_obs_survey$survey_mins,
+  wilson_correction = TRUE # default
+)
+```
+
+In this example, we assume activity rate follows a log normal distribution with mean `activity_rate$mean` and standard deviation `activity_rate$sd`. The units are flights / sqkm / year. It's uncorrected at this stage for daily, monthly or spatial variability.
+
+
+### Iinteractions per turbine per year
+
+This is where we account for
+
+* The size of the turbine
+* The proportion of the day active (moderated for the `obs_scale_factor` - see the function help page for more information)
+* The proportion of the year active
+* The proportion of flights at RSH
+
+```{r}
+n_interactions_year <-  n_interaction(
+  activity_rate = activity_rate$mean,
+  prop_height = 0.75,
+  bird_prop_year = wte$prop_year, 
+  bird_prop_day = wte$prop_day,
+  bird_obs_scale_factor = 1.0, 
+  turb_prop_operational = v90_single$prop_operational, 
+  turb_blade_length = v90_single$blade_length
+)
+
+```
+
+**Note**
+
+* because we are not modelling a spatial activity rate, the turbine interactions are the same for each turbine
+* The units for `activity_rate` is flights / sqkm / year and turbine dimensions are in metres
+* The units for `n_interactions` is flights / turbine / year. It represents the flights through an area of space equal to the turbine disk at the spatial location of the turbine
+
+### Total annual collisions (with avoidance)
+
+Model 90% avoidance
+
+```{r}
+avoidance_rate <- 0.9
+
+n_collision_year <- n_collision(
+  avoidance_rate = avoidance_rate,
+  n_interaction_yr = n_interactions_year,
+  p_collision = p_coll_dyn + p_coll_static
+  
+)
+
+print(n_collision_year)
 ```
