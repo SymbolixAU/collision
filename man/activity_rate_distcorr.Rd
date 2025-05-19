@@ -25,8 +25,7 @@ observation. For no observations send zero length vector.}
 NAs ignored. Must use units of minutes.}
 
 \item{mean_event_size}{numeric; Allows the user to submit a custom variable
-  for the mean event size.  Defaults to the mean of
-obs_size.}
+for the mean event size.  Defaults to the mean of obs_size.}
 
 \item{sd_event_size}{numeric; Allows the user to submit a custom variable
 for the sd event size.  Defaults to the sd of obs_size.}
@@ -41,7 +40,7 @@ list; the mean and sd of activity rate
 }
 \description{
 The activity rate is defined as the number of flights per
-square kilometer per year, assuming constant presence (we deal with that ]
+square kilometer per year, assuming constant presence (we deal with that
 at a later step).
 }
 \details{

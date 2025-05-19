@@ -19,7 +19,8 @@ Suggests:
   tinytest,
   knitr,
   rmarkdown,
-  stochLAB
+  stochLAB,
+  ggplot2
 Encoding: UTF-8
 RoxygenNote: 7.3.2
 Depends: 
