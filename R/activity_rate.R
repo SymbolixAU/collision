@@ -1,7 +1,7 @@
 #' Distance corrected activity rate
 #'
 #' The activity rate is defined as the number of flights per
-#' square kilometer per year, assuming constant presence (we deal with that ]
+#' square kilometer per year, assuming constant presence (we deal with that
 #' at a later step).
 #'
 #' Given a set of observations, survey durations and a related distance model
@@ -17,8 +17,7 @@
 #' @param survey_mins numeric; vector holding the duration of each survey.
 #'                    NAs ignored. Must use units of minutes.
 #' @param mean_event_size numeric; Allows the user to submit a custom variable
-#'                    for the mean event size.  Defaults to the mean of
-#'                  obs_size.
+#'                    for the mean event size.  Defaults to the mean of obs_size.
 #' @param sd_event_size numeric; Allows the user to submit a custom variable
 #'                    for the sd event size.  Defaults to the sd of obs_size.
 #' @param wilson_correction boolean;  Apply wilson correction if there are
@@ -131,7 +130,6 @@ activity_rate_distcorr <- function(
 
     # convert to obs / km2 / year
     act_rate <- act_rate * (1e6) * (60 * 24 * 365.25)
-
     act_rate_sd <- act_rate_sd * (1e6) * (60 * 24 * 365.25)
 
     result <- list(mean = act_rate, sd = act_rate_sd)
