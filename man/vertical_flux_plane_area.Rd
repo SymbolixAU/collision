@@ -4,11 +4,9 @@
 \alias{vertical_flux_plane_area}
 \title{Vertical flux plane area}
 \usage{
-vertical_flux_plane_area(edr, hh, rotor_diam)
+vertical_flux_plane_area(hh, rotor_diam)
 }
 \arguments{
-\item{edr}{effective detection radius (m)}
-
 \item{hh}{hub height (m)}
 
 \item{rotor_diam}{rotor diameter (m)}
@@ -24,7 +22,6 @@ effective detection radius and the height is the max. height of the turbine
 \examples{
 
 vertical_flux_plane_area(
-  edr = 500,
   hh = 150,
   rotor_diam = 210 
 )

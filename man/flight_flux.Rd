@@ -7,7 +7,7 @@
 flight_flux(
   obs_size,
   survey_mins,
-  eda = NULL,
+  edr = NULL,
   prop_at_height,
   prop_below_height,
   rotor_diameter,
@@ -65,7 +65,7 @@ species during the survey run.
 obs <- c(0, 1, 1, 3, 4)
 survey <- c(60, 60, 60, NA, 30)
 
-activity_rate_distcorr(ds_example,
+flight_flux(
     obs_size = obs,
     survey_mins = survey,
     edr = 300,
@@ -78,7 +78,7 @@ activity_rate_distcorr(ds_example,
 
 obs <- integer()
 survey <- c(60, 60, 60, 45, 30)
-activity_rate_distcorr(ds_example,
+flight_flux(
     obs_size = obs,
     survey_mins = survey,
     wilson_correction = TRUE
@@ -91,11 +91,10 @@ activity_rate_distcorr(ds_example,
 # zero observations without wilson correction returns NaN
 # and warning
 
-activity_rate_distcorr(ds_example,
+flight_flux(ds_example,
     obs_size = obs,
     survey_mins = survey,
     wilson_correction = FALSE,
-    edr = 300,
     prop_at_height = 0.3,
     prop_below_height = 0.7,
     rotor_diameter = 230 

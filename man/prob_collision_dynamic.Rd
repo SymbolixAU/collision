@@ -13,8 +13,7 @@ prob_collision_dynamic(
   blade_thickness_narrow,
   hh,
   bird_length,
-  bird_speed,
-  edr
+  bird_speed
 )
 }
 \arguments{
@@ -35,8 +34,6 @@ prob_collision_dynamic(
 \item{bird_length}{Length of archetype bird (metres)}
 
 \item{bird_speed}{numeric; Average flight speed (m/sec)}
-
-\item{edr}{effective detection radius (m)}
 }
 \description{
 Probability of collision with leading edge of blade
@@ -52,8 +49,7 @@ prob_collision_dynamic(
  blade_thickness_narrow = 0.1,
  hh = 10,
  bird_length = 0.9,
- bird_speed = 12,
- edr = 800
+ bird_speed = 12
 )
 
 
