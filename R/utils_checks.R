@@ -8,3 +8,18 @@ check_input_class <- function(x) {
   }
 }
 
+
+
+
+#' check input within bounds
+#' @param x the input to check
+#' @param min optional lower bound
+#' @param max optional upper bound
+check_num_bounds <- function(x, min = Inf, max = Inf) {
+  if (!inherits(x, "numeric")) {
+    stop("Numeric input expected")
+  }
+  if (any(x < min) | any(x > max)) {
+    stop("variable out of bounds")
+  }
+}

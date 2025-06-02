@@ -56,7 +56,7 @@ vertical_flux_plane_area <- function(
 #' @param blade_thickness_narrow the thickness of the blade (side on) at its thinnest point
 #' @param prop_at_height proportion of flights at height
 #' @param prop_below_height proportion of flights below rotor height
-#'@param edr effective detection radius (m)
+#' @param edr effective detection radius (m)
 #' 
 #' 
 #' 
