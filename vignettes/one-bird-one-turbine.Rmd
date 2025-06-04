@@ -94,8 +94,7 @@ p_coll_static <- prob_collision_static(
   blade_thickness_wide = v90_single$blade_thickness_wide,
   blade_thickness_narrow = v90_single$blade_thickness_narrow,
   prop_at_height = 0.75,
-  prop_below_height = 0.2, 
-  edr = v90_single$rotor_diam/2
+  prop_below_height = 0.2
 )
 
 p_coll_dyn <- prob_collision_dynamic(
@@ -107,8 +106,7 @@ p_coll_dyn <- prob_collision_dynamic(
   blade_thickness_narrow = v90_single$blade_thickness_narrow,
   hh = v90_single$hh,
   bird_length = wte$bird_length,
-  bird_speed = wte$bird_speed,
-  edr = v90_single$rotor_diam/2
+  bird_speed = wte$bird_speed
 )
 
 p_coll_dyn + p_coll_static

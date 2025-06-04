@@ -52,9 +52,13 @@ prob_collision_static(
 
 \item{blade_thickness_narrow}{the thickness of the blade (side on) at its thinnest point}
 
-\item{prop_at_height}{proportion of flights at height}
+\item{prop_at_height}{proportion of flights at rotor swept height}
 
-\item{prop_below_height}{proportion of flights below rotor height}
+\item{prop_below_height}{proportion of flights below rotor swept height}
+}
+\value{
+numeric; probability of collision with static turbine.
+        Range from 0 to 1
 }
 \description{
 Probability of collision calculated as the ratio of the sum of static presented

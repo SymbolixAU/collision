@@ -13,9 +13,16 @@ flux_per_year(flux_per_min, flight_hours, months_on_site)
 
 \item{months_on_site}{months per year the species is present onsite}
 }
+\value{
+numeric; flux through turbine in flights / year
+}
 \description{
 Converts flights per minute from [flight_flux()] into an annual rate
 }
 \details{
-Note this calculation assumes the \code{flux_per_min} is representative of the annual average flight rate. If the observation period does not represent the flights during active hours of the day and annual activity, the inputs below may need adjusting, or the annual flux may need to be calculated using an alternative method.
+Note this calculation assumes the \code{flux_per_min} is representative of 
+the annual average flight rate. If the observation period does not represent 
+the flights during active hours of the day and annual activity, the inputs 
+below may need adjusting, or the annual flux may need to be calculated using 
+an alternative method.
 }

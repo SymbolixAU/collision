@@ -1,6 +1,6 @@
 ## distance_helpers
 ## functions to help manipulate the outputs of the R package
-## Distance for use in activity rate and CRM calculations
+## Distance for use in flight flux and CRM calculations
 
 #' extract data from distance model
 #'
@@ -14,7 +14,6 @@
 #' summary(ds_example) # example data
 #' w_from_distmodel(ds_example) # extract truncation parameter, w
 #' edr_from_distmodel(ds_example) # extract effective detection radius
-#' eda_from_distmodel(ds_example) # extract effective detection area
 #'
 #' @references
 #' Miller DL, Rexstad E, Thomas L, Marshall L, Laake JL (2019).
@@ -37,13 +36,4 @@ w_from_distmodel <- function(ds_model) {
 edr_from_distmodel <- function(ds_model) {
   if (!inherits(ds_model, "dsmodel")) stop("`dsmodel` object required")
   sqrt(unique(ds_model$ddf$fitted)) * w_from_distmodel(ds_model)
-}
-
-#' @rdname data_from_distmodel
-#' @export
-eda_from_distmodel <- function(ds_model) {
-  if (!inherits(ds_model, "dsmodel")) stop("`dsmodel` object required")
-  edr <- edr_from_distmodel(ds_model)
-  eda <- pi * (edr**2)
-  return(eda)
 }

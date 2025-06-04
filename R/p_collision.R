@@ -7,7 +7,7 @@
 #' @param hh hub height (m)
 #' @param rotor_diam rotor diameter (m)
 #'
-#' @return area of plane of flight in m^2           
+#' @return area of plane of flight in m^2
 #' 
 #' @examples 
 #' 
@@ -51,10 +51,11 @@ vertical_flux_plane_area <- function(
 #' @param min_chord the chord of the blade at its tip (thinnest point)
 #' @param blade_thickness_wide the thickness of the blade (side on) at its widest point
 #' @param blade_thickness_narrow the thickness of the blade (side on) at its thinnest point
-#' @param prop_at_height proportion of flights at height
-#' @param prop_below_height proportion of flights below rotor height
+#' @param prop_at_height proportion of flights at rotor swept height
+#' @param prop_below_height proportion of flights below rotor swept height
 #' 
-#' 
+#' @return numeric; probability of collision with static turbine.
+#'         Range from 0 to 1
 #' 
 #' @examples
 #'
@@ -137,6 +138,9 @@ prob_collision_static <- function(
 #' @param bird_length Length of archetype bird (metres)
 #' @param bird_speed numeric; Average flight speed (m/sec)
 #'
+#' @return numeric; probability of collision with leading edge of blade.
+#'         Range from 0 to 1
+#' 
 #' @examples
 #' # example code
 #' prob_collision_dynamic(

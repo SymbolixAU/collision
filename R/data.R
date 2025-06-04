@@ -56,13 +56,3 @@
 #' 
 #' 
 "ds_raptor"
-
-#' Example activity rate
-#' 
-#' Example output from \code{collision::activity_rate_distcorr} using the example survey, observation and raptor data. Used for examples vignetts
-#' 
-#' #' @docType data
-#' 
-#' @usage activity_rate_raptor
-#' 
-"activity_rate_raptor"

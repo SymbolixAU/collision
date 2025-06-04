@@ -35,6 +35,10 @@ prob_collision_dynamic(
 
 \item{bird_speed}{numeric; Average flight speed (m/sec)}
 }
+\value{
+numeric; probability of collision with leading edge of blade.
+        Range from 0 to 1
+}
 \description{
 Probability of collision with leading edge of blade
 }

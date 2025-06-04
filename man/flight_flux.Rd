@@ -22,12 +22,17 @@ flight_flux(
 observation. For no observations send zero length vector.}
 
 \item{survey_mins}{numeric; vector holding the duration of each survey.
-                  NAs ignored. Must use units of minutes.
-@param edr numeric; Allows you to manually specify the EDR, must be in metres. If null \code{NULL} the function will extract it from the distance model).}
+NAs ignored. Must use units of minutes.}
+
+\item{edr}{numeric; Allows you to manually specify the EDR, must be in 
+metres. If null \code{NULL} the function will extract it from the 
+distance model.}
 
 \item{prop_at_height}{proportion of flights at height}
 
 \item{prop_below_height}{proportion of flights below rotor height}
+
+\item{rotor_diameter}{rotor diameter (m)}
 
 \item{mean_event_size}{numeric; Allows the user to submit a custom variable
 for the mean event size.  Defaults to the mean of obs_size.}
@@ -38,26 +43,33 @@ for the sd event size.  Defaults to the sd of obs_size.}
 \item{wilson_correction}{boolean;  Apply wilson correction if there are
 no observations? Defaults to true}
 
-\item{ds_model}{an object of class \code{dsmodel} fit using
-\code{Distance::ds}. Must use metres as measure of distance. Defaults to NULL}
-
-\item{rotor_diam}{rotor diameter (m)}
+\item{ds_model}{an object of class \code{dsmodel} fit using 
+\code{Distance::ds}. Must use metres as measure of distance. 
+Defaults to NULL}
 }
 \value{
-list; the mean and sd of activity rate
+list; the mean and sd of flux through turbine in flights / min
 }
 \description{
-The flight flux is defined as the number of flights per
-minute through a cylinder of rotor diameter and maximum turbine height.  We consider that every flight through the cylinder intersects a rectangular plane of width of the rotor diameter and maximum turbine height. This works because in the probability of collision calculations [prob_collision_static()] and [prob_collision_dynamic()] project the volume of the turbine onto the same plane.
+The flight flux is defined as the number of flights per minute through a 
+cylinder of rotor diameter and maximum turbine height.  We consider that 
+every flight through the cylinder intersects a rectangular plane of width of 
+the rotor diameter and maximum turbine height. This works because in the 
+probability of collision calculations [prob_collision_static()] and 
+[prob_collision_dynamic()] project the volume of the turbine onto the same 
+plane.
 }
 \details{
 # Details
 
 Given a set of observations, survey durations and a related distance model
-(fit using the \code{Distance} package) we calculate the flight flux through a rectangle of width of 2*(effective detection radius) and (maximum) height of the turbine in one minute of observation time. We then calculate the adjusted flux through a rectangle of the width of the turbine rotor diameter.
+(fit using the \code{Distance} package) we calculate the flight flux through 
+a rectangle of width of 2*(effective detection radius) and (maximum) height 
+of the turbine in one minute of observation time. We then calculate the 
+adjusted flux through a rectangle of the width of the turbine rotor diameter.
 
 The optional Wilson Correction can be used to
-generate an activity rate in the case when no observations are made of the
+generate an flux in the case when no observations are made of the
 species during the survey run.
 }
 \examples{
@@ -81,7 +93,7 @@ survey <- c(60, 60, 60, 45, 30)
 flight_flux(
     obs_size = obs,
     survey_mins = survey,
-    wilson_correction = TRUE
+    wilson_correction = TRUE,
     edr = 300,
     prop_at_height = 0.3,
     prop_below_height = 0.7,
@@ -91,7 +103,8 @@ flight_flux(
 # zero observations without wilson correction returns NaN
 # and warning
 
-flight_flux(ds_example,
+flight_flux(
+    ds_model = ds_example,
     obs_size = obs,
     survey_mins = survey,
     wilson_correction = FALSE,

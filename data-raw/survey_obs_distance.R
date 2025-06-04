@@ -130,14 +130,3 @@ ds_raptor <- ds(df_obs_survey)
 
 usethis::use_data(df_obs_survey, overwrite = TRUE)
 usethis::use_data(ds_raptor, overwrite = TRUE)
-
-
-
-activity_rate_raptor <- activity_rate_distcorr(
-  ds_model = ds_raptor,
-  obs_size = df_obs_survey$n_individuals,
-  survey_mins = df_obs_survey$survey_mins,
-  wilson_correction = TRUE # default
-)
-
-usethis::use_data(activity_rate_raptor, overwrite = TRUE)

@@ -4,14 +4,11 @@
 \alias{data_from_distmodel}
 \alias{w_from_distmodel}
 \alias{edr_from_distmodel}
-\alias{eda_from_distmodel}
 \title{extract data from distance model}
 \usage{
 w_from_distmodel(ds_model)
 
 edr_from_distmodel(ds_model)
-
-eda_from_distmodel(ds_model)
 }
 \arguments{
 \item{ds_model}{an object of class \code{dsmodel} fit using \code{Distance::ds}}
@@ -24,7 +21,6 @@ Helper functions to extract data from a distance model object
 summary(ds_example) # example data
 w_from_distmodel(ds_example) # extract truncation parameter, w
 edr_from_distmodel(ds_example) # extract effective detection radius
-eda_from_distmodel(ds_example) # extract effective detection area
 
 }
 \references{

@@ -11,6 +11,9 @@ rotate_areas(front, side)
 
 \item{side}{area of side-view in metres squared}
 }
+\value{
+numeric
+}
 \description{
 Rotate shape through 180 degrees. Internal function
 }
