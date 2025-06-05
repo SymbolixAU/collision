@@ -13,7 +13,9 @@ prob_collision_dynamic(
   blade_thickness_narrow,
   hh,
   bird_length,
-  bird_speed
+  bird_speed,
+  prop_at_height,
+  prop_below_height
 )
 }
 \arguments{
@@ -34,6 +36,10 @@ prob_collision_dynamic(
 \item{bird_length}{Length of archetype bird (metres)}
 
 \item{bird_speed}{numeric; Average flight speed (m/sec)}
+
+\item{prop_at_height}{proportion of flights at rotor swept height}
+
+\item{prop_below_height}{proportion of flights below rotor swept height}
 }
 \value{
 numeric; probability of collision with leading edge of blade.
@@ -53,7 +59,9 @@ prob_collision_dynamic(
  blade_thickness_narrow = 0.1,
  hh = 10,
  bird_length = 0.9,
- bird_speed = 12
+ bird_speed = 12, 
+ prop_at_height = 0.5,
+ prop_below_height = 0.2
 )
 
 

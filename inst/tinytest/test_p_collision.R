@@ -26,8 +26,10 @@ dyn_chk <- prob_collision_dynamic(
   blade_thickness_narrow = v90_single$blade_thickness_narrow,
   hh = v90_single$hh,
   bird_length = wte$bird_length,
-  bird_speed = wte$bird_speed
+  bird_speed = wte$bird_speed,
+  prop_at_height = 0.75,
+  prop_below_height = 0.2
 )
 
-expect_equal(stat_chk, 0.0323754, tolerance = 0.00001)
-expect_equal(dyn_chk, 0.057672, tolerance = 0.00001)
+expect_equal(stat_chk, 0.0340794, tolerance = 0.00001)
+expect_equal(dyn_chk, 0.060707, tolerance = 0.00001)
