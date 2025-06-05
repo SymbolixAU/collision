@@ -118,6 +118,7 @@ prob_collision_static <- function(
     prop_below_height * (
       pa_below( d_base, d_rotormin, hh-0.5*max_nac_h, blade_length)
     )
+  
   presented_area <- presented_area/(prop_at_height+prop_below_height)
   
   return(presented_area/flux_plane_area)
@@ -137,6 +138,8 @@ prob_collision_static <- function(
 #' @param hh hub height
 #' @param bird_length Length of archetype bird (metres)
 #' @param bird_speed numeric; Average flight speed (m/sec)
+#' @param prop_at_height proportion of flights at rotor swept height
+#' @param prop_below_height proportion of flights below rotor swept height
 #'
 #' @return numeric; probability of collision with leading edge of blade.
 #'         Range from 0 to 1
@@ -152,7 +155,9 @@ prob_collision_static <- function(
 #'  blade_thickness_narrow = 0.1,
 #'  hh = 10,
 #'  bird_length = 0.9,
-#'  bird_speed = 12
+#'  bird_speed = 12, 
+#'  prop_at_height = 0.5,
+#'  prop_below_height = 0.2
 #' )
 #'
 #' 
@@ -166,7 +171,9 @@ prob_collision_dynamic <- function(
     blade_thickness_narrow,
     hh,
     bird_length,
-    bird_speed
+    bird_speed,
+    prop_at_height,
+    prop_below_height
 ){
   
   
@@ -183,6 +190,8 @@ prob_collision_dynamic <- function(
     bird_length = bird_length ,
     bird_speed = bird_speed
   )
+  
+  presented_area <- presented_area/(prop_at_height+prop_below_height)
   
   return(presented_area/flux_plane_area)
 }
