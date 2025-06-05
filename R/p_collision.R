@@ -118,7 +118,7 @@ prob_collision_static <- function(
     prop_below_height * (
       pa_below( d_base, d_rotormin, hh-0.5*max_nac_h, blade_length)
     )
-  
+  presented_area <- presented_area/(prop_at_height+prop_below_height)
   
   return(presented_area/flux_plane_area)
 }
