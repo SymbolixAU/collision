@@ -191,7 +191,8 @@ prob_collision_dynamic <- function(
     bird_speed = bird_speed
   )
   
-  presented_area <- presented_area/(prop_at_height+prop_below_height)
+  presented_area <- presented_area * prop_at_height /
+    (prop_at_height+prop_below_height)
   
   return(presented_area/flux_plane_area)
 }

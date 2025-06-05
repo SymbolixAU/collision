@@ -32,4 +32,4 @@ dyn_chk <- prob_collision_dynamic(
 )
 
 expect_equal(stat_chk, 0.0340794, tolerance = 0.00001)
-expect_equal(dyn_chk, 0.060707, tolerance = 0.00001)
+expect_equal(dyn_chk, 0.045530, tolerance = 0.00001)
