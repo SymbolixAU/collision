@@ -111,7 +111,7 @@ summary(df_obs_survey)
 
 is a combined dataset of 100 point count surveys, including the count (`n_individuals`) of raptors (and associated distance at first observation (`distance`)). If none were seen we have an `NA` record for the observation.
 
-It's very important that this data include surveys with no sightings as well as positive detections. 
+It's very important that the field data include surveys with no sightings as well as positive detections. 
 
 In addition it must include:
 
@@ -130,6 +130,7 @@ print(edr_from_distmodel(ds_model)) # in metres
 print(w_from_distmodel(ds_model)) # truncation distance / max distance in m
 ```
 
+
 ## Calculate proportion at height and below height
 
 prop_at_height is either a single value or distribution information which represents the proportion of flights at rotor swept height while prop_below_height is the proportion of flights below rotor swept height.
@@ -137,34 +138,44 @@ prop_at_height is either a single value or distribution information which repres
 A simple, single value example of this is given below
 
 ```{r}
-turbine_hub_height <- v90_single$hh
-turbine_blade_length <- v90_single$blade_length
 
-min_blade_height_m <- turbine_hub_height - turbine_blade_length
-max_blade_height_m <- turbine_hub_height + turbine_blade_length
+# rotor_diam / 2 is better than using blade length because it 
+# includes the nacelle size 
+min_rsh <- v90_single$hh - v90_single$rotor_diam * 0.5
+max_rsh <- v90_single$hh + v90_single$rotor_diam * 0.5
 
-ggplot(df_obs_survey, aes(x = height)) +
-  geom_histogram() +
-  geom_vline(xintercept = min_blade_height_m, colour = "red") +
-  geom_vline(xintercept = max_blade_height_m, colour = "red")
+# generate a height vector that's one row per observation
+height_vec <- rep(df_obs_survey$height, times = df_obs_survey$n_individuals)
 
-individuals_at_height <- sum(df_obs_survey$n_individuals[df_obs_survey$height >= min_blade_height_m &
-  df_obs_survey$height <= max_blade_height_m])
+## Review the heights
 
-individuals_below_height <- sum(df_obs_survey$n_individuals[df_obs_survey$height < min_blade_height_m])
+ggplot(data = as.data.frame(height_vec), aes(x = height_vec)) +
+  stat_ecdf() +
+  geom_vline(xintercept = min_rsh, colour = "red") +
+  geom_vline(xintercept = max_rsh, colour = "red")
 
-total_individuals <- sum(df_obs_survey$n_individuals)
 
-# Calculate the proportion
-prop_at_height <- individuals_at_height / total_individuals
-prop_below_height <- individuals_below_height / total_individuals
+# calculate ecdf
+# Note - this is a simple example; it's up to the analyst how best to 
+## fit the height distribution
+cdf_height <- ecdf(height_vec)
 
-print(prop_at_height)
+
+prop_at_height <- cdf_height(round(max_rsh)) - cdf_height(round(min_rsh))
+prop_below_height <- cdf_height(round(min_rsh))
+
+
 ```
+
+* Proportion at height: `r prop_at_height`
+* Proportion below height: `r prop_below_height`
+* Proportion above height: `r 1.0 - (prop_at_height + prop_below_height)`
+
 
 ## Modelling
 
-For a deterministic model, we need the following 4 stepss
+For a deterministic model, we need the following 4 steps:
+
 * Step 1 - Run `flight_flux()` and `flux_per_year()` - calculate flux through turbine per year
 * Step 2 - Run `prob_interaction_flat()` - calculate $P(I)$
 * Step 3 - Run `p_collisions()` - calculate $P(C|I)$ for one interaction
@@ -268,43 +279,26 @@ df_turbines$p_coll_dyn <- prob_collision_dynamic(
   prop_below_height = 0.2
 )
 
-df_turbines$p_coll_dyn + df_turbines$p_coll_static
+
 ```
 
 ### Step 4 - Total annual collisions (with avoidance)
 
-We use 99% avoidance rate for static part of turbine and 90% and 95% for dynamic part of turbine.
 
 ```{r}
-avoidance_rates_static <- 0.99
-avoidance_rates_dynamic <- c(0.9, 0.95)
 
-df_avoid <- data.frame(
-  species = wte$species,
-  avoidance_static = avoidance_rates_static,
-  avoidance_dynamic = avoidance_rates_dynamic
-)
-
-df_results <- base::merge(
-  x = df_turbines,
-  y = df_avoid,
-  all = TRUE
-)
+df_turbines
 
 
-df_results$n_collision <- n_collision(
-  avoidance_rate_static = df_results$avoidance_static,
-  avoidance_rate_dynamic = df_results$avoidance_dynamic,
+df_turbines$n_collision <- n_collision(
+  avoidance_rate_static = wte$avoidance_static,
+  avoidance_rate_dynamic = wte$avoidance_dynamic,
   flux_yr = flight_flux_year,
   p_interaction = prob_interaction,
-  p_coll_static = df_results$p_coll_static,
-  p_coll_dynamic = df_results$p_coll_dyn
+  p_coll_static = df_turbines$p_coll_static,
+  p_coll_dynamic = df_turbines$p_coll_dyn
 )
 
 ## For a final result, sum all turbines
-knitr::kable(
-  aggregate(n_collision ~ species + avoidance_dynamic,
-    data = df_results, FUN = "sum"
-  )
-)
+sum(df_turbines$n_collision)
 ```
