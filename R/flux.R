@@ -203,16 +203,16 @@ flight_flux <- function(
 #' an alternative method.
 #' 
 #' @param flux_per_min flux through turbine in flights / min
-#' @param flight_hours hours per day the species is active onsite
-#' @param months_on_site months per year the species is present onsite
+#' @param prop_day proportion of 24 hour day the species is active onsite
+#' @param prop_year proportion of year the species is present onsite
 #' 
 #' @return numeric; flux through turbine in flights / year
 #' 
 #' @export
 flux_per_year <- function(
     flux_per_min,
-    flight_hours,
-    months_on_site
+    prop_day,
+    prop_year
 ){ 
 
   if (any(!is.numeric(flux_per_min))) stop("flux_per_min must be numeric")
@@ -230,6 +230,6 @@ flux_per_year <- function(
     stop("months_on_site must be in range (0, 12]")
   }
 
-  flux_per_min * 365.25 * 24 * 60 * (flight_hours/24) * (months_on_site/12)
+  flux_per_min * 365.25 * 24 * 60 * prop_day * prop_year
 
 }
