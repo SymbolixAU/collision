@@ -279,7 +279,7 @@ expect_equal(
 # flux_per_year ----------------------------------------------------------------
 
 expect_equal(
-  flux_per_year(flux_per_min = 0.1, flight_hours = 24, months_on_site = 12), 
+  flux_per_year(flux_per_min = 0.1, prop_day = 1, prop_year = 1), 
   52596, 
   tolerance = tol
 )
@@ -287,32 +287,33 @@ expect_equal(
 ## Test input handling
 
 expect_error(
-  flux_per_year(flux_per_min = list(), flight_hours = 24, months_on_site = 12),
+  flux_per_year(flux_per_min = list(), prop_day = 1, prop_year = 1),
   "flux_per_min must be numeric"
 )
 
 expect_error(
-  flux_per_year(flux_per_min = -1, flight_hours = 24, months_on_site = 12),
-  "flux_per_min must not be negative"
+  flux_per_year(flux_per_min = -1, prop_day = 1, prop_year = 1),
+  "variable out of bounds"
 )
 
 
 expect_error(
-  flux_per_year(flux_per_min = 0.1, flight_hours = "24", months_on_site = 12),
-  "flight_hours must be numeric"
+  flux_per_year(flux_per_min = 0.1, prop_day = "1", prop_year = 1),
+  "Numeric input expected"
 )
 
 expect_error(
-  flux_per_year(flux_per_min = 0.1, flight_hours = 0, months_on_site = 12),
-  "flight_hours must be in range \\(0, 24]" # Escape (
+  flux_per_year(flux_per_min = 0.1, prop_day = -1, prop_year = 1),
+  "variable out of bounds"
+  )
+
+expect_error(
+  flux_per_year(flux_per_min = 0.1, prop_day = 1, prop_year = ""),
+  "Numeric input expected"
 )
 
 expect_error(
-  flux_per_year(flux_per_min = 0.1, flight_hours = 24, months_on_site = ""),
-  "months_on_site must be numeric"
+  flux_per_year(flux_per_min = 0.1, prop_day = 1, prop_year = 1.2),
+  "variable out of bounds"
 )
 
-expect_error(
-  flux_per_year(flux_per_min = 0.1, flight_hours = 1, months_on_site = 13),
-  "months_on_site must be in range \\(0, 12]" # Escape (
-)

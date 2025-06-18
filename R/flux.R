@@ -216,19 +216,11 @@ flux_per_year <- function(
 ){ 
 
   if (any(!is.numeric(flux_per_min))) stop("flux_per_min must be numeric")
-  if (any(flux_per_min < 0)) {
-    stop("flux_per_min must not be negative")
-  }
-
-  if (any(!is.numeric(flight_hours))) stop("flight_hours must be numeric")
-  if (any(flight_hours <= 0) || any(flight_hours > 24)) {
-    stop("flight_hours must be in range (0, 24]")
-  }
-
-  if (any(!is.numeric(months_on_site))) stop("months_on_site must be numeric")
-  if (any(months_on_site <= 0) || any(months_on_site > 12)) {
-    stop("months_on_site must be in range (0, 12]")
-  }
+  
+  check_num_bounds(flux_per_min, min = 0)
+  check_num_bounds(prop_day, min = 0, max = 1)
+  check_num_bounds(prop_year, min = 0, max = 1)
+  
 
   flux_per_min * 365.25 * 24 * 60 * prop_day * prop_year
 
