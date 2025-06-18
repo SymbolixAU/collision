@@ -20,7 +20,7 @@ expect_error(
     p_coll_static = 0.05,
     p_coll_dynamic = 0.03
   ),
-  "avoidance_rate_static must be numeric"
+  "Numeric input expected"
 )
 
 expect_error(
@@ -32,7 +32,7 @@ expect_error(
     p_coll_static = 0.05,
     p_coll_dynamic = 0.03
   ),
-  "avoidance_rate_static must be in range \\[0, 1]"
+  "variable out of bounds"
 )
 
 expect_error(
@@ -44,7 +44,7 @@ expect_error(
     p_coll_static = 0.05,
     p_coll_dynamic = 0.03
   ),
-  "avoidance_rate_dynamic must be numeric"
+  "Numeric input expected"
 )
 
 expect_error(
@@ -56,7 +56,7 @@ expect_error(
     p_coll_static = 0.05,
     p_coll_dynamic = 0.03
   ),
-  "avoidance_rate_dynamic must be in range \\[0, 1]"
+  "variable out of bounds"
 )
 
 
@@ -69,7 +69,7 @@ expect_error(
     p_coll_static = 0.05,
     p_coll_dynamic = 0.03
   ),
-  "flux_yr must be numeric"
+  "Numeric input expected"
 )
 
 expect_error(
@@ -81,7 +81,7 @@ expect_error(
     p_coll_static = 0.05,
     p_coll_dynamic = 0.03
   ),
-  "flux_yr must not be negative"
+  "variable out of bounds"
 )
 
 expect_error(
@@ -93,7 +93,7 @@ expect_error(
     p_coll_static = 0.05,
     p_coll_dynamic = 0.03
   ),
-  "p_interaction must be numeric"
+  "Numeric input expected"
 )
 
 expect_error(
@@ -105,7 +105,7 @@ expect_error(
     p_coll_static = 0.05,
     p_coll_dynamic = 0.03
   ),
-  "p_interaction must be in range \\[0, 1]"
+  "variable out of bounds"
 )
 
 expect_error(
@@ -117,7 +117,7 @@ expect_error(
     p_coll_static = "0.05",
     p_coll_dynamic = 0.03
   ),
-  "p_coll_static must be numeric"
+  "Numeric input expected"
 )
 
 expect_error(
@@ -129,7 +129,7 @@ expect_error(
     p_coll_static = -0.01,
     p_coll_dynamic = 0.03
   ),
-  "p_coll_static must be in range \\[0, 1]"
+  "variable out of bounds"
 )
 
 expect_error(
@@ -141,7 +141,7 @@ expect_error(
     p_coll_static = 0.05,
     p_coll_dynamic = "0.03"
   ),
-  "p_coll_dynamic must be numeric"
+  "Numeric input expected"
 )
 
 expect_error(
@@ -153,5 +153,5 @@ expect_error(
     p_coll_static = 0.05,
     p_coll_dynamic = 12.03
   ),
-  "p_coll_dynamic must be in range \\[0, 1]"
+  "variable out of bounds"
 )

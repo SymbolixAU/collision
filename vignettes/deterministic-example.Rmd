@@ -215,8 +215,8 @@ Here we correct it for daily and monthly variability.
 ```{r}
 flight_flux_year <- flux_per_year(
   flux_per_min = flight_flux_min$mean,
-  flight_hours = wte$prop_day, 
-  months_on_site = wte$prop_year
+  prop_day = wte$prop_day,
+  prop_year = wte$prop_year
 )
 ```
 

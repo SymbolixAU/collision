@@ -94,7 +94,7 @@ expect_error(
         rotor_diameter = 230,
         edr = 1
     ),
-    "prop_at_height must be numeric"
+    "Numeric input expected"
 )
 
 expect_error(
@@ -118,7 +118,7 @@ expect_error(
         rotor_diameter = 230,
         edr = 1
     ),
-    "prop_at_height must be in range \\[0, 1]"
+    "variable out of bounds"
 )
 
 expect_error(
@@ -130,7 +130,7 @@ expect_error(
         rotor_diameter = 230,
         edr = 1
     ),
-    "prop_below_height must be numeric"
+    "Numeric input expected"
 )
 
 expect_error(
@@ -154,7 +154,7 @@ expect_error(
         rotor_diameter = 230,
         edr = 1
     ),
-    "prop_below_height must be in range \\[0, 1]"
+    "variable out of bounds"
 )
 
 expect_error(
@@ -179,7 +179,7 @@ expect_error(
         rotor_diameter = "230",
         edr = 1
     ),
-    "rotor_diameter must be numeric"
+    "Numeric input expected"
 )
 
 expect_error(
@@ -203,7 +203,7 @@ expect_error(
         rotor_diameter = -230,
         edr = 1
     ),
-    "rotor_diameter must be greater than 0"
+    "variable out of bounds"
 )
 
 ## Wilson correction works -----------------------------------------------------
@@ -288,7 +288,7 @@ expect_equal(
 
 expect_error(
   flux_per_year(flux_per_min = list(), prop_day = 1, prop_year = 1),
-  "flux_per_min must be numeric"
+  "Numeric input expected"
 )
 
 expect_error(

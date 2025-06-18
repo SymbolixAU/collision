@@ -37,36 +37,13 @@ n_collision <- function(
     p_interaction,
     p_coll_static,
     p_coll_dynamic) {
-  if (any(!is.numeric(avoidance_rate_static))) stop("avoidance_rate_static must be numeric")
-  if (any(avoidance_rate_static < 0) || any(avoidance_rate_static > 1)) {
-      stop("avoidance_rate_static must be in range [0, 1]")
-  }
 
-  if (any(!is.numeric(avoidance_rate_dynamic))) stop("avoidance_rate_dynamic must be numeric")
-  if (any(avoidance_rate_dynamic < 0) || any(avoidance_rate_dynamic > 1)) {
-      stop("avoidance_rate_dynamic must be in range [0, 1]")
-  }
-
-  if (any(!is.numeric(flux_yr))) stop("flux_yr must be numeric")
-  if (any(flux_yr < 0)) {
-      stop("flux_yr must not be negative")
-  }
-
-  if (any(!is.numeric(p_interaction))) stop("p_interaction must be numeric")
-  if (any(p_interaction < 0) || any(p_interaction > 1)) {
-      stop("p_interaction must be in range [0, 1]")
-  }
-
-  if (any(!is.numeric(p_coll_static))) stop("p_coll_static must be numeric")
-  if (any(p_coll_static < 0) || any(p_coll_static > 1)) {
-      stop("p_coll_static must be in range [0, 1]")
-  }
-
-  if (any(!is.numeric(p_coll_dynamic))) stop("p_coll_dynamic must be numeric")
-  if (any(p_coll_dynamic < 0) || any(p_coll_dynamic > 1)) {
-      stop("p_coll_dynamic must be in range [0, 1]")
-  }
-
+  check_num_bounds(avoidance_rate_static, min = 0, max = 1)
+  check_num_bounds(avoidance_rate_dynamic, min = 0, max = 1)
+  check_num_bounds(flux_yr, min = 0)
+  check_num_bounds(p_interaction, min = 0, max = 1)
+  check_num_bounds(p_coll_static, min = 0, max = 1)
+  check_num_bounds(p_coll_dynamic, min = 0, max = 1)
 
 
   return(

@@ -4,14 +4,14 @@
 \alias{flux_per_year}
 \title{Flux though the turbine area per year}
 \usage{
-flux_per_year(flux_per_min, flight_hours, months_on_site)
+flux_per_year(flux_per_min, prop_day, prop_year)
 }
 \arguments{
 \item{flux_per_min}{flux through turbine in flights / min}
 
-\item{flight_hours}{hours per day the species is active onsite}
+\item{prop_day}{proportion of 24 hour day the species is active onsite}
 
-\item{months_on_site}{months per year the species is present onsite}
+\item{prop_year}{proportion of year the species is present onsite}
 }
 \value{
 numeric; flux through turbine in flights / year
@@ -25,4 +25,13 @@ the annual average flight rate. If the observation period does not represent
 the flights during active hours of the day and annual activity, the inputs 
 below may need adjusting, or the annual flux may need to be calculated using 
 an alternative method.
+}
+\examples{
+
+flux_per_year(
+    flux_per_min = 100,
+    prop_day = 0.5,
+    prop_year = 1
+)
+
 }

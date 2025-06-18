@@ -130,26 +130,17 @@ flight_flux <- function(
     }
 
     if (length(prop_at_height) != 1) stop("prop_at_height must be length 1")
-    if (!is.numeric(prop_at_height)) stop("prop_at_height must be numeric")
-    if (prop_at_height < 0 || prop_at_height > 1) {
-        stop("prop_at_height must be in range [0, 1]")
-    }
+    check_num_bounds(prop_at_height, min = 0, max = 1)
 
     if (length(prop_below_height) != 1) stop("prop_below_height must be length 1")
-    if (!is.numeric(prop_below_height)) stop("prop_below_height must be numeric")
-    if (prop_below_height < 0 || prop_below_height > 1) {
-        stop("prop_below_height must be in range [0, 1]")
-    }
+    check_num_bounds(prop_below_height, min = 0, max = 1)
 
     if (prop_at_height + prop_below_height > 1) {
         stop("prop_at_height + prop_below_height must not be greater than 1")
     }
 
     if (length(rotor_diameter) != 1) stop("rotor_diameter must be length 1")
-    if (!is.numeric(rotor_diameter)) stop("rotor_diameter must be numeric")
-    if (rotor_diameter < 0) {
-        stop("rotor_diameter must be greater than 0")
-    }
+    check_num_bounds(rotor_diameter, min = 0)
 
 
     if (length(obs_size) == 0) { # Is wil corr needed?
@@ -208,14 +199,20 @@ flight_flux <- function(
 #' 
 #' @return numeric; flux through turbine in flights / year
 #' 
+#' @examples
+#'
+#' flux_per_year(
+#'     flux_per_min = 100,
+#'     prop_day = 0.5,
+#'     prop_year = 1
+#' )
+#' 
 #' @export
 flux_per_year <- function(
     flux_per_min,
     prop_day,
     prop_year
 ){ 
-
-  if (any(!is.numeric(flux_per_min))) stop("flux_per_min must be numeric")
   
   check_num_bounds(flux_per_min, min = 0)
   check_num_bounds(prop_day, min = 0, max = 1)
