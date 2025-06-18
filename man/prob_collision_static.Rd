@@ -20,8 +20,7 @@ prob_collision_static(
   blade_thickness_wide,
   blade_thickness_narrow,
   prop_at_height,
-  prop_below_height,
-  edr
+  prop_below_height
 )
 }
 \arguments{
@@ -53,11 +52,13 @@ prob_collision_static(
 
 \item{blade_thickness_narrow}{the thickness of the blade (side on) at its thinnest point}
 
-\item{prop_at_height}{proportion of flights at height}
+\item{prop_at_height}{proportion of flights at rotor swept height}
 
-\item{prop_below_height}{proportion of flights below rotor height}
-
-\item{edr}{effective detection radius (m)}
+\item{prop_below_height}{proportion of flights below rotor swept height}
+}
+\value{
+numeric; probability of collision with static turbine.
+        Range from 0 to 1
 }
 \description{
 Probability of collision calculated as the ratio of the sum of static presented
@@ -88,8 +89,7 @@ prob_collision_static(
  blade_thickness_wide = 2.5,
  blade_thickness_narrow = 0.1,
  prop_at_height = 0.5,
- prop_below_height = 0.2, 
- edr = 800
+ prop_below_height = 0.2
 )
 
 

@@ -5,6 +5,7 @@ Version: 0.2.0
 Authors@R: c(
   person("Elizabeth", "Stark", ,"estark@symbolix.com.au", role = c("aut", "cre")),
   person("Muir", "Stuart", role = c("aut")),
+  person("Shao", "Ray", role = c("ctb")),
   person("Biosis", role="cph", comment = "Package uses and adapts turbine geometry methods sourced with permission from Biosis' Collision Risk Model")
   )
 Maintainer: Elizabeth Stark <estark@symbolix.com.au>
@@ -19,7 +20,8 @@ Suggests:
   tinytest,
   knitr,
   rmarkdown,
-  stochLAB
+  stochLAB,
+  ggplot2
 Encoding: UTF-8
 RoxygenNote: 7.3.2
 Depends: 

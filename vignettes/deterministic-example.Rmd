@@ -1,0 +1,302 @@
+---
+title: "Deterministic example"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Deterministic example}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+template:
+  math-rendering: mathml
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(knitr)
+library(collision)
+library(ggplot2)
+
+# for distance modelling
+library(Distance)
+```
+
+
+# Deterministic Example
+
+This is a good example to start with. It models a (fictional) site with 2 proposed turbines, all of the same model, and a (fictional) point count survey of Wedge-tailed Eagle. 
+For this example we assume flight density is constant across the site.
+
+We are going to calculate a simple deterministic model output here.  For a stochastic output see the other examples.
+
+
+## Setup inputs
+
+### Define turbine model
+
+Step one is to set up a turbine - here's an example based basically on a Vestas 90, set up using the `define_turbine` function:
+
+```{r}
+v90_single <- define_turbine(
+  model_id = "Vesta V90",
+  blade_length = 44,
+  blade_thickness_narrow = 0.07,
+  blade_thickness_wide = 2.6,
+  d_base = 4.15,
+  d_rotormin = 3.55,
+  d_top = 2.55,
+  hh = 65,
+  max_chord = 3.51,
+  min_chord = 0.39,
+  max_nac_h = 4.05,
+  max_nac_l = 13.25,
+  max_width_nacelle = 3.6,
+  rpm = 16.1,
+  rotor_diam = NULL,
+  tilt_deg = 6,
+  prop_operational = 0.98
+)
+```
+
+
+### Define bird
+
+Now we need a bird (see `define_bird`)
+
+```{r}
+wte <- define_bird(
+  species = "Wedge-tailed Eagle",
+  bird_length = 0.945,
+  bird_speed = 17,
+  prop_day = 0.5,
+  prop_year = 1,
+  avoidance_dynamic = 0.90,
+  avoidance_static = 0.9999
+)
+```
+
+### Define a set of turbines
+
+The basic template for the model outputs is a `data.frame` of turbine inputs.  These can be read in from a csv, or you can set them up with a few basic pieces of information and the turbine definition above.  
+
+For each turbine we need a turbine ID, and a location. Location can be NA if you are not including any spatial modelling.
+
+
+`make_turbine_set` creates the data.frame of turbine inputs, sampled (if needed) and ready for analysis
+
+```{r}
+df_turbines <- data.frame(
+  turbine_id = c("T01", "T02"),
+  lat = c(-32.512, -32.521),
+  lon = c(143.441, 143.442)
+)
+```
+
+
+### Survey, observation and detection radius
+
+Use the provided survey data to fit a (very simple) distance model. **NOTE** Please see [Distance](http://distancesampling.org/R/) and the references therein for a complete primer on doing and interpreting Distance analysis. 
+
+The package dataset:
+
+```{r}
+summary(df_obs_survey)
+```
+
+is a combined dataset of 100 point count surveys, including the count (`n_individuals`) of raptors (and associated distance at first observation (`distance`)). If none were seen we have an `NA` record for the observation.
+
+It's very important that the field data include surveys with no sightings as well as positive detections. 
+
+In addition it must include:
+
+* Distance to the bird at first sighting in metres. If transect sampling, this is usually the perpendicular (right-angle) distance from the transect line.
+* Duration of the surveys in minutes
+* Count of individuals in each observation (for flock sightings)
+
+We fit a distance model and extract the effective detection radius (EDR)
+
+```{r}
+ds_model <- ds(df_obs_survey)
+
+plot(ds_model)
+
+print(edr_from_distmodel(ds_model)) # in metres
+print(w_from_distmodel(ds_model)) # truncation distance / max distance in m
+```
+
+
+## Calculate proportion at height and below height
+
+prop_at_height is either a single value or distribution information which represents the proportion of flights at rotor swept height while prop_below_height is the proportion of flights below rotor swept height.
+
+A simple, single value example of this is given below
+
+```{r}
+
+# rotor_diam / 2 is better than using blade length because it 
+# includes the nacelle size 
+min_rsh <- v90_single$hh - v90_single$rotor_diam * 0.5
+max_rsh <- v90_single$hh + v90_single$rotor_diam * 0.5
+
+# generate a height vector that's one row per observation
+height_vec <- rep(df_obs_survey$height, times = df_obs_survey$n_individuals)
+
+## Review the heights
+
+ggplot(data = as.data.frame(height_vec), aes(x = height_vec)) +
+  stat_ecdf() +
+  geom_vline(xintercept = min_rsh, colour = "red") +
+  geom_vline(xintercept = max_rsh, colour = "red")
+
+
+# calculate ecdf
+# Note - this is a simple example; it's up to the analyst how best to 
+## fit the height distribution
+cdf_height <- ecdf(height_vec)
+
+
+prop_at_height <- cdf_height(round(max_rsh)) - cdf_height(round(min_rsh))
+prop_below_height <- cdf_height(round(min_rsh))
+
+
+```
+
+* Proportion at height: `r prop_at_height`
+* Proportion below height: `r prop_below_height`
+* Proportion above height: `r 1.0 - (prop_at_height + prop_below_height)`
+
+
+## Modelling
+
+For a deterministic model, we need the following 4 steps:
+
+* Step 1 - Run `flight_flux()` and `flux_per_year()` - calculate flux through turbine per year
+* Step 2 - Run `prob_interaction_flat()` - calculate $P(I)$
+* Step 3 - Run `p_collisions()` - calculate $P(C|I)$ for one interaction
+* Step 4 - Run `n_collisions()` - calculate number of collisions a year
+
+### Step 1 - Flux through turbine
+
+This is where we account for
+
+* The size of the turbine
+* The proportion of the day active (moderated for the `obs_scale_factor` - see the function help page for more information)
+* The proportion of the year active
+* The proportion of flights at RSH
+
+We first calculate the flight flux for the turbines. This is in units of 
+`flights per minute`. The turbine dimensions are in metres
+
+Note that I can specify the distance model or the edr. The results are equivalent
+
+```{r}
+flight_flux_min <- flight_flux(
+  ds_model = ds_model,
+  obs_size = df_obs_survey$n_individuals,
+  survey_mins = df_obs_survey$survey_mins,
+  prop_at_height = prop_at_height,
+  prop_below_height = prop_below_height,
+  rotor_diameter = v90_single$rotor_diam,
+  wilson_correction = TRUE # default
+)
+
+```
+
+In this example, we assume flight flux follows a log normal distribution with mean `flight_flux_min$mean` and standard deviation `flight_flux_min$sd`. The units are flights / min.
+
+Here we correct it for daily and monthly variability.
+
+```{r}
+flight_flux_year <- flux_per_year(
+  flux_per_min = flight_flux_min$mean,
+  prop_day = wte$prop_day,
+  prop_year = wte$prop_year
+)
+```
+
+* The units for `flight_flux_year` is flights / year
+
+### Probability of interaction
+
+For a flat ultilisation, we can get the probability of interaction using this example
+
+```{r}
+prob_interaction <- prob_interaction_flat(num_turbines = nrow(df_turbines))
+```
+
+
+### Step 3 - Probability of collision given interaction
+
+Our approach considers both the static ($P(C)_{s}$) and dynamic components ($P(C)_{dyn}$)
+
+Without avoidance, and isolated from the overall collision rate calculation, the total probability of collision, given interaction is the 
+
+
+$$P(C|I) = P(C|I)_{static} + P(C|I)_{dynamic} $$
+
+because the two options are mutually exclusive.  
+
+Let's calculate the collision probability for a Wedge-tailed Eagle and the V90 turbine model.
+
+
+```{r}
+df_turbines$p_coll_static <- prob_collision_static(
+  d_base = v90_single$d_base,
+  d_rotormin = v90_single$d_rotormin,
+  d_top = v90_single$d_top,
+  hh = v90_single$hh,
+  blade_length = v90_single$blade_length,
+  max_nac_h = v90_single$max_nac_h,
+  max_nac_l = v90_single$max_nac_l,
+  max_width_nacelle = v90_single$max_width_nacelle,
+  rotor_diam = v90_single$rotor_diam,
+  tilt_deg = v90_single$tilt_deg,
+  max_chord = v90_single$max_chord,
+  min_chord = v90_single$min_chord,
+  blade_thickness_wide = v90_single$blade_thickness_wide,
+  blade_thickness_narrow = v90_single$blade_thickness_narrow,
+  prop_at_height = prop_at_height,
+  prop_below_height = prop_below_height
+)
+
+df_turbines$p_coll_dyn <- prob_collision_dynamic(
+  rpm = v90_single$rpm, # s_rot,
+  blade_length = v90_single$blade_length,
+  max_width_nacelle = v90_single$max_width_nacelle,
+  rotor_diam = v90_single$rotor_diam,
+  blade_thickness_wide = v90_single$blade_thickness_wide,
+  blade_thickness_narrow = v90_single$blade_thickness_narrow,
+  hh = v90_single$hh,
+  bird_length = wte$bird_length,
+  bird_speed = wte$bird_speed,
+  prop_at_height = prop_at_height,
+  prop_below_height = prop_below_height
+)
+
+
+```
+
+### Step 4 - Total annual collisions (with avoidance)
+
+
+```{r}
+
+
+df_turbines$n_collision <- n_collision(
+  avoidance_rate_static = wte$avoidance_static,
+  avoidance_rate_dynamic = wte$avoidance_dynamic,
+  flux_yr = flight_flux_year,
+  p_interaction = prob_interaction,
+  p_coll_static = df_turbines$p_coll_static,
+  p_coll_dynamic = df_turbines$p_coll_dyn
+)
+
+## For a final result, sum all turbines
+sum(df_turbines$n_collision)
+```

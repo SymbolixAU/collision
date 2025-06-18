@@ -4,28 +4,25 @@
 #' vertical flux window through which flights occur.  The width is 2x the 
 #' effective detection radius and the height is the max. height of the turbine
 #' 
-#' @param edr effective detection radius (m)
 #' @param hh hub height (m)
 #' @param rotor_diam rotor diameter (m)
 #'
-#' @return area of plane of flight in m^2           
+#' @return area of plane of flight in m^2
 #' 
 #' @examples 
 #' 
 #' vertical_flux_plane_area(
-#'   edr = 500,
 #'   hh = 150,
 #'   rotor_diam = 210 
 #' )
 #'  
 #' @export
 vertical_flux_plane_area <- function( 
-    edr,
     hh,
     rotor_diam
 ){
   
-  2.0 * edr * (hh + 0.5*rotor_diam)
+  rotor_diam * (hh + 0.5*rotor_diam)
   
 }
 
@@ -54,11 +51,11 @@ vertical_flux_plane_area <- function(
 #' @param min_chord the chord of the blade at its tip (thinnest point)
 #' @param blade_thickness_wide the thickness of the blade (side on) at its widest point
 #' @param blade_thickness_narrow the thickness of the blade (side on) at its thinnest point
-#' @param prop_at_height proportion of flights at height
-#' @param prop_below_height proportion of flights below rotor height
-#'@param edr effective detection radius (m)
+#' @param prop_at_height proportion of flights at rotor swept height
+#' @param prop_below_height proportion of flights below rotor swept height
 #' 
-#' 
+#' @return numeric; probability of collision with static turbine.
+#'         Range from 0 to 1
 #' 
 #' @examples
 #'
@@ -80,8 +77,7 @@ vertical_flux_plane_area <- function(
 #'  blade_thickness_wide = 2.5,
 #'  blade_thickness_narrow = 0.1,
 #'  prop_at_height = 0.5,
-#'  prop_below_height = 0.2, 
-#'  edr = 800
+#'  prop_below_height = 0.2
 #' )
 #' 
 #' 
@@ -104,12 +100,11 @@ prob_collision_static <- function(
     blade_thickness_wide,
     blade_thickness_narrow,
     prop_at_height,
-    prop_below_height, 
-    edr
+    prop_below_height
 ){
   
   
-  flux_plane_area <- vertical_flux_plane_area(edr = edr, hh = hh,
+  flux_plane_area <- vertical_flux_plane_area(hh = hh,
                                               rotor_diam = rotor_diam)
   
   presented_area <- prop_at_height*(
@@ -124,6 +119,7 @@ prob_collision_static <- function(
       pa_below( d_base, d_rotormin, hh-0.5*max_nac_h, blade_length)
     )
   
+  presented_area <- presented_area/(prop_at_height+prop_below_height)
   
   return(presented_area/flux_plane_area)
 }
@@ -140,10 +136,14 @@ prob_collision_static <- function(
 #' @param blade_thickness_wide the thickness of the blade (side on) at its widest point
 #' @param blade_thickness_narrow the thickness of the blade (side on) at its thinnest point
 #' @param hh hub height
-#' @param edr effective detection radius (m)
 #' @param bird_length Length of archetype bird (metres)
 #' @param bird_speed numeric; Average flight speed (m/sec)
+#' @param prop_at_height proportion of flights at rotor swept height
+#' @param prop_below_height proportion of flights below rotor swept height
 #'
+#' @return numeric; probability of collision with leading edge of blade.
+#'         Range from 0 to 1
+#' 
 #' @examples
 #' # example code
 #' prob_collision_dynamic(
@@ -155,8 +155,9 @@ prob_collision_static <- function(
 #'  blade_thickness_narrow = 0.1,
 #'  hh = 10,
 #'  bird_length = 0.9,
-#'  bird_speed = 12,
-#'  edr = 800
+#'  bird_speed = 12, 
+#'  prop_at_height = 0.5,
+#'  prop_below_height = 0.2
 #' )
 #'
 #' 
@@ -171,11 +172,12 @@ prob_collision_dynamic <- function(
     hh,
     bird_length,
     bird_speed,
-    edr
+    prop_at_height,
+    prop_below_height
 ){
   
   
-  flux_plane_area <- vertical_flux_plane_area(edr = edr, hh = hh,
+  flux_plane_area <- vertical_flux_plane_area(hh = hh,
                                               rotor_diam = rotor_diam)
   
   presented_area <- pa_dynamic(
@@ -188,6 +190,9 @@ prob_collision_dynamic <- function(
     bird_length = bird_length ,
     bird_speed = bird_speed
   )
+  
+  presented_area <- presented_area * prop_at_height /
+    (prop_at_height+prop_below_height)
   
   return(presented_area/flux_plane_area)
 }

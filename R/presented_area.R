@@ -5,6 +5,8 @@
 #' @param front area of front-view in metres squared
 #' @param side area of side-view in metres squared
 #' 
+#' @return numeric
+#' 
 #' @examples
 #' \dontrun{
 #' rotate_areas(1,2)

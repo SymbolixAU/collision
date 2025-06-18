@@ -23,3 +23,36 @@
 #' Created with [define_bird()]
 #' 
 "wte"
+
+#' 
+#' An object of class \code{dsmodel} fit using \code{Distance::ds}
+#' The example model is fit to the data \code{book.tee.data} from \code{mrds}
+#'
+#' #' @docType data
+#'
+#' @usage ds_example
+#' 
+"ds_example"
+
+#' Example survey and observation
+#' 
+#' Combined data set of survey and observations that mimic point count 
+#' observations of raptors. Used for examples and to construct \code{ds_raptor}
+#' 
+#' #' @docType data
+#' 
+#' @usage df_obs_survey
+#' 
+"df_obs_survey"
+
+#' Distance model example - raptor
+#'
+#' An object of class \code{dsmodel} fit using \code{Distance::ds}
+#' The example model is fit to the data \code{df_obs_survey} from this package
+#'
+#' #' @docType data
+#' 
+#' @usage ds_raptor
+#' 
+#' 
+"ds_raptor"
