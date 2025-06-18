@@ -261,8 +261,8 @@ df_turbines$p_coll_static <- prob_collision_static(
   min_chord = v90_single$min_chord,
   blade_thickness_wide = v90_single$blade_thickness_wide,
   blade_thickness_narrow = v90_single$blade_thickness_narrow,
-  prop_at_height = 0.75,
-  prop_below_height = 0.2
+  prop_at_height = prop_at_height,
+  prop_below_height = prop_below_height
 )
 
 df_turbines$p_coll_dyn <- prob_collision_dynamic(
@@ -275,8 +275,8 @@ df_turbines$p_coll_dyn <- prob_collision_dynamic(
   hh = v90_single$hh,
   bird_length = wte$bird_length,
   bird_speed = wte$bird_speed,
-  prop_at_height = 0.75,
-  prop_below_height = 0.2
+  prop_at_height = prop_at_height,
+  prop_below_height = prop_below_height
 )
 
 
@@ -286,8 +286,6 @@ df_turbines$p_coll_dyn <- prob_collision_dynamic(
 
 
 ```{r}
-
-df_turbines
 
 
 df_turbines$n_collision <- n_collision(
