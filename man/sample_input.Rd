@@ -3,12 +3,18 @@
 \name{sample_input}
 \alias{sample_input}
 \alias{sample_input.randInput}
+\alias{sample_input.birdInput}
+\alias{sample_input.turbineInput}
 \alias{sample_input.default}
 \title{Sample value from chosen distribution}
 \usage{
 sample_input(input, ...)
 
 \method{sample_input}{randInput}(input, ..., n = 1)
+
+\method{sample_input}{birdInput}(input, ..., n = 1)
+
+\method{sample_input}{turbineInput}(input, ..., n = 1)
 
 \method{sample_input}{default}(input, ..., n = 1)
 }
