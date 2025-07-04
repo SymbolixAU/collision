@@ -22,6 +22,9 @@
 #'
 #' @export
 parameterise_lnorm <- function(mean, sd) {
+
+  check_num_bounds(mean, min = 0)
+  check_num_bounds(sd, min = 0)
   
   v <- sd^2
   meanlog <- log(mean) - log(v / mean^2 + 1) / 2
