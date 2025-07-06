@@ -3,8 +3,10 @@ title: "Simple simulation example"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Simple simulation example}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 
