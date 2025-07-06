@@ -86,8 +86,38 @@ sample_input <- function(input, ...) UseMethod("sample_input", input)
 sample_input.randInput <- function(input, ..., n = 1) {
   
   res <- do.call(input$distr, append(input$params, list(n = n)))
-  #units::set_units(res, input$units)
+
+  return(res)
+}
+
+
+#' @rdname sample_input
+#'
+#' @param n integer. The number of samples to draw. Defaults to 1.
+#'
+#' @export
+sample_input.birdInput <- function(input, ..., n = 1) {
+
+  for (col in names(input)){
+    input[[col]] <- sample_input(input[[col]], ..., n = n)
+  }
   
+  return(input)
+  
+}
+
+#' @rdname sample_input
+#'
+#' @param n integer. The number of samples to draw. Defaults to 1.
+#'
+#' @export
+sample_input.turbineInput <- function(input, ..., n = 1) {
+
+  for (col in names(input)){
+    input[[col]] <- sample_input(input[[col]], ..., n = n)
+  }
+  
+  return(input)
 }
 
 
