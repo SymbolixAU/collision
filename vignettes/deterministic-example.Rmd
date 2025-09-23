@@ -144,12 +144,9 @@ A simple, single value example of this is given below
 min_rsh <- v90_single$hh - v90_single$rotor_diam * 0.5
 max_rsh <- v90_single$hh + v90_single$rotor_diam * 0.5
 
-# generate a height vector that's one row per observation
-height_vec <- rep(df_obs_survey$height, times = df_obs_survey$n_individuals)
-
 ## Review the heights
 
-ggplot(data = as.data.frame(height_vec), aes(x = height_vec)) +
+ggplot(data = as.data.frame(df_obs_survey), aes(x = height)) +
   stat_ecdf() +
   geom_vline(xintercept = min_rsh, colour = "red") +
   geom_vline(xintercept = max_rsh, colour = "red")
@@ -158,7 +155,8 @@ ggplot(data = as.data.frame(height_vec), aes(x = height_vec)) +
 # calculate ecdf
 # Note - this is a simple example; it's up to the analyst how best to 
 ## fit the height distribution
-cdf_height <- ecdf(height_vec)
+cdf_height <- ecdf(df_obs_survey$height)
+
 
 
 prop_at_height <- cdf_height(round(max_rsh)) - cdf_height(round(min_rsh))

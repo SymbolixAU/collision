@@ -21,6 +21,7 @@ knitr::opts_chunk$set(
 ```{r setup, results='hide'}
 library(collision)
 library(Distance)
+library(mc2d)  # for the PERT distribution
 ```
 
 
@@ -32,8 +33,7 @@ For this example we assume flight density is constant across the site.
 
 We are going to calculate a simple stochastic model output here.  
 
-
-In the examples below we are just outlining how to use the model but there's a lot of analysis required beforehand to calculate the flight flux, analyse flight heights, and understand the spatial and temporal variability in the flight patterns. Please refer to other vignettes for more information.
+In the examples below we are just outlining how to use the model but there's a lot of analysis required beforehand to fit a distance curve and extract the effective detection radius, analyse flight heights, and understand the spatial and temporal variability in the flight patterns. Please refer to other vignettes for more information.
 
 ## Setup inputs
 
@@ -69,23 +69,34 @@ v90_single <- define_turbine(
 We make a 'bird' object - a list of key parameters. These parameters can be defined as probability distributions or as single numbers. 
 
 ```{r}
+#TODO issue13 more info on distribuutions
+
 wte <- define_bird(
   species = "Wedge-tailed Eagle",
   bird_length = set_random("rnorm", mean = 0.945, sd = 0.2),
   bird_speed = set_random("rnorm", mean = 17, sd = 3),
-  prop_day = set_random("runif", min = 0.45, max = 0.55),
+  prop_day = set_random("runif", min = 0.48, max = 0.52),
   prop_year = 1,
-  avoidance_dynamic = set_random("runif", min = 0.85, max = 0.95),
+  avoidance_dynamic = set_random("rpert",
+                                 min = 0.88, max = 0.95, 
+                                 mode = 0.92, shape =4),
   avoidance_static = 0.9999
 )
+
+
 ```
 
 
 ### Proportion of heights
 
-We define the proportion of flights at rotor swept height and below rotor swept height. Because we want to avoid negative proportion of heights, we're using a log-normal distribution. The right distribution requires analysis on a case-by-case basis.
+We define the proportion of flights at rotor swept height and below rotor swept height. We will fit a distribution to our height data and extract the value at height
 
 ```{r}
+
+collision::df_obs_survey
+
+
+
 prop_at_height <- parameterise_lnorm(
   mean = 0.185,
   sd = 0.05
