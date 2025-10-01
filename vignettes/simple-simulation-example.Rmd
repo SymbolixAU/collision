@@ -35,6 +35,19 @@ We are going to calculate a simple stochastic model output here.
 
 In the examples below we are just outlining how to use the model but there's a lot of analysis required beforehand to fit a distance curve and extract the effective detection radius, analyse flight heights, and understand the spatial and temporal variability in the flight patterns. Please refer to other vignettes for more information.
 
+The inner functions of the package are designed to take single value inputs. The input functions `define_bird` and `define_turbine` can define single or stochastic inputs. So we need to:
+
+* Define stochastic rules for inputs
+  - bird(s) : `define_bird`
+  - turbine(s) : `define_turbine`
+  - calculate flight flux through vertical plane of infinite height (technically to maximum observation height which is assumed to include all flight heights) and the effective observation area.
+* 
+
+
+
+
+
+
 ## Setup inputs
 
 
