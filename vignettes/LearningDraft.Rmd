@@ -1,0 +1,121 @@
+---
+title: "PY learning (may turn into a proper vignette or may end up being scratch)"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{PY learning}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(collision)
+
+library(Distance)
+library(mc2d)  # for the PERT distribution
+```
+
+I think what I'm going to do is try to run and explain a stochastic collision and hopefully in going through it I will identify holes in my understanding and anything that needs more development
+
+I'm going to follow the deterministic example but do the stochastic version of each step
+NVM I immediately gave up on that but leaving it here in case I come back to it
+
+I want to see if I can recreate the modified PERT using `stats:rbeta` and what I understand about the PERT distribution
+
+Basically a PERT is just a normal two parameter beta distribution ($B(\alpha,\beta)$) with min = a, max = c and mode = b, where
+$$\alpha = \frac{(\mu-a)(2b-a-c)}{(b-\mu)(c-a)}$$
+$$\beta = \frac{\alpha(c-\mu)}{\mu-a}$$
+and a modified PERT has an additional shape parameter $\gamma$ where $\mu = \frac{a+\gamma b+c}{\gamma+2}$ (setting $\gamma = 4$ returns the unmodified PERT distribution)
+
+```{r}
+# this bit of wikipedia https://en.wikipedia.org/wiki/Beta_distribution#Four_parameters
+# and the mc2d::pert help page were both very helpful for my understanding
+diy_rpert <- function(n, min, max, mode, mean = NULL, shape = 4){
+  # min <- 10
+  # max <- 80
+  # mode <- 20
+  # shape <- 3
+  if (!is.null(mode) & !is.null(mean)) {
+    stop("specify 'mode' or 'mean' but not both")
+  }
+  else if (!is.null(mode)) {
+    mean <- (min+shape*mode+max)/(2+shape)
+  }
+  else if (!is.null(mean)) {
+    mode <- ((2+shape)*mean-min-max)/shape
+    if (mode < min | mode > max) {
+      warning("Impossible 'mode': 'mode' < 'min' or 'mode' > 'max', please check the mean")
+    }
+  }
+  else {
+    stop("Please specify one of 'mode' or 'mean'")
+  }
+  alpha <- (mean-min)*(2*mode-min-max)/((mode-mean)*(max-min))
+  beta <- alpha*(max-mean)/(mean-min)
+  
+  rbeta(n = n, shape1 = alpha, shape2 = beta)*(max-min)+min
+}
+
+n <- 10000
+a <- 25
+b <- 60
+c <- 85
+g <- 5
+
+mc2dr <- rpert(n = n, min = a, max = c, mode = b, shape = g)
+diyr <- diy_rpert(n = n, min = a, max = c, mode = b, shape = g)
+
+ggplot()+
+  geom_histogram(aes(x = mc2dr))
+ggplot()+
+  geom_histogram(aes(x = diyr))
+
+
+Mode <- function(x) {
+  xdens = density(x)
+  xdens$x[which.max(xdens$y)]
+}
+
+a; min(mc2dr); min(diyr)
+
+b; Mode(mc2dr); Mode(diyr)
+
+c; max(mc2dr); max(diyr)
+
+# mean
+(a+g*b+c)/(2+g); mean(mc2dr); mean(diyr)
+
+g; (min(mc2dr)+max(mc2dr)-2*mean(mc2dr))/(mean(mc2dr)-Mode(mc2dr)); (min(diyr)+max(diyr)-2*mean(diyr))/(mean(diyr)-Mode(diyr))
+```
+
+I just realised that running `rpert` shows the function, there's a lot more checks in there but the maths is the same so that's nice :)
+
+
+Fitting a PERT distribution to your data. The great thing about a PERT distribution is that all you really need to know is the minimum, maximum and mode (or mean) of the random variable you're trying to estimate. A lot of the time this is what you'll get from expert elicitation or literature for the bird parameters anyway.
+
+
+----
+Adding my obsidian notes on PERT so this stuff is all in one place:
+Whats a PERT distribution
+It is a transformation of the four parameter beta distribution.
+What's the four parameter beta distribution? It's not in base R or the stats package, the most common package for it seems to be `ExtDist` in which it is called `Beta_ab`. Read https://en.wikipedia.org/wiki/Beta_distribution#Four_parameters for the maths because it explains it fairly well, basically you have the two parameter beta dist:
+$$PDF = \frac{1}{B(\alpha, \beta)}x^{\alpha-1}(1-x)^{\beta-1}$$
+and you parametrise $x$ as $x = \frac{y-a}{b-a}$ where $a$ is the minimum value (as opposed to 0 in the two parameter dist) and $c$ is the maximum (as opposed to 1). This gives you:
+$$PDF = \frac{(y-a)^{\alpha-1}(c-y)^{\beta-1}}{B(\alpha, \beta)(c-a)^{\alpha+\beta-1}}$$
+
+The PERT distribution additionally assumes that the expected value $\mu$ is given by 
+$$\mu = \frac{a+4b+c}{6}$$
+Where $a$ and $c$ are the min and max (as above) and $b$ is the mode (i.e. most likely value). It's kind of like the triangular distribution ($\mu = \frac{a+b+c}{3}$) but it uses the beta distribution to kind of smooth it out, it also tails off at the ends which is typically more realistic than the triangular distribution which gives equal emphasis to $a$ and $c$ as it does to $b$. ![[Pasted image 20251003103904.png|200]]
+
+If you want to add peakiness you need the modified PERT distribution. It introduces yet another parameter $\gamma$ where
+$$\mu = \frac{a+\gamma b+c}{\gamma+2}$$
+(obvs to retrieve the unmodified PERT you'd set $\gamma = 4$)
+
