@@ -86,7 +86,7 @@ We make a 'bird' object - a list of key parameters. These parameters can be defi
 
 wte <- define_bird(
   species = "Wedge-tailed Eagle",
-  bird_length = set_random("rnorm", mean = 0.945, sd = 0.2),
+  bird_length = set_random("rnorm", mean = 0.945, sd = 0.2) ,
   bird_speed = set_random("rnorm", mean = 17, sd = 3),
   prop_day = set_random("runif", min = 0.48, max = 0.52),
   prop_year = 1,
