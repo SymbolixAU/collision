@@ -72,3 +72,5 @@ vignettes/*.pdf
 *.out
 *.app
 inst/doc
+/doc/
+/Meta/

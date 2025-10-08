@@ -11,11 +11,11 @@ A object of class 'list' and custom class 'turbineInput':
 v90_single
 }
 \description{
-A example of class `turbineInput` containing example turbine dimensions
+A example of class \code{turbineInput} containing example turbine dimensions
 based off a Vestas V90 example. This version has all fixed (i.e. no stochastic)
 input values and is useful for vignettes and tests
 }
 \details{
-Created with [define_turbine()]
+Created with \code{\link[=define_turbine]{define_turbine()}}
 }
 \keyword{datasets}

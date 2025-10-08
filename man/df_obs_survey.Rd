@@ -11,7 +11,7 @@ An object of class \code{data.frame} with 120 rows and 9 columns.
 df_obs_survey
 }
 \description{
-Combined data set of survey and observations that mimic point count 
+Combined data set of survey and observations that mimic point count
 observations of raptors. Used for examples and to construct \code{ds_raptor}
 }
 \details{

@@ -7,7 +7,7 @@
 #' Helper functions to extract data from a distance model object
 #'
 #'
-#' @param ds_model an object of class \code{dsmodel} fit using \code{Distance::ds}
+#' @param ds_model an object of class `dsmodel` fit using `Distance::ds`
 #'
 #' @examples
 #'

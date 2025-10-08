@@ -122,7 +122,15 @@ In addition it must include:
 We fit a distance model and extract the effective detection radius (EDR)
 
 ```{r}
-ds_model <- ds(df_obs_survey)
+ds_model <- ds(
+  data = df_obs_survey,
+  truncation = max(df_obs_survey$distance, na.rm=TRUE),
+  transect = "point",
+  formula = ~1,
+  key = "hr",
+  dht_group = TRUE,
+  nadj = 0
+  )
 
 plot(ds_model)
 
@@ -194,25 +202,34 @@ We first calculate the flight flux for the turbines. This is in units of
 Note that I can specify the distance model or the edr. The results are equivalent
 
 ```{r}
-flight_flux_min <- flight_flux(
-  ds_model = ds_model,
+
+# flights / m / min
+obs_flux_min <- flight_flux_point(
   obs_size = df_obs_survey$n_individuals,
-  survey_mins = df_obs_survey$survey_mins,
-  prop_at_height = prop_at_height,
-  prop_below_height = prop_below_height,
-  rotor_diameter = v90_single$rotor_diam,
-  wilson_correction = TRUE # default
+  survey_duration = df_obs_survey$survey_mins,
+  eff_detection_width = 2.0*edr_from_distmodel(ds_model),
+  survey_units = "min",
+  width_units = "m"
 )
+
+#flights through turbine / min
+
+flux_turbine_min <- turbine_flux(
+  obs_flux = obs_flux_min,
+  rotor_diameter  = v90_single$rotor_diam,
+  prop_below_turbine_max = prop_at_height + prop_below_height
+)
+
 
 ```
 
-In this example, we assume flight flux follows a log normal distribution with mean `flight_flux_min$mean` and standard deviation `flight_flux_min$sd`. The units are flights / min.
+In this example, we assume flight flux follows a log normal distribution with mean `flight_flux_min`. The units are flights / min.
 
 Here we correct it for daily and monthly variability.
 
 ```{r}
 flight_flux_year <- flux_per_year(
-  flux_per_min = flight_flux_min$mean,
+  flux_per_min = flux_turbine_min,
   prop_day = wte$prop_day,
   prop_year = wte$prop_year
 )
@@ -222,7 +239,7 @@ flight_flux_year <- flux_per_year(
 
 ### Probability of interaction
 
-For a flat ultilisation, we can get the probability of interaction using this example
+For a flat utilisation, we can get the probability of interaction using this example
 
 ```{r}
 prob_interaction <- prob_interaction_flat(num_turbines = nrow(df_turbines))

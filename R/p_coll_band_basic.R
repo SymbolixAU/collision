@@ -25,11 +25,11 @@
 #' This function calculates the probability of collision of a single
 #' flight with a single turbine, given that the flight has
 #' interacted with the turbine (i.e. \eqn{P(C|I)}). \cr
-#' Formerly called \code{fun_bandWTG}.
+#' Formerly called `fun_bandWTG`.
 #'
 #' Relies on the size and speed parameters for the bird and chosen
 #' turbine model provided as a list.The list can be
-#' produced using \code{make_lst_band()}.
+#' produced using `make_lst_band()`.
 #'
 #' Uses Band Collision Risk Model (see Band 2007 / Band 2012) and is
 #' a direct reproduction of the publicly available Excel spreadsheet models.

@@ -25,8 +25,8 @@
 "wte"
 
 #' 
-#' An object of class \code{dsmodel} fit using \code{Distance::ds}
-#' The example model is fit to the data \code{book.tee.data} from \code{mrds}
+#' An object of class `dsmodel` fit using `Distance::ds`
+#' The example model is fit to the data `book.tee.data` from `mrds`
 #'
 #' #' @docType data
 #'
@@ -37,7 +37,7 @@
 #' Example survey and observation
 #' 
 #' Combined data set of survey and observations that mimic point count 
-#' observations of raptors. Used for examples and to construct \code{ds_raptor}
+#' observations of raptors. Used for examples and to construct `ds_raptor`
 #' 
 #' #' @docType data
 #' 
@@ -47,8 +47,8 @@
 
 #' Distance model example - raptor
 #'
-#' An object of class \code{dsmodel} fit using \code{Distance::ds}
-#' The example model is fit to the data \code{df_obs_survey} from this package
+#' An object of class `dsmodel` fit using `Distance::ds`
+#' The example model is fit to the data `df_obs_survey` from this package
 #'
 #' #' @docType data
 #' 

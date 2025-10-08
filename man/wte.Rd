@@ -15,6 +15,6 @@ A non-stochastic example of bird data for vignettes and testing
 Based off the Australian / Tasmanian Wedge-tailed Eagle
 }
 \details{
-Created with [define_bird()]
+Created with \code{\link[=define_bird]{define_bird()}}
 }
 \keyword{datasets}

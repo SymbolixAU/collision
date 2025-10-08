@@ -5,9 +5,9 @@
 #' @param mean  the mean
 #' @param sd  the standard deviation
 #' 
-#' @return \code{list} object with the mean and standard deviation of the 
-#' distribution on the log scale. These are the \code{rlnorm} parameters \code{meanlog}
-#' and \code{sdlog} used in the \code{\link[stats]{rlnorm}} function
+#' @return `list` object with the mean and standard deviation of the 
+#' distribution on the log scale. These are the `rlnorm` parameters `meanlog`
+#' and `sdlog` used in the [stats::rlnorm()] function
 #'
 #' @examples
 #'
@@ -18,7 +18,7 @@
 #'                             sdlog = log_rate$sd)
 #' sample_input(flight_flux_min)
 #'
-#' @seealso \code{\link[stats]{rlnorm}}
+#' @seealso [stats::rlnorm()]
 #'
 #' @export
 parameterise_lnorm <- function(mean, sd) {

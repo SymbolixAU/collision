@@ -22,6 +22,7 @@ knitr::opts_chunk$set(
 library(collision)
 library(Distance)
 library(mc2d)  # for the PERT distribution
+library(ggplot2)
 ```
 
 
@@ -42,9 +43,6 @@ The inner functions of the package are designed to take single value inputs. The
   - turbine(s) : `define_turbine`
   - calculate flight flux through vertical plane of infinite height (technically to maximum observation height which is assumed to include all flight heights) and the effective observation area.
 * 
-
-
-
 
 
 
@@ -106,31 +104,43 @@ We define the proportion of flights at rotor swept height and below rotor swept 
 
 ```{r}
 
-collision::df_obs_survey
+min_rsh <- v90_single$hh - v90_single$rotor_diam * 0.5
+max_rsh <- v90_single$hh + v90_single$rotor_diam * 0.5
 
+## calculate ecdf
+## Note - this is a simple example; it's up to the analyst how best to
+## fit the height distribution
 
+prop_between <- function(dat, i, lwr, upp){
 
-prop_at_height <- parameterise_lnorm(
-  mean = 0.185,
-  sd = 0.05
+  cdf_dat <- ecdf(dat[i])
+  p_low <- cdf_dat(lwr)
+  p_high <- cdf_dat(upp)
+
+  return(p_high - p_low)
+
+}
+
+## bootstrap prop below RSH
+b <- boot::boot(
+  data = df_obs_survey$height,
+  statistic = prop_between, stype = "i",
+  R = 1000,
+  lwr = 0, upp = round(min_rsh)
 )
 
-prop_at_height <- set_random(
-  distr = "rlnorm",
-  meanlog = prop_at_height$meanlog,
-  sdlog = prop_at_height$sdlog
+prop_below_height <- set_random("rnorm", mean = summary(b)$original, sd = summary(b)$bootSE)
+
+## booststrap prop at RSH
+b <- boot::boot(
+  data = df_obs_survey$height,
+  statistic = prop_between, stype = "i",
+  R = 1000,
+  lwr = round(min_rsh), upp = round(max_rsh)
 )
 
-prop_below_height <- parameterise_lnorm(
-  mean = 0.0432,
-  sd = 0.01
-)
+prop_at_height <- set_random("rnorm", mean = summary(b)$original, sd = summary(b)$bootSE)
 
-prop_below_height <- set_random(
-  distr = "rlnorm",
-  meanlog = prop_below_height$meanlog,
-  sdlog = prop_below_height$sdlog
-)
 ```
 
 
@@ -159,16 +169,87 @@ I'm also assuming constant flight rate across the site.
 Because we want to avoid negative flight flux, we're using a log-normal distribution. The right distribution requires analysis on a case-by-case basis.
 
 ```{r}
-flight_flux_min <- parameterise_lnorm(
-  mean = 0.000238,
-  sd = 0.00001
+
+ds_hr <- ds(
+  data = df_obs_survey,
+  truncation = max(df_obs_survey$distance, na.rm=TRUE),
+  transect = "point",
+  formula = ~1,
+  key = "hr",
+  dht_group = TRUE,
+  nadj = 0
+  )
+
+edr_fun <- function(d = df_obs_survey$survey_id
+                    ,  i = seq_len(nrow(df_obs_survey))
+                    , dat = df_obs_survey){
+
+  message(paste(i, collapse = ", "))
+  df_boot_i <- dat[dat$survey_id %in% d[i],]
+
+  ds_CI <- tryCatch(
+    ds(data = df_boot_i,
+       transect = "point",
+       formula = ~ 1,
+       key = "hn",
+       dht_group = TRUE,
+       nadj = 0)
+    , error = function(e) {
+      print(e)
+      NULL
+    }
+  )
+
+  if (is.null(ds_CI)) return(NA)
+  edr_boot <- edr_from_distmodel(ds_CI)
+  return(edr_boot)
+}
+
+ds_boot <- boot::boot(data = df_obs_survey$survey_id
+                , statistic = edr_fun,
+                , sim = "ordinary"
+                , stype = "i"
+                , R = 150
+               # , parallel = "multicore"
+              #  , ncpus = parallel::detectCores(logical = FALSE) - 1
 )
 
-flight_flux_min <- set_random(
-  distr = "rlnorm",
-  meanlog = flight_flux_min$meanlog,
-  sdlog = flight_flux_min$sdlog
+
+##check bootstrap convergence
+
+df_boot_check <- data.frame(
+  iteration = seq_len(length(ds_boot$t[, 1]))
+  , est = ds_boot$t[, 1]
 )
+for (i in seq_len(nrow(df_boot_check))) {
+  if (i == 1) next
+  df_boot_check[i, "cum_sd"] <- sd(df_boot_check$est[seq(1, i)], na.rm = TRUE)
+
+}
+
+
+ggplot() +
+  geom_line(data = df_boot_check
+            , aes(x = iteration, y = cum_sd)) +
+  labs(title = "EDR")
+
+
+## Define EDR
+## 
+## 
+edr <- set_random("rnorm",
+                  mean = mean(ds_boot$t, na.rm = TRUE),
+                  sd = sd(ds_boot$t, na.rm = TRUE)
+                  )
+
+## take a look
+## 
+edr_hist <- sapply(1:1000, FUN = function(i) collision::sample_input(edr) )
+hist(edr_hist)
+
+
+
+
 ```
 
 ## Modelling
@@ -195,7 +276,8 @@ For a breakdown of each step see [the deterministic examples](deterministic-exam
 ## v90_single - class `turbineInput`
 ## prop_at_height - class `randomInput`
 ## prop_below_height - class `randomInput`
-## flight_flux_min - class `randomInput`
+## edr - class `randomInput`
+## observations - df_obs_survey
 
 
 set.seed(1234)
@@ -209,12 +291,23 @@ lst_results <- lapply(1:iterations, function(i) {
   turbines_i <- sample_input(v90_single)
   prop_at_height_i <- sample_input(prop_at_height)
   prop_below_height_i <- sample_input(prop_below_height)
+  edr_i <- sample_input(edr)
 
-  # Step 2 - Get sampled `flux_per_year()` - calculate flux through turbine per year
-  df_turbines_results$flight_flux_year <- flux_per_year(
-    flux_per_min = sample_input(flight_flux_min),
+  
+  # Step 2 - Get samplededr# Step 2 - Get sampled `flux_per_year()` - calculate flux through turbine per year
+  df_turbines_results$flight_flux_year <- turbine_flux_year(
+    survey_type = "point",
+    obs_size = df_obs_survey$n_individuals,
+    survey_duration = df_obs_survey$survey_mins,
+    eff_detection_width = edr_i,
+    rotor_diameter = turbines_i$rotor_diam,
+    prop_below_turbine_max = prop_at_height_i + prop_below_height_i,
     prop_day = bird_i$prop_day,
-    prop_year = bird_i$prop_year
+    prop_year = bird_i$prop_year,
+    survey_units = "min",
+    width_units = "m",
+    survey_weight = NULL,  # defaults to equal weights
+    wilson_correction = TRUE
   )
 
   # Step 3 - Run `prob_interaction_flat()` - calculate $P(I)$

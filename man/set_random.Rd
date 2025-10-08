@@ -12,7 +12,7 @@ is.randInput(x)
 \arguments{
 \item{distr}{string. The name of the R function to return random deviates (e.g. \code{runif}, \code{rnorm}). See vignettes for examples of fitting to an empirical distribution.}
 
-\item{...}{Additional parameters passed to the function \code{distr}. Do *not* set \code{n} (number of samples) here. This is set in \link{sample_input} to separate the simulation settings and statistical distribution definition.}
+\item{...}{Additional parameters passed to the function \code{distr}. Do \emph{not} set \code{n} (number of samples) here. This is set in \link{sample_input} to separate the simulation settings and statistical distribution definition.}
 
 \item{x}{object to check}
 }

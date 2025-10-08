@@ -20,21 +20,21 @@ avoidance rate of static components (tower + static presented area)}
 \item{avoidance_rate_dynamic}{numeric; Number between 0 and 1 representing the
 avoidance rate of dynamic components (moving blade edge)}
 
-\item{flux_yr}{numeric; Flux though the turbine  per year. Calculated from 
-[flux_per_year()]}
+\item{flux_yr}{numeric; Flux though the turbine  per year. Calculated from
+\code{\link[=flux_per_year]{flux_per_year()}}}
 
-\item{p_interaction}{numeric; Probability of interaction. Calculated from 
-[prob_interaction_flat()]}
+\item{p_interaction}{numeric; Probability of interaction. Calculated from
+\code{\link[=prob_interaction_flat]{prob_interaction_flat()}}}
 
-\item{p_coll_static}{numeric; the probability of collision with static 
-turbine components if an interaction occurs and 
-avoidance is zero. Calculated from 
-[prob_collision_static()]}
+\item{p_coll_static}{numeric; the probability of collision with static
+turbine components if an interaction occurs and
+avoidance is zero. Calculated from
+\code{\link[=prob_collision_static]{prob_collision_static()}}}
 
-\item{p_coll_dynamic}{numeric; the probability of collision with dynamic 
-blade edge turbine components if an interaction occurs 
-and avoidance is zero. Calculated from 
-[prob_collision_dynamic()]}
+\item{p_coll_dynamic}{numeric; the probability of collision with dynamic
+blade edge turbine components if an interaction occurs
+and avoidance is zero. Calculated from
+\code{\link[=prob_collision_dynamic]{prob_collision_dynamic()}}}
 }
 \value{
 numeric; number of collisions per year

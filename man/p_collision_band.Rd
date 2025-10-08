@@ -22,7 +22,7 @@ Must be a static value}
 \item{pitch_deg}{numeric; Pitch of the turbine blades (degrees).
 Must be a static value}
 
-\item{rotor_diam}{numeric; The length from turbine blade tip to blade 
+\item{rotor_diam}{numeric; The length from turbine blade tip to blade
 tip (metres). Must be a static value}
 
 \item{rpm}{Rotation speed (RPM).}
@@ -44,12 +44,11 @@ numeric; Number between 0 and 1 representing the probability
 of collision given interaction
 }
 \description{
-Uses Band 2012 option 1. Simple implementation and internal function for 
+Uses Band 2012 option 1. Simple implementation and internal function for
 testing and verification only
 }
 \details{
 Calculate probability of collision given interaction
-
 
 This function calculates the probability of collision of a single
 flight with a single turbine, given that the flight has
