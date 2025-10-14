@@ -36,12 +36,12 @@
 #' @importFrom Rdpack reprompt
 #' @export
 flight_flux_point <- function(
-    obs_size,
-    survey_duration,
+    obs_size, # Cannot be empty, should be c(0, 0, ...)
+    survey_duration, # Needs to match obs_size length
     eff_detection_width,
     survey_units = "min",
     width_units = "m",
-    survey_weight = NULL,
+    survey_weight = NULL, # Needs to be same length as obs_size
     wilson_correction = TRUE
 ) {
   
@@ -55,9 +55,19 @@ flight_flux_point <- function(
             output will be flights / metre / minute")
   }
   
-  survey_duration <- units::set_units(
-    survey_duration, survey_units, mode = "standard"
-  )
+  if (!is.null(survey_duration)){
+    survey_duration <- units::set_units(
+      survey_duration, survey_units, mode = "standard"
+    )
+  }
+  
+  
+  if (!is.null(eff_detection_width)) {
+    if (!is.numeric(eff_detection_width)) stop(
+      "effective detection width must be numeric")
+    if (length(eff_detection_width) != 1) stop("effective detection width must be length 1")
+  }
+  
   eff_detection_width <- units::set_units(
     eff_detection_width, width_units, mode = "standard"
   )
@@ -70,12 +80,6 @@ flight_flux_point <- function(
     warning("NA survey durations detected - NA surveys will be ignored")
   }
   
-  if (!is.null(eff_detection_width)) {
-    if (!is.numeric(eff_detection_width)) stop(
-      "effective detection width must be numeric")
-    if (length(eff_detection_width) != 1) stop("edr must be length 1")
-  }
-  
   stopifnot("obs_size, survey_mins must be equal" = 
               length(obs_size) == length(survey_duration))
   stopifnot("survey_weight must be NULL or same length as survey_mins" = 
@@ -83,7 +87,7 @@ flight_flux_point <- function(
   
   if(is.null(survey_weight)){survey_weight <- rep(1, length(survey_duration))}
   
-  if (length(obs_size) == 0) { # Is wil corr needed?
+  if (sum(obs_size) == 0) { # Is wil corr needed?
     
     if (isTRUE(wilson_correction)) {
       

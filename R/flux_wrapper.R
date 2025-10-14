@@ -90,6 +90,8 @@ turbine_flux_year <- function(
     wilson_correction = TRUE
 ){
   
+  if (is.null(survey_type) || is.na(survey_type)) stop("survey_type cannot be NA/NULL")
+
   switch (survey_type,
           "point" = {
             obs_flux <- flight_flux_point(
@@ -106,15 +108,16 @@ turbine_flux_year <- function(
          Line transects and digital areal surveys TODO")
   )
   
-  obs_flux <- flight_flux_point(
-    obs_size = obs_size,
-    survey_duration = survey_duration,
-    eff_detection_width = eff_detection_width,
-    survey_units = survey_units,
-    width_units = width_units,
-    survey_weight = survey_weight,
-    wilson_correction = wilson_correction
-  )
+  # SA: I think this can be removed now?
+  # obs_flux <- flight_flux_point(
+  #   obs_size = obs_size,
+  #   survey_duration = survey_duration,
+  #   eff_detection_width = eff_detection_width,
+  #   survey_units = survey_units,
+  #   width_units = width_units,
+  #   survey_weight = survey_weight,
+  #   wilson_correction = wilson_correction
+  # )
   
   flux_min <- turbine_flux(
     obs_flux = obs_flux,
