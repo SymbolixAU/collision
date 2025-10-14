@@ -40,7 +40,7 @@ We are going to calculate a simple deterministic model output here.  For a stoch
 
 ### Define turbine model
 
-Step one is to set up a turbine - here's an example based basically on a Vestas 90, set up using the `define_turbine` function:
+Step one is to set up a turbine - here's an example based on a Vestas 90, set up using the `define_turbine` function:
 
 ```{r}
 v90_single <- define_turbine(
@@ -111,7 +111,7 @@ summary(df_obs_survey)
 
 is a combined dataset of 100 point count surveys, including the count (`n_individuals`) of raptors (and associated distance at first observation (`distance`)). If none were seen we have an `NA` record for the observation.
 
-It's very important that the field data include surveys with no sightings as well as positive detections. 
+It's very important that the field data include any surveys with no sightings as well as positive detections. 
 
 In addition it must include:
 
@@ -132,7 +132,7 @@ ds_model <- ds(
   nadj = 0
   )
 
-plot(ds_model)
+plot(ds_model, pdf=TRUE)
 
 print(edr_from_distmodel(ds_model)) # in metres
 print(w_from_distmodel(ds_model)) # truncation distance / max distance in m
@@ -141,7 +141,7 @@ print(w_from_distmodel(ds_model)) # truncation distance / max distance in m
 
 ## Calculate proportion at height and below height
 
-prop_at_height is either a single value or distribution information which represents the proportion of flights at rotor swept height while prop_below_height is the proportion of flights below rotor swept height.
+`prop_at_height` is either a single value or distribution information which represents the proportion of flights at rotor swept height while `prop_below_height` is the proportion of flights below rotor swept height.
 
 A simple, single value example of this is given below
 
@@ -154,18 +154,23 @@ max_rsh <- v90_single$hh + v90_single$rotor_diam * 0.5
 
 ## Review the heights
 
-ggplot(data = as.data.frame(df_obs_survey), aes(x = height)) +
-  stat_ecdf() +
+# ggplot(data = as.data.frame(df_obs_survey), aes(x = height)) +
+#   stat_ecdf() +
+#   geom_vline(xintercept = min_rsh, colour = "red") +
+#   geom_vline(xintercept = max_rsh, colour = "red")
+
+# PY: I think a histogram is more interpretable for the average person but I'm not sure
+ggplot(data = as.data.frame(df_obs_survey),
+       aes(x = height, y = after_stat(density))) +
+  geom_histogram() +
   geom_vline(xintercept = min_rsh, colour = "red") +
   geom_vline(xintercept = max_rsh, colour = "red")
 
 
-# calculate ecdf
+# calculate ecdf (empirical cumulative distribution function)
 # Note - this is a simple example; it's up to the analyst how best to 
 ## fit the height distribution
 cdf_height <- ecdf(df_obs_survey$height)
-
-
 
 prop_at_height <- cdf_height(round(max_rsh)) - cdf_height(round(min_rsh))
 prop_below_height <- cdf_height(round(min_rsh))
@@ -182,24 +187,23 @@ prop_below_height <- cdf_height(round(min_rsh))
 
 For a deterministic model, we need the following 4 steps:
 
-* Step 1 - Run `flight_flux()` and `flux_per_year()` - calculate flux through turbine per year
+* Step 1 - Run `flight_flux_point()`, `turbine_flux()` and `flux_per_year()` - calculate flux through turbine per year. This can also be done in one step using `turbine_flux_year()`.
 * Step 2 - Run `prob_interaction_flat()` - calculate $P(I)$
-* Step 3 - Run `p_collisions()` - calculate $P(C|I)$ for one interaction
+* Step 3 - Run `prob_collision_static()` and `prob_collision_dynamic()` - calculate $P(C|I)$ for one interaction
 * Step 4 - Run `n_collisions()` - calculate number of collisions a year
 
 ### Step 1 - Flux through turbine
 
 This is where we account for
 
-* The size of the turbine
-* The proportion of the day active (moderated for the `obs_scale_factor` - see the function help page for more information)
-* The proportion of the year active
-* The proportion of flights at RSH
+* The size of the turbine (contained in the object made using `define_turbine()`)
+* The proportion of the day active (moderated for the `obs_scale_factor` - see the function help page for more information) (contained in the object made using `define_bird()`)
+* The proportion of the year active (contained in the object made using `define_bird()`)
+* The proportion of flights at RSH (`prop_at_height`)
 
-We first calculate the flight flux for the turbines. This is in units of 
-`flights per minute`. The turbine dimensions are in metres
+We first calculate the flight flux for the turbines. This is in units of `flights per minute` (per turbine). The turbine dimensions are in metres.
 
-Note that I can specify the distance model or the edr. The results are equivalent
+This is done in two steps, first (if the observations were from point count surveys) we calculate the observed flight flux through vertical airspace using `flight_flux_point()`. Second we apply this to the "turbine plane" (a rectangular "doorway" defined by the rotor diameter and rotor swept height) using `turbine_flux()` to obtain the flights through the turbine plane per minute.
 
 ```{r}
 
@@ -223,7 +227,7 @@ flux_turbine_min <- turbine_flux(
 
 ```
 
-In this example, we assume flight flux follows a log normal distribution with mean `flight_flux_min`. The units are flights / min.
+In this example, we assume flight flux follows a log normal distribution with mean = `flight_flux_min`. The units are flights / min.
 
 Here we correct it for daily and monthly variability.
 
@@ -235,7 +239,7 @@ flight_flux_year <- flux_per_year(
 )
 ```
 
-* The units for `flight_flux_year` is flights / year
+* The units for `flight_flux_year` is flights / year (per turbine).
 
 ### Probability of interaction
 
@@ -244,7 +248,6 @@ For a flat utilisation, we can get the probability of interaction using this exa
 ```{r}
 prob_interaction <- prob_interaction_flat(num_turbines = nrow(df_turbines))
 ```
-
 
 ### Step 3 - Probability of collision given interaction
 
@@ -281,7 +284,7 @@ df_turbines$p_coll_static <- prob_collision_static(
 )
 
 df_turbines$p_coll_dyn <- prob_collision_dynamic(
-  rpm = v90_single$rpm, # s_rot,
+  rpm = v90_single$rpm, 
   blade_length = v90_single$blade_length,
   max_width_nacelle = v90_single$max_width_nacelle,
   rotor_diam = v90_single$rotor_diam,
@@ -299,6 +302,7 @@ df_turbines$p_coll_dyn <- prob_collision_dynamic(
 
 ### Step 4 - Total annual collisions (with avoidance)
 
+Now using the calculated yearly flux, the probability of interaction and probability of collision given interaction as well as the expected avoidance rates, we can obtain an estimate of the total number of expected collision per year.
 
 ```{r}
 

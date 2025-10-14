@@ -80,7 +80,7 @@ v90_single <- define_turbine(
 We make a 'bird' object - a list of key parameters. These parameters can be defined as probability distributions or as single numbers. 
 
 ```{r}
-#TODO issue13 more info on distribuutions
+#TODO issue13 more info on distributions
 
 wte <- define_bird(
   species = "Wedge-tailed Eagle",
@@ -97,10 +97,12 @@ wte <- define_bird(
 
 ```
 
+Note: the Beta PERT distribution (`rpert`) is a good distribution to use if you only have the mode (or mean) and the minimum and maximum parameters for a species (eg. mean body length = 0.95m, range: 0.6-1.2m). See _vignette we haven't made yet_ to see how to fit it.
+
 
 ### Proportion of heights
 
-We define the proportion of flights at rotor swept height and below rotor swept height. We will fit a distribution to our height data and extract the value at height
+We define the proportion of flights at rotor swept height and below rotor swept height. We will fit a distribution to our height data and extract the values at and below rotor swept height. To do this we define a function that uses the empirical cumulative density distribution to calculate the proportion of heights between the upper and lower values. We then use the `boot()` function to determine the variance in the data. Noting that this is an example and it is up to the analyst to determine how best to fit the height distribution.
 
 ```{r}
 
@@ -168,7 +170,7 @@ I'm also assuming constant flight rate across the site.
 
 Because we want to avoid negative flight flux, we're using a log-normal distribution. The right distribution requires analysis on a case-by-case basis.
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 
 ds_hr <- ds(
   data = df_obs_survey,
@@ -184,7 +186,6 @@ edr_fun <- function(d = df_obs_survey$survey_id
                     ,  i = seq_len(nrow(df_obs_survey))
                     , dat = df_obs_survey){
 
-  message(paste(i, collapse = ", "))
   df_boot_i <- dat[dat$survey_id %in% d[i],]
 
   ds_CI <- tryCatch(
@@ -254,13 +255,13 @@ hist(edr_hist)
 
 ## Modelling
 
-Here we set up a loop to run the simulation. Note that all the iteration of the loop are independent to others, meaning that you can wrap the loop inside methods to run the iterations in parallel to save time if you wish.
+Here we set up a loop to run the simulation. Note that each iteration of the loop is independent to others, meaning that you can wrap the loop inside methods to run the iterations in parallel to save time if you wish.
 
 * Step 0 - Set up simulation parameters
 * Step 1 - Sample inputs for bird, turbine, prop at height and prop below height
-* Step 2 - Get sampled `flux_per_year()` - calculate flux through turbine per year
-* Step 3 - Run `prob_interaction_flat()` - calculate $P(I)$
-* Step 4 - Run `p_collisions()` - calculate $P(C|I)$ for one interaction
+* Step 2 - Calculate `turbine_flux_year()` with sampled values - calculate flux through turbine per year
+* Step 3 - Run `prob_interaction_flat()` - calculate $P(I)$ (assuming no spatial varaition)
+* Step 4 - Run `prob_collision_static()` and `prob_collision_dynamic()` - calculate $P(C|I)$ for one interaction
 * Step 5 - Run `n_collisions()` - calculate number of collisions a year
 
 For a breakdown of each step see [the deterministic examples](deterministic-example.html).  
@@ -294,7 +295,7 @@ lst_results <- lapply(1:iterations, function(i) {
   edr_i <- sample_input(edr)
 
   
-  # Step 2 - Get samplededr# Step 2 - Get sampled `flux_per_year()` - calculate flux through turbine per year
+  # Step 2 calculate flux through turbine per year
   df_turbines_results$flight_flux_year <- turbine_flux_year(
     survey_type = "point",
     obs_size = df_obs_survey$n_individuals,
@@ -366,7 +367,7 @@ lst_results <- lapply(1:iterations, function(i) {
 })
 ```
 
-Now we have the output of each simulation. We can use them to plot out the hisogram of collision results.
+Now we have the output of each simulation. We can use them to plot out the histogram of collision results.
 
 ```{r}
 lapply(lst_results, function(x) {
