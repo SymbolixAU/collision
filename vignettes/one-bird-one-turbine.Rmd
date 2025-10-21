@@ -31,21 +31,14 @@ library(knitr)
 
 One of the key differences in this package and previous Band-based models is the geometric calculation for the core probability of a collision, given a bird is passing through the turbine zone.
 
-**TODO** smales et all description of the geometry
-
-The turbine is split into it's static and dynamic components. The static component includes:
+The turbine is split into it's static and dynamic components as described in Smales et al., 2013. The static component includes:
 
 - the turbine tower, defined by the hub height (`hh`), and three diameters of the tower: the base diameter (`d_base`), the top diameter (`d_top`) and the diameter at the minimum rotor swept height (`d_rotormin`)
 - the generator nacelle, defined by it's maximum width (`max_width_nacelle`), length (`max_nac_l`) and height (`max_nac_h`)
+- the hemi-spherical hub with the diameter defined by the width of the nacelle (`max_width_nacelle`)
 - the rotor blades, defined by the blade length (`blade_length`), the chord of the blade at the widest point (`max_chord`) and at at its tip (thinnest point; `min_chord`), the thickness of the blade at it's widest and thinnest point (`blade_thickness_wide` and `blade_thickness_narrow`), and the blade tilt (`tilt_deg`)
 
-While the dynamic component is "the area swept by the leading edges of rotor blades during the time that a bird would take to pass through the rotor-swept zone" (Smales et al., 2013)
-
-From Smales et al., 2013:
-
-> The static areas of a turbine include all surfaces of the entire machine comprising a tower, which in current turbines is a simple taper with known base and top diameters; a rectangular nacelle housing the generator; a hemi-spherical hub; and rotor blades that taper in 2 planes. The dynamic component is the area swept by the leading edges of rotor blades during the time that a bird would take to pass through the rotor-swept zone.
-
-
+While the dynamic component is "the area swept by the leading edges of rotor blades during the time that a bird would take to pass through the rotor-swept zone" (Smales et al., 2013) which is defined by the turbine hub and rotor parameters as well as the length and speed of the bird (`bird_length` and `bird_speed`).
 
 ## A worked example - deterministic
 
@@ -128,7 +121,7 @@ p_coll_dyn + p_coll_static
 
 ### Hang on - what's that `edr`?
 
-Note we set our effective detection radius (`edr`) to half the rotor diameter. Normally this parameter is calculated via distance sampling (TODO BUCKLAND REF). As the effective detection increases, this probability of collision given interaction also decreases. 
+Note we set our effective detection radius (`edr`) to half the rotor diameter. Normally this parameter is calculated via distance sampling (Buckland et al., 1993). As the effective detection increases, this probability of collision given interaction also decreases. 
 
 But don't stress! 
 
@@ -166,3 +159,9 @@ collision:::p_collision_band(
 )
 
 ```
+
+---
+# References
+
+Buckland, Stephen T, David Raymond Anderson, Kenneth P Burnham, Jeffrey L Laake, et al. (1993). “Distance Sampling: Estimating Abundance of Biological Populations.”
+Smales, I., Muir, S., Meredith, C., & Baird, R. (2013). _A description of the biosis model to assess risk of bird collisions with wind turbines_. Wildlife Society Bulletin, 37(1), 59–65. https://doi.org/10.1002/wsb.257
