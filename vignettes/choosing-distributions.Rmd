@@ -3,8 +3,10 @@ title: "Choosing distrtibutions for risk modelling"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Choosing distrtibutions for risk modelling}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r, include = FALSE}
@@ -16,7 +18,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(collision)
-
+library(data.table)
 library(Distance)
 library(mc2d)  # for the PERT distribution
 ```
@@ -138,3 +140,163 @@ prop_below_height <- cdf_height(round(min_rsh))
 
 
 ```
+
+PY: I left the stuff above because I'm not sure if ES want's it laid out more like the above or if that's just scratch
+
+# The Uniform Distribution
+
+Is a distribution whose probability density function (PDF) is a straight horizontal line. It's defined by a minimum and maximum and all values between the min and max have the same likelihood of occurring ($\frac{1}{max-min}$). This is mostly useful for generating some random values between some minimum and maximum values. For example if you know that the amount of time a bird species is on site tends to be about 8 to 10 hours you could simply set the proportion of the day on site to be a uniform distribution with a minimum of 0.333 and a maximum of 0.417. This may not be exactly accurate, perhaps the amount of time on site does actually follow some distribution but if you don't have enough data to determine that, inputting a range instead of just taking the mid point and setting it to 0.375 (9 hours) will still give a better idea of the natural variation in behaviour.
+
+```{r}
+x <- seq(8/24, 10/24, length.out = 10)
+ggplot() +
+  geom_line(aes(x = x, y = dunif(x, min = 8/24, max = 10/24))) +
+  geom_point(aes(x = c(8/24, 10/24), y = dunif(0.4, min = 8/24, max = 10/24))) +
+  labs(x = "Proportion of day on site", y = "PDF")
+```
+
+
+# The Normal Distribution
+
+Aka the Gaussian distribution is an extremely common and useful distribution. If you have the mean and standard error of the variable you are trying to model you can probably get a decent approximation. One important use is modelling measurement errors because the central limit theorem says that error on the mean has a distribution that converges to a normal distribution (that's not exactly it and it's only under the appropriate conditions but it's still very useful). For example if you have observations of flight heights, the proportion of those flights that is at the rotor swept height is itself a random variable that is approximately normally distributed. To estimate the parameters of the distribution we can bootstrap the data.
+
+```{r}
+
+min_rsh <- v90_single$hh - v90_single$rotor_diam * 0.5
+max_rsh <- v90_single$hh + v90_single$rotor_diam * 0.5
+
+## Review the heights
+
+ggplot(data = as.data.frame(df_obs_survey), aes(x = height)) +
+  stat_ecdf() +
+  geom_vline(xintercept = min_rsh, colour = "red") +
+  geom_vline(xintercept = max_rsh, colour = "red")
+
+
+## calculate ecdf
+prop_between <- function(dat, i, lwr, upp){
+
+  cdf_dat <- ecdf(dat[i])
+  p_low <- cdf_dat(lwr)
+  p_high <- cdf_dat(upp)
+
+  return(p_high - p_low)
+
+}
+
+boot_prop_between <- boot::boot(
+  data = df_obs_survey$height,
+  statistic = prop_between, stype = "i",
+  R = 1000,
+  lwr = 0, upp = round(min_rsh)
+)
+
+boot_prop_below <- boot::boot(
+  data = df_obs_survey$height,
+  statistic = prop_between, stype = "i",
+  R = 1000,
+  lwr = round(min_rsh), upp = round(max_rsh)
+)
+
+prop_between <- set_random("rnorm", mean = summary(boot_prop_between)$original,
+                           sd = summary(boot_prop_between)$bootSE)
+
+x <- seq(-0.025, 0.1, 0.0001)
+ggplot() +
+  geom_line(aes(x = x, y = dnorm(x = x, mean = summary(boot_prop_between)$original,
+                                 sd = summary(boot_prop_between)$bootSE))) +
+  labs(x = "Proportion of flights at height", y = "Density",
+       caption = "Bootstrapped distribution of the proportion of flights at rotor swept height")
+
+```
+
+# The Log-normal Distribution
+
+Is a distribution whose logarithm is normally distributed. Due to the nature of the logarithm this distribution can take only positive real values, making it very useful for representing all sorts of physical values. TODO
+
+```{r}
+x <- seq(0, 7, 0.001)
+ggplot() +
+  geom_line(aes(x = x, y = dlnorm(x, meanlog = 0, sdlog = 1))) +
+  labs(y = "PDF")
+```
+
+# The Weibull Distribution
+
+Is positive 
+
+```{r}
+x <- seq(0, 35, 0.005)
+ggplot() +
+  geom_line(aes(x = x, y = dweibull(x, shape = 2.3, scale = 14))) +
+  labs(y = "PDF")
+```
+
+# The PERT distribution
+
+Aka the Beta-PERT distribution is the beta distribution with the domain extended to [min, max] (as opposed to [0, 1]). It can be defined by the minimum, maximum and mode (most common value) of the distribution (you can also use the mean instead of the mode). In the case of the modified PERT distribution it has an additional shape parameter which controls the "peakiness" of the distribution (set the shape to 4 to retrieve the standard PERT distribution). This distribution is very useful for expert elicitation as you will often receive the range of possible values and the most common or average value which can easily be input into the pert distribution as the minimum, maximum and mode or mean. For example [HANZAB](https://hanzab.birdlife.org.au/species/australian-magpie/) list the average body length of the Australian Magpie as 41cm with a range between 37-43cm. These are all the values we need to define the relevant PERT distribution.
+
+```{r}
+x <- seq(37, 43, 0.1)
+ggplot() +
+  geom_line(aes(x = x, y = dpert(x, min = 37, max = 43, mean = 41))) +
+  labs(x = "Body length (cm)", y = "PDF")
+```
+
+If you think the peak is too narrow or too wide you can use a modified PERT distribution and adjust the shape parameter.
+
+```{r}
+dt_plot <- CJ(x, shape = 2:5)
+dt_plot[, y := dpert(x, min = 37, max = 43, mean = 41, shape = shape)]
+
+ggplot(data = dt_plot) +
+  geom_line(aes(x = x, y = y, group = shape, colour = as.factor(shape))) +
+  labs(x = "Body length (cm)", y = "PDF", colour = "Shape parameter")
+```
+
+# Custom distributions
+
+IDK how realistic or helpful this is but:
+
+Because of how collision's stochastic implementation is defined you can also create custom distributions to use with `set_random()`
+
+Say you want a distribution for the rpm of the turbine and you know that the rpm increases linearly with windspeed from the cut in speed of 3 m/s until it reaches the optimal rpm at about 10 m/s after which it remains at that rpm. Let's say that the wind speed follows a weibull distribution, we can make a custom `rrpm` function like so
+
+```{r}
+rrpm <- function(n, shape, scale, cut_in_speed, min_optimal_windspeed,
+                 rpm_at_cut_in, optimal_rpm, slope){
+  
+  
+  stopifnot(cut_in_speed<min_optimal_windspeed)
+  
+  windspeed <- rweibull(n, shape, scale)
+  
+  rpm <- sapply(windspeed, function(w) {
+    if(w >= min_optimal_windspeed){
+      rpm <- optimal_rpm
+    }
+    if(w < cut_in_speed){
+      rpm <- 0
+    }
+    if(w > cut_in_speed & w < min_optimal_windspeed){
+      rpm <- slope*w-slope*cut_in_speed+rpm_at_cut_in
+    }
+    return(rpm)
+  })
+  return(rpm)
+}
+
+x <- seq(0, 35, 0.005)
+ggplot() +
+  geom_density(aes(x = rrpm(10000, shape = 2, scale = 15, cut_in_speed = 3,
+                                   min_optimal_windspeed = 10.2, rpm_at_cut_in = 3.25,
+                                   optimal_rpm = 10.1, slope = 0.95)))+
+  labs(x = "RPM", y = "PDF")
+
+rpm_dist <- set_random("rrpm", shape = 2, scale = 15, cut_in_speed = 3,
+                    min_optimal_windspeed = 10.2, rpm_at_cut_in = 3.25,
+                    optimal_rpm = 10.1, slope = 0.95)
+
+sample_input(rpm_dist)
+```
+
