@@ -7,8 +7,9 @@
 #'
 #'
 #' @param obs_flux numeric; number of flights through one metre of vertical space
-#'    as output by [flight_flux_point()] or similar
+#'    as output by [obs_flux()] or similar
 #' @param rotor_diameter numeric; rotor diameter (m)
+#' @param hub_height numeric; hub height (m)
 #' @param prop_below_turbine_max numeric; proportion of the flight height
 #'    distribution below max top height. Between 0 and 1.
 #'
@@ -20,12 +21,14 @@
 #' @example examples/flux_example.R
 #'
 #' @export
-turbine_flux <- function(obs_flux, rotor_diameter, prop_below_turbine_max) {
+turbine_flux <- function(obs_flux, rotor_diameter, hub_height, prop_below_turbine_max) {
   check_num_bounds(obs_flux, min = 0)
   check_num_bounds(rotor_diameter, min = 0)
+  check_num_bounds(hub_height, min = 0)
   check_num_bounds(prop_below_turbine_max, min = 0, max = 1)
-
-  res <- obs_flux * rotor_diameter * prop_below_turbine_max
+  
+  turbine_height <- hub_height + 0.5*rotor_diameter
+  res <- obs_flux * rotor_diameter * turbine_height * prop_below_turbine_max
   return(res)
 }
 
