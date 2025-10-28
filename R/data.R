@@ -1,6 +1,6 @@
 #' Single turbine example data
 #' 
-#' A example of class `turbineInput` containing example turbine dimensions
+#' An object of class `turbineInput` containing example turbine dimensions
 #' based off a Vestas V90 example. This version has all fixed (i.e. no stochastic)
 #' input values and is useful for vignettes and tests
 #' 
@@ -34,16 +34,27 @@
 #' 
 "ds_example"
 
-#' Example survey and observation
+#' Example observations
 #' 
-#' Combined data set of survey and observations that mimic point count 
+#' Data set of observations (with corresponding survey_ids) that mimic point count 
 #' observations of raptors. Used for examples and to construct `ds_raptor`
 #' 
 #' #' @docType data
 #' 
-#' @usage df_obs_survey
+#' @usage df_obs
 #' 
-"df_obs_survey"
+"df_obs"
+
+#' Example survey
+#' 
+#' Data set of survey metadata that mimic point count 
+#' surveys for raptors. Used for examples.
+#' 
+#' #' @docType data
+#' 
+#' @usage df_survey
+#' 
+"df_survey"
 
 #' Distance model example - raptor
 #'

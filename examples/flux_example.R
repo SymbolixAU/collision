@@ -19,7 +19,7 @@ edh <- hub_height+0.5*rotor_diameter # can set to turbine height since all fligh
 
 # flights observed per minute of survey
 flights_per_min <- encounter_rate(
-  df_obs <- df_obs,
+  df_obs_summary = df_obs,
   survey_units = "min", # Default
   wilson_correction = TRUE # Default
 )

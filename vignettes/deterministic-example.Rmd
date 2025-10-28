@@ -109,7 +109,7 @@ The package dataset:
 summary(df_obs_survey)
 ```
 
-is a combined dataset of 100 point count surveys, including the count (`n_individuals`) of raptors (and associated distance at first observation (`distance`)). If none were seen we have an `NA` record for the observation.
+is a combined dataset of 100 point count surveys, including the count (`size`) of raptors (and associated distance at first observation (`distance`)). If none were seen we have an `NA` record for the observation.
 
 It's very important that the field data include any surveys with no sightings as well as positive detections. 
 
@@ -117,7 +117,7 @@ In addition it must include:
 
 * Distance to the bird at first sighting in metres. If transect sampling, this is usually the perpendicular (right-angle) distance from the transect line.
 * Duration of the surveys in minutes
-* Count of individuals in each observation (for flock sightings)
+* Count of individuals in each survey (`size`)
 
 We fit a distance model and extract the effective detection radius (EDR)
 

@@ -4,20 +4,22 @@
 \alias{turbine_flux}
 \title{Convert observed flight flux to number flights through turbine plane}
 \usage{
-turbine_flux(obs_flux, rotor_diameter, prop_below_turbine_max)
+turbine_flux(obs_flux, rotor_diameter, hub_height, prop_below_turbine_max)
 }
 \arguments{
 \item{obs_flux}{numeric; number of flights through one metre of vertical space
-as output by \code{\link[=flight_flux_point]{flight_flux_point()}} or similar}
+as output by \code{\link[=obs_flux]{obs_flux()}} or similar}
 
 \item{rotor_diameter}{numeric; rotor diameter (m)}
 
+\item{hub_height}{numeric; hub height (m)}
+
 \item{prop_below_turbine_max}{numeric; proportion of the flight height
-distribution below max top height. Between 0 and 1.}
+distribution below the turbine's maximum tip height. Between 0 and 1.}
 }
 \value{
 numeric; number of flights through turbine plane.
-Time interval is the same as refernced by \code{obs_flux} input
+Time interval is the same as referenced by \code{obs_flux} input
 }
 \description{
 Convert observed flight flux to number flights through turbine plane
@@ -26,9 +28,9 @@ Convert observed flight flux to number flights through turbine plane
 The steps to calculate the number of flights through a turbine
 plan includes three steps
 \itemize{
-\item Calculate the observed flights in a vertical column one metre wide from the
+\item Calculate the observed flights in a vertical square-metre area from the
 count of observed flights and details of the surveys. See for example
-\code{\link[=flight_flux_point]{flight_flux_point()}}
+\code{\link[=obs_flux]{obs_flux()}}
 \item Scale the observed flight flux to an area equivalent to the
 rotor diameter by the maximum height of the turbine, e.g. \code{\link[=turbine_flux]{turbine_flux()}}
 \item Scale the observed flight flux to the time period under study. There's a
@@ -39,8 +41,9 @@ helper function to scale to one year e.g \code{\link[=flux_per_year]{flux_per_ye
 Given a set of observations, survey durations and a related distance model
 (fit using the \code{Distance} package \insertCite{Miller019a}{collision}) we
 calculate the flight flux through
-a rectangle of width of 2*(effective detection radius) and (maximum) height
-in one minute of observation time.
+a rectangle of width of 2*(effective detection radius) and height of the
+observer's effective detection height (see TODO for more info about effective
+detection height) in one minute of observation time.
 
 The optional Wilson Correction can be used to
 generate an flux in the case when no observations are made of the
@@ -52,9 +55,9 @@ be sampled from prior to calling this function. See vignettes for more details
 
 \subsection{Scale to turbine}{
 
-\code{\link[=turbine_flux]{turbine_flux()}} converts the flight flux through one metre of vertical space into the
-number of flights through an arbitrary vertical plane of
-width equal to rotor diameter and height equal to the tip height of the turbine
+\code{\link[=turbine_flux]{turbine_flux()}} converts the flight flux through one metre of vertical space
+into the number of flights through an arbitrary vertical plane of width equal
+to rotor diameter and height equal to the tip height of the turbine
 
 The time interval is not adjusted (i.e. if you input flights / min, it will
 output flights / min).
@@ -62,22 +65,25 @@ output flights / min).
 
 \subsection{Scale to year}{
 
-After obtaining the observed flux through a vertical column in a minute,
+After obtaining the observed flux through a vertical area in a minute,
 we need to scale up to the relevant risk timeframe, often a year.
 
 This can be done manually by the analyst for any time period, but we have
 included a helper function for the case of scaling to one year (\code{\link[=flux_per_year]{flux_per_year()}}).
 Note this function assumes the flux is the
 average flight flux when active onsite.  If surveys are conducted year round
-and the fluc represents the annual average then \code{prop_year} should be 1.
-If a bird is onsite for three months of the year and the flux was measured in
-season only, the \code{prop_year = 3/12 = 0.25}.
+and the flux represents the annual average then \code{prop_year} should be 1. If
+surveys are conducted only while the bird is on site and the flux represents
+the average over the period the birds are on site then \code{prop_year} should be
+the proportion of the year that the bird is on site.
+For example, if a bird is onsite for three months of the year and the flux
+was measured in season only, the \code{prop_year = 3/12 = 0.25}.
 
 Similarly care must be taken if the daily observation window does not overlap
 completely with the birds activity. If the flight flux calculation
 includes times when the species is not active the \code{prop_day} should be
 adjusted to account for this, or the flux calculated only using
-observations during the activity period.
+surveys during the activity period.
 }
 }
 \examples{
@@ -89,35 +95,42 @@ observations during the activity period.
 ## # Step by step
 ## 
 
-obs_size <- c(0,2,3,0)
-survey_duration <- c(20, 20, 18, 20)
-edr <- 800
-# Optional survey weights to deal with stratification etc
-survey_weight = c(1,1,1,1)
+df_obs <- data.frame(size = c(0, 2 , 3, 0), # four surveys
+                     survey_duration = c(20, 20, 18, 20),
+                     # Optional survey weights to deal with stratification etc
+                     survey_weight = c(1,1,1,1))
+
 prop_below_turbine_max <- 1
-rotor_diameter = 300
+rotor_diameter <- 300
+hub_height <- 200
+edr <- 800
+edh <- hub_height+0.5*rotor_diameter # can set to turbine height since all flights below turbine max
 
+# flights observed per minute of survey
+flights_per_min <- encounter_rate(
+  df_obs_summary = df_obs,
+  survey_units = "min", # Default
+  wilson_correction = TRUE # Default
+)
 
-# flights through vertical plane of one metre wide in one minute
-flights_per_m_per_min <- flight_flux_point(
-  obs_size = obs_size,
-  survey_duration = survey_duration,
+# flights through vertical plane of one metre squared in one minute
+flights_per_m2_per_min <- obs_flux(
+  encounter_rate = flights_per_min,
   eff_detection_width = edr,
-  survey_units = "min",  # default
-  width_units = "m",     # default
-  survey_weight = survey_weight,
-  wilson_correction = TRUE
+  eff_detection_height = edh,
+  width_units = "m", # Default
+  height_units = "m" # Default
 )
 
 # scale to turbine width and height
 flights_turbine_min <- turbine_flux(
-  obs_flux = flights_per_m_per_min,
+  obs_flux = flights_per_m2_per_min,
   rotor_diameter = rotor_diameter,
+  hub_height = hub_height,
   prop_below_turbine_max = prop_below_turbine_max
 )
 
-
-# scale to annual flights through area of rotor_diamter x turbine height 
+# scale to annual flights through area of rotor_diameter x turbine height 
 flights_turbine_year <- flux_per_year(
   flux_per_min = flights_turbine_min,
   prop_day = 0.5,  #diurnal species
@@ -128,18 +141,17 @@ flights_turbine_year <- flux_per_year(
 ## to go from observations to turbine flights per year
 ## 
 flights_turbine_year2 <- turbine_flux_year(
-  survey_type= "point",
-  obs_size = obs_size,
-  survey_duration = survey_duration,
+  survey_type = "point", # only supported option currently
+  encounter_rate = flights_per_min,
   eff_detection_width = edr,
+  eff_detection_height = edh,
   rotor_diameter = rotor_diameter,
+  hub_height = hub_height,
   prop_below_turbine_max = prop_below_turbine_max,
   prop_day = 0.5,  #diurnal species
   prop_year = 1,   # present all year
-  survey_units = "min",
-  width_units = "m",
-  survey_weight = survey_weight,
-  wilson_correction = TRUE
+  width_units = "m", # Default
+  height_units = "m" # Default
 )
 
 #They are the same
@@ -150,5 +162,5 @@ flights_turbine_year2
 \insertAllCited{}
 }
 \seealso{
-\code{\link[=flight_flux_point]{flight_flux_point()}}
+\code{\link[=obs_flux]{obs_flux()}}
 }

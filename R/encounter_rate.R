@@ -12,7 +12,7 @@
 #' @references
 #'   \insertAllCited{}
 #'   
-#' @param df_obs data.frame; a data.frame containing at least columns `size` and 
+#' @param df_obs_summary data.frame; a data.frame with one row per survey containing at least columns `size` and 
 #'    `survey_duration`. It can also optionally include a column `survey_weight` if needed
 #'    to account for stratification etc. When NULL (the default) will 
 #'    weight surveys equally.
@@ -29,14 +29,14 @@
 #' @export
 #' 
 encounter_rate <- function(
-    df_obs,
+    df_obs_summary,
     survey_units = "min",
     wilson_correction = TRUE
 ) {
   
-  obs_size <- df_obs$size
-  survey_duration <- df_obs$survey_duration
-  survey_weight <- df_obs$survey_weight
+  obs_size <- df_obs_summary$size
+  survey_duration <- df_obs_summary$survey_duration
+  survey_weight <- df_obs_summary$survey_weight
   
   # maybe these checks should happen on the data.frame?
   

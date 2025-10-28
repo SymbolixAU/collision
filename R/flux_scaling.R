@@ -16,7 +16,7 @@
 #' @return numeric; number of flights through turbine plane.
 #'    Time interval is the same as referenced by `obs_flux` input
 #'
-#' @seealso [flight_flux_point()]
+#' @seealso [obs_flux()]
 #'
 #' @example examples/flux_example.R
 #'
@@ -51,7 +51,7 @@ turbine_flux <- function(obs_flux, rotor_diameter, hub_height, prop_below_turbin
 #' @example examples/flux_example.R
 #'
 #'
-#' @seealso [flight_flux_point()]
+#' @seealso [obs_flux()]
 #' @export
 flux_per_year <- function(
   flux_per_min,

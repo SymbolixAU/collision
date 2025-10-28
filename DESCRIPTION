@@ -28,7 +28,7 @@ Suggests:
   mc2d,
   parallel
 Encoding: UTF-8
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 RdMacros: Rdpack
 Depends: 
     R (>= 3.5.0)
