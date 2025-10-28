@@ -5,7 +5,7 @@
 \alias{df_survey}
 \title{Example survey}
 \format{
-An object of class \code{data.frame} with 75 rows and 3 columns.
+An object of class \code{data.frame} with 100 rows and 3 columns.
 }
 \usage{
 df_survey

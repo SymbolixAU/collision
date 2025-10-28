@@ -22,6 +22,7 @@ knitr::opts_chunk$set(
 library(knitr)
 library(collision)
 library(ggplot2)
+library(data.table)
 
 # for distance modelling
 library(Distance)
@@ -103,17 +104,28 @@ df_turbines <- data.frame(
 
 Use the provided survey data to fit a (very simple) distance model. **NOTE** Please see [Distance](http://distancesampling.org/R/) and the references therein for a complete primer on doing and interpreting Distance analysis. 
 
-The package dataset:
+The package observations dataset:
 
 ```{r}
-summary(df_obs_survey)
+summary(df_obs)
+setDT(df_obs)
 ```
 
-is a combined dataset of 100 point count surveys, including the count (`size`) of raptors (and associated distance at first observation (`distance`)). If none were seen we have an `NA` record for the observation.
+is a dataset of `r nrow(df_obs)` observations from 100 point count surveys, including the count (`size`) of raptors (and associated distance at first observation (`distance`)).
+
+
+And the package survey dataset:
+
+```{r}
+summary(df_survey)
+setDT(df_survey)
+```
+
+is a dataset of the metadata for the `r nrow(df_survey)` point count surveys, including the duration of each survey.
 
 It's very important that the field data include any surveys with no sightings as well as positive detections. 
 
-In addition it must include:
+Between the two of them these tables must include:
 
 * Distance to the bird at first sighting in metres. If transect sampling, this is usually the perpendicular (right-angle) distance from the transect line.
 * Duration of the surveys in minutes
@@ -123,8 +135,8 @@ We fit a distance model and extract the effective detection radius (EDR)
 
 ```{r}
 ds_model <- ds(
-  data = df_obs_survey,
-  truncation = max(df_obs_survey$distance, na.rm=TRUE),
+  data = df_obs,
+  truncation = max(df_obs$distance, na.rm=TRUE),
   transect = "point",
   formula = ~1,
   key = "hr",
@@ -153,13 +165,6 @@ min_rsh <- v90_single$hh - v90_single$rotor_diam * 0.5
 max_rsh <- v90_single$hh + v90_single$rotor_diam * 0.5
 
 ## Review the heights
-
-# ggplot(data = as.data.frame(df_obs_survey), aes(x = height)) +
-#   stat_ecdf() +
-#   geom_vline(xintercept = min_rsh, colour = "red") +
-#   geom_vline(xintercept = max_rsh, colour = "red")
-
-# PY: I think a histogram is more interpretable for the average person but I'm not sure
 ggplot(data = as.data.frame(df_obs_survey),
        aes(x = height, y = after_stat(density))) +
   geom_histogram() +
@@ -187,12 +192,39 @@ prop_below_height <- cdf_height(round(min_rsh))
 
 For a deterministic model, we need the following 4 steps:
 
-* Step 1 - Run `flight_flux_point()`, `turbine_flux()` and `flux_per_year()` - calculate flux through turbine per year. This can also be done in one step using `turbine_flux_year()`.
-* Step 2 - Run `prob_interaction_flat()` - calculate $P(I)$
-* Step 3 - Run `prob_collision_static()` and `prob_collision_dynamic()` - calculate $P(C|I)$ for one interaction
-* Step 4 - Run `n_collisions()` - calculate number of collisions a year
+* Step 1 - Run `encounter_rate()` - calculate the uncorrected flights per survey minute.
+* Step 2 - Run `obs_flux()`, `turbine_flux()` and `flux_per_year()` - calculate flux through turbine per year. This can also be done in one step using `turbine_flux_year()`.
+* Step 3 - Run `prob_interaction_flat()` - calculate $P(I)$
+* Step 4 - Run `prob_collision_static()` and `prob_collision_dynamic()` - calculate $P(C|I)$ for one interaction
+* Step 5 - Run `n_collisions()` - calculate number of collisions a year
 
-### Step 1 - Flux through turbine
+### Step 1 - Encounter rate
+
+This is where we determine the average encounter rate per minute of survey. That is the average number of individuals observed in each minute of survey. This is basically just $\frac{total\ individuals\ observed}{total\ survey\ time (min)}$, however the function also allows for weighting surveys if there was uneven survey effort to account for stratification and can apply the Wilson correction (citation TODO) if there were no observations. The Wilson correction is an estimate of the highest possible encounter rate that could result in zero observations.
+
+This function takes as input a `df_obs_summary` data.frame. This object have one row per survey and must contain a column named `survey_duration` and a column named `size` which is the **total** number of individuals observed in each survey.
+
+First let's make that table (using data.table):
+
+```{r}
+df_obs_survey <- df_obs[, .("size" = sum(size)), survey_id][df_survey,
+                                                            on = "survey_id"]
+```
+
+Now we can use this table in `encounter_rate()`:
+
+```{r}
+flights_per_min <- encounter_rate(
+  df_obs_summary = df_obs_survey,
+  survey_units = "min", # survey duration units - defaults to minutes
+  wilson_correction = TRUE # Default
+ )
+```
+
+Any surveys with `NA` observations are assumed to have zero observations. The average number of movements observed per minute of survey is `r flights_per_min` flights per minute.
+
+
+### Step 2 - Flux through turbine
 
 This is where we account for
 
@@ -203,17 +235,17 @@ This is where we account for
 
 We first calculate the flight flux for the turbines. This is in units of `flights per minute` (per turbine). The turbine dimensions are in metres.
 
-This is done in two steps, first (if the observations were from point count surveys) we calculate the observed flight flux through vertical airspace using `flight_flux_point()`. Second we apply this to the "turbine plane" (a rectangular "doorway" defined by the rotor diameter and rotor swept height) using `turbine_flux()` to obtain the flights through the turbine plane per minute.
+This is done in two steps, first (if the observations were from point count surveys) we calculate the observed flight flux through vertical airspace using `obs_flux()`. Second we apply this to the "turbine plane" (a rectangular "doorway" defined by the rotor diameter and maximum rotor swept height) using `turbine_flux()` to obtain the flights through the turbine plane per minute.
 
 ```{r}
 
 # flights / m / min
-obs_flux_min <- flight_flux_point(
-  obs_size = df_obs_survey$n_individuals,
-  survey_duration = df_obs_survey$survey_mins,
+obs_flux_min <- obs_flux(
+  encounter_rate, # numeric per min
   eff_detection_width = 2.0*edr_from_distmodel(ds_model),
-  survey_units = "min",
-  width_units = "m"
+  eff_detection_height = TODO,
+  width_units = "m",
+  height_units = "m"
 )
 
 #flights through turbine / min

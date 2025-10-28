@@ -15,7 +15,7 @@ usethis::use_data(ds_example, overwrite = TRUE)
 
 df_obs <- structure(
   list(
-    distance = c(300L, 2000L, 400L, NA, 100L, 40L, 
+    distance = c(300L, 2000L, 400L, 20L, 100L, 40L, 
     300L, 125L, 800L, 300L, 400L, 1200L, 100L, 700L, 150L, 25L, 680L, 
     400L, 500L, 800L, 850L, 500L, 100L, 653L, 300L, 500L, 400L, 250L, 
     800L, 360L, 800L, 600L, 700L, 500L, 400L, 1000L, 850L, 25L, 300L, 
@@ -28,7 +28,7 @@ df_obs <- structure(
     250L, 1250L, 400L, 600L, 500L, 545L, 475L, 500L, 1500L, 300L, 
     660L, 300L, 300L, 1000L, 40L, 200L, 300L, 150L), 
     size = c(1L, 
-    1L, 1L, 0L, 2L, 1L, 2L, 1L, 1L, 1L, 1L, 2L, 2L, 1L, 3L, 2L, 1L, 
+    1L, 1L, 1L, 2L, 1L, 2L, 1L, 1L, 1L, 1L, 2L, 2L, 1L, 3L, 2L, 1L, 
     1L, 1L, 2L, 1L, 1L, 1L, 2L, 2L, 1L, 1L, 2L, 2L, 2L, 1L, 2L, 2L, 
     1L, 1L, 1L, 1L, 2L, 2L, 1L, 1L, 1L, 1L, 1L, 2L, 1L, 1L, 1L, 1L, 
     1L, 3L, 1L, 2L, 1L, 1L, 1L, 2L, 1L, 1L, 1L, 2L, 1L, 4L, 1L, 1L, 
@@ -37,7 +37,7 @@ df_obs <- structure(
     1L, 1L, 2L, 1L, 2L, 2L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 2L, 1L, 
     1L, 2L, 1L, 1L, 2L, 1L, 1L), 
     type = c("raptor", "raptor", "raptor", 
-    "", "raptor", "raptor", "raptor", "raptor", "raptor", "raptor", 
+    "raptor", "raptor", "raptor", "raptor", "raptor", "raptor", "raptor", 
     "raptor", "raptor", "raptor", "raptor", "raptor", "raptor", "raptor", 
     "raptor", "raptor", "raptor", "raptor", "raptor", "raptor", "raptor", 
     "raptor", "raptor", "raptor", "raptor", "raptor", "raptor", "raptor", 
@@ -74,15 +74,8 @@ df_obs <- structure(
     65L, 66L, 67L, 69L, 70L, 71L, 71L, 72L, 72L, 72L, 74L, 75L, 75L, 
     75L, 78L, 78L, 79L, 80L, 80L, 81L, 81L, 84L, 84L, 86L, 87L, 87L, 
     87L, 88L, 90L, 90L, 90L, 90L, 92L, 93L, 94L, 95L, 96L, 97L, 99L, 
-    99L, 100L),
-    detected = c(1, 1, 1, 0, 1, 1, 
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1), 
-    object = c(1:3, NA, 4:119)), 
+    99L, 100L), 
+    object = c(1:120)), 
   row.names = c(NA, -120L), 
   class = c("data.frame")
 )
@@ -91,15 +84,10 @@ df_obs <- structure(
 
 df_survey <- structure(
   list(
-    survey_id = c(1L, 2L, 3L, 4L, 6L, 7L, 8L, 10L, 17L, 18L, 20L, 21L, 22L, 23L, 
-                  24L, 25L, 28L, 29L, 30L, 31L, 32L, 33L, 34L, 36L, 37L, 38L, 39L, 
-                  40L, 41L, 43L, 45L, 46L, 47L, 48L, 49L, 50L, 51L, 53L, 54L, 55L, 
-                  56L, 57L, 58L, 59L, 60L, 61L, 62L, 63L, 64L, 65L, 66L, 67L, 69L, 
-                  70L, 71L, 72L, 74L, 75L, 78L, 79L, 80L, 81L, 84L, 86L, 87L, 88L, 
-                  90L, 92L, 93L, 94L, 95L, 96L, 97L, 99L, 100L), 
-    survey_duration = rep(45, 75),
-    survey_type = rep("point", 75)), 
-  row.names = c(NA, -75L), 
+    survey_id = 1:100L, 
+    survey_duration = rep(45, 100),
+    survey_type = rep("point", 100)), 
+  row.names = c(NA, -100L), 
   class = c("data.frame")
 )
 
