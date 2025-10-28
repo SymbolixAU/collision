@@ -11,10 +11,10 @@
 #' @param rotor_diameter numeric; rotor diameter (m)
 #' @param hub_height numeric; hub height (m)
 #' @param prop_below_turbine_max numeric; proportion of the flight height
-#'    distribution below max top height. Between 0 and 1.
+#'    distribution below the turbine's maximum tip height. Between 0 and 1.
 #'
 #' @return numeric; number of flights through turbine plane.
-#'    Time interval is the same as refernced by `obs_flux` input
+#'    Time interval is the same as referenced by `obs_flux` input
 #'
 #' @seealso [flight_flux_point()]
 #'

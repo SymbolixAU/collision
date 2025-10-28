@@ -1,6 +1,6 @@
-#' Calculate observed flights / min / metre from point transects
+#' Calculate uncorrected observed flights / minute of survey from point transects
 #' 
-#' This function converts observed flights (movements), survey duration and effective detection radius (see for example \insertCite{Buckland2001;textual}{collision} ) into an estimate of flight flux per minute per square metre of vertical airspace \insertCite{Smales2013}{collision}.
+#' This function converts observed flights (movements), survey duration into the "encounter rate" per minute of survey. This value is uncorrected for the observer's effective detection area \insertCite{Buckland1993}{collision}.
 #' 
 #' @inherit turbine_flux_year details
 #' 
@@ -12,23 +12,16 @@
 #' @references
 #'   \insertAllCited{}
 #'   
-#' @param df_obs data.frame; a data.frame containing at least ....
-#' @param survey_duration numeric; vector holding the duration of each survey.
-#'    NAs ignored.
-#' @param eff_detection_width numeric; Allows you to manually specify the effective detection width, 
-#'    which is usually 2 x effective detection radius
-#' @param survey_units character; units of `survey_duration`. Defaults to "m". 
-#'    Will return a warning if not "m" or "metres"/"meters"
-#' @param width_units character; units of `eff_detection_width`. Defaults to "min". 
-#'    Will return a warning if not "min" or "minutes"
-#' @param survey_weight numeric; optional vector of survey weights if needed
+#' @param df_obs data.frame; a data.frame containing at least columns `size` and 
+#'    `survey_duration`. It can also optionally include a column `survey_weight` if needed
 #'    to account for stratification etc. When NULL (the default) will 
 #'    weight surveys equally.
+#' @param survey_units character; units of `survey_duration`. Defaults to "min". 
+#'    Will return a warning if not "min" or "minutes".
 #' @param wilson_correction boolean;  Apply wilson correction if there are
-#'    no observations. Defaults to TRUE
+#'    no observations. Defaults to TRUE (TODO add citation or explanation of wilson correction).
 #'   
-#' @return numeric; number of flights through vertical plane with width 
-#'   `eff_detection_width` in one minute
+#' @return numeric; number of flights observed in one minute of survey.
 #'  
 #' @example examples/flux_example.R
 #'   
@@ -41,12 +34,11 @@ encounter_rate <- function(
     wilson_correction = TRUE
 ) {
   
-  #PY: I think we actually need it to stop if there are NAs rather than ignoring them 
-  # by introducing survey weights we need these to all align
-  #TBD
   obs_size <- df_obs$size
   survey_duration <- df_obs$survey_duration
   survey_weight <- df_obs$survey_weight
+  
+  # maybe these checks should happen on the data.frame?
   
   stopifnot("NA survey durations detected" = 
               sum(is.na(survey_duration)) == 0)
@@ -61,14 +53,14 @@ encounter_rate <- function(
   
   if(!survey_units %in% c("min", "minutes")){
     warning("survey duration will be converted to mins and 
-            output will be flights / metre / minute") # TODO
+            output will be flights / minute")
   }
   
   if (!is.null(survey_duration)){
     survey_duration <- units::set_units(
       survey_duration, survey_units, mode = "standard"
     )
-  } # TODO: does this check make sense? Surely if survey duration is NULL it should crash?
+  } # TODO: does this check make sense? Surely if survey duration is NULL it just should crash?
   
   stopifnot("obs_size, survey_mins must be equal" = 
               length(obs_size) == length(survey_duration))
@@ -81,7 +73,7 @@ encounter_rate <- function(
     
     if (isTRUE(wilson_correction)) {
       
-      message("zero observations recorded - applying Wilson Correction") # TODO: if we change the eqn below we made need to change this
+      message("zero observations recorded - applying Wilson Correction")
       n_events <- 2
       mean_event_size <- 1
       sd_event_size <- 0
@@ -105,6 +97,9 @@ encounter_rate <- function(
   } # check for zero obs
   
   encounter_rate <- total/effort
+  
+  encounter_rate <- units::set_units(encounter_rate, "1/min")
+  encounter_rate <- units::drop_units(encounter_rate)
   
   return(encounter_rate)
   

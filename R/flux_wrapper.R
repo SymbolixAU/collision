@@ -81,28 +81,26 @@
 #' @export
 turbine_flux_year <- function(
     survey_type = c("point"),
-    encounter_rate,
+    encounter_rate, # per min
     eff_detection_width,
     eff_detection_height,
     rotor_diameter,
+    hub_height,
     prop_below_turbine_max,
     prop_day,
     prop_year,
-    encounter_per_units = "min",
     width_units = "m",
-    height_units = "m",
-    wilson_correction = TRUE
+    height_units = "m"
 ){
   
   if (is.null(survey_type) || is.na(survey_type)) stop("survey_type cannot be NA/NULL")
 
   switch (survey_type,
           "point" = {
-            obs_flux <- flight_flux_point(
+            obs_flux <- obs_flux(
               encounter_rate = encounter_rate,
               eff_detection_width = eff_detection_width,
               eff_detection_height = eff_detection_height,
-              encounter_per_units = encounter_per_units,
               width_units = width_units,
               height_units = height_units
             )
@@ -111,20 +109,14 @@ turbine_flux_year <- function(
          Line transects and digital areal surveys TODO")
   )
   
-  # SA: I think this can be removed now?
-  # obs_flux <- flight_flux_point(
-  #   obs_size = obs_size,
-  #   survey_duration = survey_duration,
-  #   eff_detection_width = eff_detection_width,
-  #   survey_units = survey_units,
-  #   width_units = width_units,
-  #   survey_weight = survey_weight,
-  #   wilson_correction = wilson_correction
-  # )
+  observer_vertical_area <- eff_detection_height*eff_detection_width
+  
+  obs_flux <- encounter_rate/observer_vertical_area # flights/m^2/min
   
   flux_min <- turbine_flux(
     obs_flux = obs_flux,
     rotor_diameter = rotor_diameter,
+    hub_height = hub_height,
     prop_below_turbine_max = prop_below_turbine_max
   )
   
