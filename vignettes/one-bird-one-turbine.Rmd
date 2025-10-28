@@ -31,14 +31,18 @@ library(knitr)
 
 One of the key differences in this package and previous Band-based models is the geometric calculation for the core probability of a collision, given a bird is passing through the turbine zone.
 
-**TODO** smales et all description of the geometry
+The turbine is split into it's static and dynamic components as described in Smales et al., 2013. The static component includes:
 
+- the turbine tower, defined by the hub height (`hh`), and three diameters of the tower: the base diameter (`d_base`), the top diameter (`d_top`) and the diameter at the minimum rotor swept height (`d_rotormin`)
+- the generator nacelle, defined by it's maximum width (`max_width_nacelle`), length (`max_nac_l`) and height (`max_nac_h`)
+- the hemi-spherical hub with the diameter defined by the width of the nacelle (`max_width_nacelle`)
+- the rotor blades, defined by the blade length (`blade_length`), the chord of the blade at the widest point (`max_chord`) and at at its tip (thinnest point; `min_chord`), the thickness of the blade at it's widest and thinnest point (`blade_thickness_wide` and `blade_thickness_narrow`), and the blade tilt (`tilt_deg`)
 
-
+While the dynamic component is "the area swept by the leading edges of rotor blades during the time that a bird would take to pass through the rotor-swept zone" (Smales et al., 2013) which is defined by the turbine hub and rotor parameters as well as the length and speed of the bird (`bird_length` and `bird_speed`).
 
 ## A worked example - deterministic
 
-To calculate the probability of collision (of one bird with one turbine) will consider a bird with no avoidance behaviour, and compare the `collision` approach to the basic Band approach,where flights at rotor swept height are assumed to be uniformly dsitributed. 
+To calculate the probability of collision (of one bird with one turbine) will consider a bird with no avoidance behaviour, and compare the `collision` approach to the basic Band approach, where flights at rotor swept height are assumed to be uniformly distributed. 
 
 We've coded an internal function `collision:::p_collision_band` for testing purposes (note the three colons - this function is just for testing) but for the purposes of this vignette we will also use the `stochLAB::get_avg_prob_collision()` package. 
 
@@ -117,11 +121,11 @@ p_coll_dyn + p_coll_static
 
 ### Hang on - what's that `edr`?
 
-Note we set our effective detection radius (`edr`) to half the rotor diameter. Normally this parameter is calculated via distance sampling (TODO BUCKLAND REF). As the effective detection increases, this probability of collision given interaction also decreases. 
+Note we set our effective detection radius (`edr`) to half the rotor diameter. Normally this parameter is calculated via distance sampling (Buckland et al., 1993). As the effective detection increases, this probability of collision given interaction also decreases. 
 
 But don't stress! 
 
-As the effective detection radius increases, this also influences the flight density calculation. We will come back to this in a different vignette. For now, we want to compare with Band (as far as possible) so let's use a default thats the flux window associated with the turbine itself.
+As the effective detection radius increases, this also influences the flight density calculation. We will come back to this in a different vignette. For now, we want to compare with Band (as far as possible) so let's use a default that's the flux window associated with the turbine itself.
 
 ### Back to Business - whats' Band say?
 
@@ -155,3 +159,9 @@ collision:::p_collision_band(
 )
 
 ```
+
+---
+# References
+
+Buckland, Stephen T, David Raymond Anderson, Kenneth P Burnham, Jeffrey L Laake, et al. (1993). “Distance Sampling: Estimating Abundance of Biological Populations.”
+Smales, I., Muir, S., Meredith, C., & Baird, R. (2013). _A description of the biosis model to assess risk of bird collisions with wind turbines_. Wildlife Society Bulletin, 37(1), 59–65. https://doi.org/10.1002/wsb.257

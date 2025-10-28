@@ -2,12 +2,12 @@
 #'
 #' @description
 #' Stochastic input definitions using the analysts choice of base
-#' R sample distributions. Method to extend the \link{sample_input} function
+#' R sample distributions. Method to extend the [sample_input] function
 #'
-#' @param distr string. The name of the R function to return random deviates (e.g. \code{runif}, \code{rnorm}). See vignettes for examples of fitting to an empirical distribution.
-#' @param ... Additional parameters passed to the function \code{distr}. Do *not* set \code{n} (number of samples) here. This is set in \link{sample_input} to separate the simulation settings and statistical distribution definition.
+#' @param distr string. The name of the R function to return random deviates (e.g. `runif`, `rnorm`). See vignettes for examples of fitting to an empirical distribution.
+#' @param ... Additional parameters passed to the function `distr`. Do *not* set `n` (number of samples) here. This is set in [sample_input] to separate the simulation settings and statistical distribution definition.
 #'
-#' @seealso  \link{sample_input} to sample a value according to the definition.
+#' @seealso  [sample_input] to sample a value according to the definition.
 #'
 #' @examples
 #'
@@ -62,7 +62,7 @@ is.randInput <- function(x) inherits(x, "randInput")
 #'
 #' Returns sampled value for random or fixed inputs
 #'
-#' @param input an object of class \code{randInput} or \code{numeric}. See \link{set_random} for details
+#' @param input an object of class `randInput` or `numeric`. See [set_random] for details
 #' @param ... Additional parameters passed to methods.
 #'
 #' @examples

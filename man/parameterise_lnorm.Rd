@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils_stats.R
 \name{parameterise_lnorm}
 \alias{parameterise_lnorm}
-\title{Given a mean and standard deviation, solves for log normal distribution 
+\title{Given a mean and standard deviation, solves for log normal distribution
 parameters meanlog and sdlog.}
 \usage{
 parameterise_lnorm(mean, sd)
@@ -13,12 +13,12 @@ parameterise_lnorm(mean, sd)
 \item{sd}{the standard deviation}
 }
 \value{
-\code{list} object with the mean and standard deviation of the 
+\code{list} object with the mean and standard deviation of the
 distribution on the log scale. These are the \code{rlnorm} parameters \code{meanlog}
-and \code{sdlog} used in the \code{\link[stats]{rlnorm}} function
+and \code{sdlog} used in the \code{\link[stats:Lognormal]{stats::rlnorm()}} function
 }
 \description{
-Given a mean and standard deviation, solves for log normal distribution 
+Given a mean and standard deviation, solves for log normal distribution
 parameters meanlog and sdlog.
 }
 \examples{
@@ -32,5 +32,5 @@ sample_input(flight_flux_min)
 
 }
 \seealso{
-\code{\link[stats]{rlnorm}}
+\code{\link[stats:Lognormal]{stats::rlnorm()}}
 }

@@ -5,3 +5,6 @@
 ^LICENSE\.md$
 ^README\.Rmd$
 ^data-raw$
+^R\/scratch\.R$
+^doc$
+^Meta$

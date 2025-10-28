@@ -1,7 +1,7 @@
 Package: collision
 Type: Package
 Title: Collision Risk Model for Wind and Wildlife
-Version: 0.3.0
+Version: 0.4.0.9000
 Authors@R: c(
   person("Elizabeth", "Stark", ,"estark@symbolix.com.au", role = c("aut", "cre")),
   person("Muir", "Stuart", role = c("aut")),
@@ -15,18 +15,25 @@ Requires:
   stats
 Imports:
   Distance,
-  methods
+  methods,
+  Rdpack,
+  units
 Suggests: 
   tinytest,
   knitr,
   rmarkdown,
   stochLAB,
-  ggplot2
+  ggplot2,
+  boot,
+  mc2d,
+  parallel
 Encoding: UTF-8
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
+RdMacros: Rdpack
 Depends: 
     R (>= 3.5.0)
 URL: https://github.com/SymbolixAU/collision
 BugReports: https://github.com/SymbolixAU/collision/issues
 LazyData: true
 VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)

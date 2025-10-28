@@ -34,7 +34,7 @@ the bird is active onsite}
 }
 \value{
 list where items define the value or stochastic distribution f
-   or each parameter
+or each parameter
 }
 \description{
 Makes a list of avian biological parameters for the bird(s) being modelled
@@ -42,17 +42,17 @@ as a function directly in R. This function is designed for R-based workflows.
 A function define_bird_csv can be used to bulk upload parameters for
 multiple birds.
 }
-\details{
-# Details
-
+\section{Details}{
 Each input to this function must be either
-
- - an object of the \code{class} \code{randInput}.
-   See \link{set_random} for more information on setting
-   up stochastic inputs.
- - a single number representing the average (preferably median) of the
-   variable
+\itemize{
+\item an object of the \code{class} \code{randInput}.
+See \link{set_random} for more information on setting
+up stochastic inputs.
+\item a single number representing the average (preferably median) of the
+variable
 }
+}
+
 \examples{
 lst_bird <- define_bird(
   species = 'biggus raptorus',

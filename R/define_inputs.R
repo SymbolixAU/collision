@@ -9,8 +9,8 @@
 #'
 #' Each input to this function must be either
 #'
-#'  - an object of the \code{class} \code{randInput}.
-#'    See \link{set_random} for more information on setting
+#'  - an object of the `class` `randInput`.
+#'    See [set_random] for more information on setting
 #'    up stochastic inputs.
 #'  - a single number representing the average (preferably median) of the
 #'    variable
@@ -20,9 +20,9 @@
 #'
 #' @param species char; species identifier
 #' @param bird_length Length of archetype bird (metres), or distribution
-#'    information using \link{set_random}
+#'    information using [set_random]
 #' @param bird_speed numeric; Average flight speed (m/sec), or
-#'                   distribution information using \link{set_random}
+#'                   distribution information using [set_random]
 #' @param prop_day proportion of the day the bird is active onsite
 #' @param prop_year proportion of the year (relative to the time period of the survey)
 #'                  the bird is active onsite
@@ -88,8 +88,8 @@ define_bird <- function(
 #'
 #' Each input to this function must be either
 #'
-#'  - an object of the \code{class} \code{randInput}.
-#' See \link{set_random} for more information on setting
+#'  - an object of the `class` `randInput`.
+#' See [set_random] for more information on setting
 #' up stochastic inputs.
 #'  - a single number representing the average (preferably median) of the
 #' variable
@@ -117,7 +117,7 @@ define_bird <- function(
 #' @param tilt_deg Blade tilt in degrees
 #' @param prop_operational numeric; Proportion of a 24 hour day that turbines
 #' are operational. A single number or distribution information using 
-#' \link{set_random}. Default 1
+#' [set_random]. Default 1
 #'
 #' @examples
 #' 

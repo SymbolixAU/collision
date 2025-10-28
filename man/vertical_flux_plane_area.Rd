@@ -16,7 +16,7 @@ area of plane of flight in m^2
 }
 \description{
 The probability of collision given interaction requires the calculation of a
-vertical flux window through which flights occur.  The width is 2x the 
+vertical flux window through which flights occur.  The width is 2x the
 effective detection radius and the height is the max. height of the turbine
 }
 \examples{

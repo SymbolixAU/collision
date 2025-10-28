@@ -25,7 +25,7 @@ define_turbine(
 )
 }
 \arguments{
-\item{model_id}{character; Label for turbine model - allows the user to 
+\item{model_id}{character; Label for turbine model - allows the user to
 define multiple turbine types on a site}
 
 \item{blade_length}{blade length (m)}
@@ -59,7 +59,7 @@ define multiple turbine types on a site}
 \item{tilt_deg}{Blade tilt in degrees}
 
 \item{prop_operational}{numeric; Proportion of a 24 hour day that turbines
-are operational. A single number or distribution information using 
+are operational. A single number or distribution information using
 \link{set_random}. Default 1}
 }
 \value{
@@ -71,17 +71,18 @@ make a list of turbine parameters for input into the default CRM
 }
 \details{
 Makes a list of parameters for the a given turbine
-
-# Details
-
+}
+\section{Details}{
 Each input to this function must be either
-
- - an object of the \code{class} \code{randInput}.
+\itemize{
+\item an object of the \code{class} \code{randInput}.
 See \link{set_random} for more information on setting
 up stochastic inputs.
- - a single number representing the average (preferably median) of the
+\item a single number representing the average (preferably median) of the
 variable
 }
+}
+
 \examples{
 
 lst_turbine <- define_turbine(

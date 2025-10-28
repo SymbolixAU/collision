@@ -43,7 +43,7 @@ prob_collision_dynamic(
 }
 \value{
 numeric; probability of collision with leading edge of blade.
-        Range from 0 to 1
+Range from 0 to 1
 }
 \description{
 Probability of collision with leading edge of blade
