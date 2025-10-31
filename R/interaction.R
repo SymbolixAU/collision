@@ -6,6 +6,9 @@
 #' turbines (See Smales et al 2013). It follows that the probability of 
 #' interation with a given turbine location is 1 / sqrt(number of turbines).
 #' 
+#' If calculating the flights per turbine (rather than at the farm level) the 
+#' probability of interacting is actually contained within the [obs_flux()] and [turbine_flights()] calculations.
+#' 
 #' @param num_turbines the total number of turbines on the site (or sub site) 
 #'                     you are modelling
 #' 
