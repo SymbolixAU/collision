@@ -26,9 +26,6 @@ Will return a warning if not "m" or "metres/meters"}
 
 \item{height_units}{character; units of \code{eff_detection_height}. Defaults to "m".
 Will return a warning if not "m" or "metres/meters"}
-
-\item{wilson_correction}{boolean; Apply wilson correction if there are
-no observations. Defaults to TRUE}
 }
 \value{
 numeric; number of flights through vertical plane with width

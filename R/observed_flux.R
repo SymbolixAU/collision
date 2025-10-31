@@ -21,8 +21,6 @@
 #'    Will return a warning if not "m" or "metres/meters"
 #' @param height_units character; units of `eff_detection_height`. Defaults to "m". 
 #'    Will return a warning if not "m" or "metres/meters"
-#' @param wilson_correction boolean; Apply wilson correction if there are
-#'    no observations. Defaults to TRUE
 #'   
 #' @return numeric; number of flights through vertical plane with width 
 #'   `eff_detection_width` and height `eff_detection_height` in one minute.
@@ -40,42 +38,20 @@ obs_flux <- function(
     width_units = "m",
     height_units = "m"
 ) {
-  # TODO: fix all the checks
-  # Leaving the old checks here in case there's useful code but feel free to delete
-  # if(!survey_units %in% c("min", "minutes")){
-  #   warning("survey duration will be converted to mins and 
-  #           output will be flights / metre / minute")
-  # }
-  # 
-  # 
-  # if (!is.null(survey_duration)){
-  #   survey_duration <- units::set_units(
-  #     survey_duration, survey_units, mode = "standard"
-  #   )
-  # }
-  # 
-  # 
-  # if (!is.null(eff_detection_width)) {
-  #   if (!is.numeric(eff_detection_width)) stop(
-  #     "effective detection width must be numeric")
-  #   if (length(eff_detection_width) != 1) stop("effective detection width must be length 1")
-  # }
-  # 
-  # 
-  # if (sum(is.na(obs_size)) > 0) {
-  #   warning("NA observations detected - NA observations will be ignored")
-  # }
-  # 
-  # if (sum(is.na(survey_duration)) > 0) {
-  #   warning("NA survey durations detected - NA surveys will be ignored")
-  # }
-  # 
-  # stopifnot("obs_size, survey_mins must be equal" = 
-  #             length(obs_size) == length(survey_duration))
-  # stopifnot("survey_weight must be NULL or same length as survey_mins" = 
-  #             is.null(survey_weight) | length(survey_weight) == length(survey_duration))
-  # 
-  # if(is.null(survey_weight)){survey_weight <- rep(1, length(survey_duration))}
+  
+  # Check parameter values
+  check_num_bounds(encounter_rate, min = 0, max = Inf)
+  check_num_bounds(eff_detection_width, min = 0, max = Inf)
+  check_num_bounds(eff_detection_height, min = 0, max = Inf)
+  
+  # Check if vector
+  if (is.vector(encounter_rate))
+  
+  if (is.null(width_units) || is.na(width_units)){
+    warning("width_units is assumed to be meters")
+    width_units <- "m"
+  }
+
   if(!width_units %in% c("m", "meters", "metres")){
     warning("width_units will be converted to metres and
             output will be flights / metre^2 / minute")
@@ -84,6 +60,11 @@ obs_flux <- function(
   eff_detection_width <- units::set_units(
     eff_detection_width, width_units, mode = "standard"
   )
+  
+  if (is.null(height_units) || is.na(height_units)){
+    warning("height_units is assumed to be meters")
+    height_units <- "m"
+  }
   
   if(!height_units %in% c("m", "meters", "metres")){
     warning("height_units will be converted to metres and

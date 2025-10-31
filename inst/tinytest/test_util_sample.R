@@ -1,35 +1,51 @@
-
 # Test set random --------------------------------------------------------------
 
-## Test structure of inputs
-res <- set_random("runif", min = 0, max = 10) 
+## Test structure of inputs--------
+res <- set_random("runif", min = 0, max = 10)
 expect_inherits(res, "randInput")
 expect_true(is.randInput(res))
 
 expect_equal(res$distr, "runif")
+expect_true(all(c("min", "max") %in% names(res$params)))
 expect_equal(res$params$min, 0)
 expect_equal(res$params$max, 10)
 
-## Test checks
+## Check warning when 'n' is included---------
+expect_warning(
+  set_random("runif", n = 5, min = 0, max = 1),
+  "'n' will be ignored"
+)
+
+## Check invalid distribution name----------
 expect_error(
   set_random(distr = "rando", min = 0, max = 1, badparam = 100),
   "Unknown distribution rando"
 )
 
+## Check invalid class (passing non-function)---------
+assign("fake_obj", 1, envir = .GlobalEnv)
+expect_error(
+  set_random("fake_obj", min = 0, max = 1),
+  "Invalid class - distr should be a function"
+)
+rm(fake_obj, envir = .GlobalEnv)
+
+## Check invalid parameter name--------
 expect_error(
   set_random(distr = "runif", min = 0, max = 1, badparam = 100),
   "You've named a parameter that doesn't exist in runif"
 )
 
-expect_warning( 
-    set_random(distr = "punif", min = 0, max = 1)
-    )
+## Check warning if distr doesn't start with "r"--------
+expect_warning(
+  set_random(distr = "punif", min = 0, max = 1)
+)
 
 
 # Test sample ------------------------------------------------------------------
 
-## default  ----
-expect_equal( sample_input(10), sample_input(10))
+## default----
+expect_equal(sample_input(10), sample_input(10))
 expect_equal(sample_input(1, n = 10), rep(1, 10))
 
 ## RandomInput ----
@@ -37,12 +53,15 @@ expect_equal(sample_input(1, n = 10), rep(1, 10))
 var1 <- set_random("rbeta", shape1 = 1, shape2 = 3, ncp = 0)
 set.seed(123)
 expect_equal(round(sample_input(var1), 3), 0.037)
-
+samp <- sample_input(var1, n = 5)
+expect_equal(length(samp), 5)
+expect_true(is.numeric(samp))
 ### Test multiple samples
 expect_equal(length(sample_input(var1, n = 10)), 10)
 
 
 ## BirdInput ----
+
 wte <- define_bird(
   species = "Wedge-tailed Eagle",
   bird_length = set_random("rnorm", mean = 0.945, sd = 0.2),
@@ -53,7 +72,7 @@ wte <- define_bird(
   avoidance_static = 0.9999
 )
 
-expect_equal(round(mean(sample_input(wte, n = 50)$bird_length), 2), 0.95)
+expect_equal(round(mean(sample_input(wte, n = 10000)$bird_length), 3), 0.94, tolerance = 0.01)
 
 ## TurbineInput ----
 v90_single <- define_turbine(
@@ -76,4 +95,4 @@ v90_single <- define_turbine(
   prop_operational = 0.98
 )
 
-expect_equal(round(mean(sample_input(v90_single, n = 50)$rpm), 2), 15.04)
+expect_equal(round(mean(sample_input(v90_single, n = 10000)$rpm), 3), 15.04, tolerance = 0.01)

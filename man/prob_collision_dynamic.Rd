@@ -59,7 +59,7 @@ prob_collision_dynamic(
  blade_thickness_narrow = 0.1,
  hh = 10,
  bird_length = 0.9,
- bird_speed = 12, 
+ bird_speed = 12,
  prop_at_height = 0.5,
  prop_below_height = 0.2
 )
