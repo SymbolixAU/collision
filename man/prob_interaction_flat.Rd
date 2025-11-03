@@ -20,6 +20,10 @@ encountered by any flight is the square root of the total number of
 turbines (See Smales et al 2013). It follows that the probability of
 interation with a given turbine location is 1 / sqrt(number of turbines).
 }
+\details{
+If calculating the flights per turbine (rather than at the farm level) the
+probability of interacting is actually contained within the \code{\link[=obs_flux]{obs_flux()}} and \code{\link[=turbine_flights]{turbine_flights()}} calculations.
+}
 \examples{
 
 prob_interaction_flat(num_turbines = 100)

@@ -7,8 +7,7 @@
 n_collision(
   avoidance_rate_static,
   avoidance_rate_dynamic,
-  flux_yr,
-  p_interaction,
+  flights_yr,
   p_coll_static,
   p_coll_dynamic
 )
@@ -20,11 +19,8 @@ avoidance rate of static components (tower + static presented area)}
 \item{avoidance_rate_dynamic}{numeric; Number between 0 and 1 representing the
 avoidance rate of dynamic components (moving blade edge)}
 
-\item{flux_yr}{numeric; Flux though the turbine  per year. Calculated from
-\code{\link[=flux_per_year]{flux_per_year()}}}
-
-\item{p_interaction}{numeric; Probability of interaction. Calculated from
-\code{\link[=prob_interaction_flat]{prob_interaction_flat()}}}
+\item{flights_yr}{numeric; Flights though the turbine per year. Calculated from
+\code{\link[=turbine_flights_year]{turbine_flights_year()}} or similar.}
 
 \item{p_coll_static}{numeric; the probability of collision with static
 turbine components if an interaction occurs and
@@ -47,7 +43,6 @@ n_collision(
   avoidance_rate_static = 0.99,
   avoidance_rate_dynamic = c(0.90, 0.95),
   flux_yr = 100,
-  p_interaction = 0.1,
   p_coll_static = 0.05,
   p_coll_dynamic = 0.03
 )

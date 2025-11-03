@@ -104,7 +104,7 @@ prob_collision_static <- function(
 ){
   
   
-  flux_plane_area <- vertical_flux_plane_area(hh = hh,
+  turbine_plane_area <- vertical_flux_plane_area(hh = hh,
                                               rotor_diam = rotor_diam)
   
   presented_area <- prop_at_height*(
@@ -121,7 +121,7 @@ prob_collision_static <- function(
   
   presented_area <- presented_area/(prop_at_height+prop_below_height)
   
-  return(presented_area/flux_plane_area)
+  return(presented_area/turbine_plane_area)
 }
 
 
@@ -177,7 +177,7 @@ prob_collision_dynamic <- function(
 ){
   
   
-  flux_plane_area <- vertical_flux_plane_area(hh = hh,
+  turbine_plane_area <- vertical_flux_plane_area(hh = hh,
                                               rotor_diam = rotor_diam)
   
   presented_area <- pa_dynamic(
@@ -194,7 +194,7 @@ prob_collision_dynamic <- function(
   presented_area <- presented_area * prop_at_height /
     (prop_at_height+prop_below_height)
   
-  return(presented_area/flux_plane_area)
+  return(presented_area/turbine_plane_area)
 }
 
 

@@ -2,65 +2,53 @@
 % Please edit documentation in R/observed_flux.R
 \name{obs_flux}
 \alias{obs_flux}
-\title{Calculate observed flights / min / square metre from point transects}
+\title{Calculate observed flights / time / area from point transects}
 \usage{
-obs_flux(
-  encounter_rate,
-  eff_detection_width,
-  eff_detection_height,
-  width_units = "m",
-  height_units = "m"
-)
+obs_flux(encounter_rate, eff_detection_width, mean_flight_height)
 }
 \arguments{
-\item{encounter_rate}{numeric; number of flights observed in a minute of survey
-as output by \code{\link[=encounter_rate]{encounter_rate()}} or similar. Must be in units of flights / minute.}
+\item{encounter_rate}{numeric; number of flights observed per unit time of survey
+as output by \code{\link[=encounter_rate]{encounter_rate()}} or similar.}
 
 \item{eff_detection_width}{numeric; Allows you to manually specify the effective detection width,
-which is usually 2 x effective detection radius}
+which is usually 2 x effective detection radius. Must be in the same units as \code{mean_flight_height}.}
 
-\item{eff_detection_height}{numeric; Allows you to manually specify the effective detection height of the observer}
-
-\item{width_units}{character; units of \code{eff_detection_width}. Defaults to "m".
-Will return a warning if not "m" or "metres/meters"}
-
-\item{height_units}{character; units of \code{eff_detection_height}. Defaults to "m".
-Will return a warning if not "m" or "metres/meters"}
+\item{mean_flight_height}{numeric; The mean of the distribution of the flight heights.
+Must be in the same units as \code{eff_detection_width}.}
 
 \item{wilson_correction}{boolean; Apply wilson correction if there are
 no observations. Defaults to TRUE}
 }
 \value{
-numeric; number of flights through vertical plane with width
-\code{eff_detection_width} and height \code{eff_detection_height} in one minute.
+numeric; number of flights through a vertical plane of unit area per unit time.
+Area units are defined by the units of the width and height, and time interval
+is the same as referenced by \code{encounter_rate} input.
 }
 \description{
-This function converts the uncorrected encounter rate, the effective detection radius (see for example \insertCite{Buckland2001;textual}{collision} ) and the effective detection height into an estimate of flight flux per minute per square metre of vertical airspace \insertCite{Smales2013}{collision}.
+This function converts the uncorrected encounter rate, the effective detection radius
+(see for example \insertCite{Buckland2001;textual}{collision}) and the mean flight height into an estimate of flight flux
+per unit time per unit area of vertical airspace \insertCite{Smales2013}{collision}.
 }
 \details{
 The steps to calculate the number of flights through a turbine
-plan includes three steps
+plane includes three steps
 \itemize{
-\item Calculate the observed flights in a vertical square-metre area from the
+\item Calculate the observed flights in a vertical area from the
 count of observed flights and details of the surveys. See for example
 \code{\link[=obs_flux]{obs_flux()}}
 \item Scale the observed flight flux to an area equivalent to the
-rotor diameter by the maximum height of the turbine, e.g. \code{\link[=turbine_flux]{turbine_flux()}}
-\item Scale the observed flight flux to the time period under study. There's a
-helper function to scale to one year e.g \code{\link[=flux_per_year]{flux_per_year()}}
+rotor diameter by the maximum height of the turbine, e.g. \code{\link[=turbine_flights]{turbine_flights()}}
+\item Scale the flights to the time period under study. There's a
+helper function to scale to one year from minutes e.g \code{\link[=flights_per_year]{flights_per_year()}}
 }
 \subsection{Observed flux from point counts}{
 
-Given a set of observations, survey durations and a related distance model
-(fit using the \code{Distance} package \insertCite{Miller019a}{collision}) we
-calculate the flight flux through
-a rectangle of width of 2*(effective detection radius) and height of the
-observer's effective detection height (see TODO for more info about effective
-detection height) in one minute of observation time.
-
-The optional Wilson Correction can be used to
-generate an flux in the case when no observations are made of the
-species during the survey run.
+Given a set of observations, survey durations, a distribution of flight heights
+and a related distance model (fit using the \code{Distance} package \insertCite{Miller019a}{collision})
+we calculate the flight flux through a rectangle of width of 2*(effective detection radius)
+and mean (expected value) of the height distribution (because \eqn{E[X] = \int_{-\infty}^{\infty}xf(x)dx}
+approximates the area in which we expect one flight if we make a simplifying assumption
+of uniform vertical density) in one unit of observation time.
 
 Note the function accepts only single valued inputs, so stochastic inputs must
 be sampled from prior to calling this function. See vignettes for more details
@@ -68,9 +56,9 @@ be sampled from prior to calling this function. See vignettes for more details
 
 \subsection{Scale to turbine}{
 
-\code{\link[=turbine_flux]{turbine_flux()}} converts the flight flux through one metre of vertical space
+\code{\link[=turbine_flights]{turbine_flights()}} converts the flight flux through one unit area of vertical space
 into the number of flights through an arbitrary vertical plane of width equal
-to rotor diameter and height equal to the tip height of the turbine
+to rotor diameter and height equal to the tip height of the turbine.
 
 The time interval is not adjusted (i.e. if you input flights / min, it will
 output flights / min).
@@ -82,7 +70,7 @@ After obtaining the observed flux through a vertical area in a minute,
 we need to scale up to the relevant risk timeframe, often a year.
 
 This can be done manually by the analyst for any time period, but we have
-included a helper function for the case of scaling to one year (\code{\link[=flux_per_year]{flux_per_year()}}).
+included a helper function for the case of scaling to one year (\code{\link[=flights_per_year]{flights_per_year()}}).
 Note this function assumes the flux is the
 average flight flux when active onsite.  If surveys are conducted year round
 and the flux represents the annual average then \code{prop_year} should be 1. If
@@ -175,6 +163,8 @@ flights_turbine_year2
 \insertAllCited{}
 }
 \seealso{
-\code{\link[=turbine_flux]{turbine_flux()}} and \code{\link[=flux_per_year]{flux_per_year()}} for methods to expand the
-observer flux into the flux through the turbine plane
+\code{\link[=encounter_rate]{encounter_rate()}}
+
+\code{\link[=turbine_flights]{turbine_flights()}} and \code{\link[=flights_per_year]{flights_per_year()}} for methods to expand the
+observer flux into the flights through the turbine plane
 }
