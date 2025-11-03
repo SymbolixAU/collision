@@ -1,13 +1,13 @@
 #' Calculate uncorrected observed flights / minute of survey from point transects
 #' 
-#' This function converts observed flights (movements), survey duration into the "encounter rate" per minute of survey. This value is uncorrected for the observer's effective detection area \insertCite{Buckland1993}{collision}.
+#' This function converts observed flights (movements) and survey duration into the "encounter rate" per minute of survey. This value is uncorrected for the observer's effective detection radius.
 #' 
-#' @inherit turbine_flux_year details
+#' @inherit turbine_flights_year details
 #' 
-#' @inherit turbine_flux_year references
+#' @inherit turbine_flights_year references
 #' 
-#' @seealso [turbine_flux()] and [flux_per_year()] for methods to expand the 
-#' observer flux into the flux through the turbine plane
+#' @seealso [turbine_flights()] and [flights_per_year()] for methods to expand the 
+#' observer flux into flights through the turbine plane
 #' 
 #' @references
 #'   \insertAllCited{}
@@ -16,12 +16,10 @@
 #'    `survey_duration`. It can also optionally include a column `survey_weight` if needed
 #'    to account for stratification etc. When NULL (the default) will 
 #'    weight surveys equally.
-#' @param survey_units character; units of `survey_duration`. Defaults to "min". 
-#'    Will return a warning if not "min" or "minutes".
 #' @param wilson_correction boolean;  Apply wilson correction if there are
 #'    no observations. Defaults to TRUE (TODO add citation or explanation of wilson correction).
 #'   
-#' @return numeric; number of flights observed in one minute of survey.
+#' @return numeric; number of flights observed in one unit time of survey.
 #'  
 #' @example examples/flux_example.R
 #'   
@@ -30,7 +28,7 @@
 #' 
 encounter_rate <- function(
     df_obs_summary,
-    survey_units = "min",
+    #survey_units = "min",
     wilson_correction = TRUE
 ) {
   
@@ -51,16 +49,16 @@ encounter_rate <- function(
     obs_size[is.na(obs_size)] <- 0
     }
   
-  if(!survey_units %in% c("min", "minutes")){
-    warning("survey duration will be converted to mins and 
-            output will be flights / minute")
-  }
-  
-  if (!is.null(survey_duration)){
-    survey_duration <- units::set_units(
-      survey_duration, survey_units, mode = "standard"
-    )
-  } # TODO: does this check make sense? Surely if survey duration is NULL it just should crash?
+  # if(!survey_units %in% c("min", "minutes")){
+  #   warning("survey duration will be converted to mins and 
+  #           output will be flights / minute")
+  # }
+  # 
+  # if (!is.null(survey_duration)){
+  #   survey_duration <- units::set_units(
+  #     survey_duration, survey_units, mode = "standard"
+  #   )
+  # } # TODO: does this check make sense? Surely if survey duration is NULL it just should crash?
   
   stopifnot("obs_size, survey_mins must be equal" = 
               length(obs_size) == length(survey_duration))
@@ -98,8 +96,8 @@ encounter_rate <- function(
   
   encounter_rate <- total/effort
   
-  encounter_rate <- units::set_units(encounter_rate, "1/min")
-  encounter_rate <- units::drop_units(encounter_rate)
+  # encounter_rate <- units::set_units(encounter_rate, "1/min")
+  # encounter_rate <- units::drop_units(encounter_rate)
   
   return(encounter_rate)
   

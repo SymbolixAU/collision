@@ -108,28 +108,27 @@ prob_collision_static <- function(
     ) &&
       is.numeric(prop_below_height)
   )
-  
+
   check_num_bounds(x = prop_at_height + prop_below_height, min = 0, max = 1)
+  turbine_plane_area <- vertical_flux_plane_area(hh = hh,
+                                              rotor_diam = rotor_diam)
+  
+  presented_area <- prop_at_height*(
+    
+    pa_towerabove(d_top, d_rotormin, blade_length) +
+      pa_nacelle(max_nac_h, max_nac_l,max_width_nacelle) +
+      pa_rotor(tilt_deg, max_chord, min_chord,
+               blade_thickness_wide, blade_thickness_narrow,
+               blade_length)
+  ) +
+    prop_below_height * (
+      pa_below( d_base, d_rotormin, hh-0.5*max_nac_h, blade_length)
+    )
+  
+  presented_area <- presented_area/(prop_at_height+prop_below_height)
+  
+  return(presented_area/turbine_plane_area)
 
-  flux_plane_area <- vertical_flux_plane_area(hh = hh, rotor_diam = rotor_diam)
-
-  presented_area <- prop_at_height *
-    (pa_towerabove(d_top, d_rotormin, blade_length) +
-      pa_nacelle(max_nac_h, max_nac_l, max_width_nacelle) +
-      pa_rotor(
-        tilt_deg,
-        max_chord,
-        min_chord,
-        blade_thickness_wide,
-        blade_thickness_narrow,
-        blade_length
-      )) +
-    prop_below_height *
-      (pa_below(d_base, d_rotormin, hh - 0.5 * max_nac_h, blade_length))
-
-  presented_area <- presented_area / (prop_at_height + prop_below_height)
-
-  return(presented_area / flux_plane_area)
 }
 
 
@@ -189,9 +188,11 @@ prob_collision_dynamic <- function(
       is.numeric(prop_below_height)
   )
   
+
   check_num_bounds(x = prop_at_height + prop_below_height, min = 0, max = 1)
-  
-  flux_plane_area <- vertical_flux_plane_area(hh = hh, rotor_diam = rotor_diam)
+
+  turbine_plane_area <- vertical_flux_plane_area(hh = hh,
+                                              rotor_diam = rotor_diam)
 
   presented_area <- pa_dynamic(
     s_rot = rpm_to_radpersec(rpm),
@@ -203,10 +204,9 @@ prob_collision_dynamic <- function(
     bird_length = bird_length,
     bird_speed = bird_speed
   )
-
-  presented_area <- presented_area *
-    prop_at_height /
-    (prop_at_height + prop_below_height)
-
-  return(presented_area / flux_plane_area)
+  
+  presented_area <- presented_area * prop_at_height /
+    (prop_at_height+prop_below_height)
+  
+  return(presented_area/turbine_plane_area)
 }
