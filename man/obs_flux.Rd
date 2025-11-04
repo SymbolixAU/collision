@@ -15,9 +15,6 @@ which is usually 2 x effective detection radius. Must be in the same units as \c
 
 \item{mean_flight_height}{numeric; The mean of the distribution of the flight heights.
 Must be in the same units as \code{eff_detection_width}.}
-
-\item{wilson_correction}{boolean; Apply wilson correction if there are
-no observations. Defaults to TRUE}
 }
 \value{
 numeric; number of flights through a vertical plane of unit area per unit time.
@@ -30,7 +27,7 @@ This function converts the uncorrected encounter rate, the effective detection r
 per unit time per unit area of vertical airspace \insertCite{Smales2013}{collision}.
 }
 \details{
-The steps to calculate the number of flights through a turbine
+Calculating the number of flights through a turbine
 plane includes three steps
 \itemize{
 \item Calculate the observed flights in a vertical area from the
@@ -45,8 +42,8 @@ helper function to scale to one year from minutes e.g \code{\link[=flights_per_y
 
 Given a set of observations, survey durations, a distribution of flight heights
 and a related distance model (fit using the \code{Distance} package \insertCite{Miller019a}{collision})
-we calculate the flight flux through a rectangle of width of 2*(effective detection radius)
-and mean (expected value) of the height distribution (because \eqn{E[X] = \int_{-\infty}^{\infty}xf(x)dx}
+we calculate the flight flux through a rectangle with a width of 2*(effective detection radius)
+and a height of the mean (expected value) of the height distribution (because \eqn{E[X] = \int_{-\infty}^{\infty}xf(x)dx}
 approximates the area in which we expect one flight if we make a simplifying assumption
 of uniform vertical density) in one unit of observation time.
 
@@ -97,43 +94,39 @@ surveys during the activity period.
 ## 
 
 df_obs <- data.frame(size = c(0, 2 , 3, 0), # four surveys
-                     survey_duration = c(20, 20, 18, 20),
+                     survey_duration = c(20, 20, 18, 20), # minutes
                      # Optional survey weights to deal with stratification etc
                      survey_weight = c(1,1,1,1))
 
-prop_below_turbine_max <- 1
 rotor_diameter <- 300
 hub_height <- 200
-edr <- 800
-edh <- hub_height+0.5*rotor_diameter # can set to turbine height since all flights below turbine max
+edr <- 800 # derive from distance model
+mean_h <- 60 # derive from height distribution
 
 # flights observed per minute of survey
 flights_per_min <- encounter_rate(
   df_obs_summary = df_obs,
-  survey_units = "min", # Default
   wilson_correction = TRUE # Default
 )
 
-# flights through vertical plane of one metre squared in one minute
+# observed flights through vertical plane of one metre squared in one minute
 flights_per_m2_per_min <- obs_flux(
   encounter_rate = flights_per_min,
-  eff_detection_width = edr,
-  eff_detection_height = edh,
-  width_units = "m", # Default
-  height_units = "m" # Default
+  eff_detection_width = 2*edr,
+  mean_flight_height = mean_h
 )
 
 # scale to turbine width and height
-flights_turbine_min <- turbine_flux(
+flights_turbine_min <- turbine_flights(
   obs_flux = flights_per_m2_per_min,
   rotor_diameter = rotor_diameter,
-  hub_height = hub_height,
-  prop_below_turbine_max = prop_below_turbine_max
+  hub_height = hub_height
 )
 
 # scale to annual flights through area of rotor_diameter x turbine height 
-flights_turbine_year <- flux_per_year(
-  flux_per_min = flights_turbine_min,
+flights_turbine_year <- flights_per_year(
+  flights_per_time = flights_turbine_min,
+  time_units = "min", # Default
   prop_day = 0.5,  #diurnal species
   prop_year = 1    # present all year
 )
@@ -141,18 +134,16 @@ flights_turbine_year <- flux_per_year(
 ## Alternate calc using a wrapper function
 ## to go from observations to turbine flights per year
 ## 
-flights_turbine_year2 <- turbine_flux_year(
+flights_turbine_year2 <- turbine_flights_year(
   survey_type = "point", # only supported option currently
   encounter_rate = flights_per_min,
-  eff_detection_width = edr,
-  eff_detection_height = edh,
+  time_units = "min",
+  eff_detection_width = 2*edr,
+  mean_flight_height = mean_h,
   rotor_diameter = rotor_diameter,
   hub_height = hub_height,
-  prop_below_turbine_max = prop_below_turbine_max,
   prop_day = 0.5,  #diurnal species
-  prop_year = 1,   # present all year
-  width_units = "m", # Default
-  height_units = "m" # Default
+  prop_year = 1   # present all year
 )
 
 #They are the same

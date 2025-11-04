@@ -108,17 +108,15 @@ The package observations dataset:
 
 ```{r}
 summary(df_obs)
-setDT(df_obs)
 ```
 
-is a dataset of `r nrow(df_obs)` observations from 100 point count surveys, including the count (`size`) of raptors (and associated distance at first observation (`distance`)).
+is a dataset of `r nrow(df_obs)` observations from `r nrow(df_survey)` point count surveys, including the count (`size`) of raptors (and associated distance at first observation (`distance`)).
 
 
 And the package survey dataset:
 
 ```{r}
 summary(df_survey)
-setDT(df_survey)
 ```
 
 is a dataset of the metadata for the `r nrow(df_survey)` point count surveys, including the duration of each survey.
@@ -165,7 +163,7 @@ min_rsh <- v90_single$hh - v90_single$rotor_diam * 0.5
 max_rsh <- v90_single$hh + v90_single$rotor_diam * 0.5
 
 ## Review the heights
-ggplot(data = as.data.frame(df_obs_survey),
+ggplot(data = as.data.frame(df_obs),
        aes(x = height, y = after_stat(density))) +
   geom_histogram() +
   geom_vline(xintercept = min_rsh, colour = "red") +
@@ -175,7 +173,7 @@ ggplot(data = as.data.frame(df_obs_survey),
 # calculate ecdf (empirical cumulative distribution function)
 # Note - this is a simple example; it's up to the analyst how best to 
 ## fit the height distribution
-cdf_height <- ecdf(df_obs_survey$height)
+cdf_height <- ecdf(df_obs$height)
 
 prop_at_height <- cdf_height(round(max_rsh)) - cdf_height(round(min_rsh))
 prop_below_height <- cdf_height(round(min_rsh))
@@ -200,15 +198,19 @@ For a deterministic model, we need the following 4 steps:
 
 ### Step 1 - Encounter rate
 
-This is where we determine the average encounter rate per minute of survey. That is the average number of individuals observed in each minute of survey. This is basically just $\frac{total\ individuals\ observed}{total\ survey\ time (min)}$, however the function also allows for weighting surveys if there was uneven survey effort to account for stratification and can apply the Wilson correction (citation TODO) if there were no observations. The Wilson correction is an estimate of the highest possible encounter rate that could result in zero observations.
+This is where we determine the average encounter rate per unit time of survey. That is the average number of individuals observed in each minute of survey (or whatever unit of time you wish to use). This is basically just $\frac{total\ individuals\ observed}{total\ survey\ time}$, however the function also allows for weighting surveys to account for stratification and can apply the Wilson correction (citation TODO) if there were no observations. The Wilson correction is an estimate of the highest possible encounter rate that could result in zero observations.
 
-This function takes as input a `df_obs_summary` data.frame. This object have one row per survey and must contain a column named `survey_duration` and a column named `size` which is the **total** number of individuals observed in each survey.
+This function takes as input a `df_obs_summary` data.frame. This object has one row per survey and must contain a column named `survey_duration` and a column named `size` which is the **total** number of individuals observed in each **survey** (not observation). Optionally, it can contain a column named `survey_weight` which has the associated relative weights of each survey (to avoid artificially inflating or deflating the encounter rate `sum(survey_weight)` must equal the number of surveys).
 
-First let's make that table (using data.table):
+First let's make that table (using `data.table`):
 
 ```{r}
+setDT(df_obs)
+setDT(df_survey)
+
 df_obs_survey <- df_obs[, .("size" = sum(size)), survey_id][df_survey,
                                                             on = "survey_id"]
+# need sum(size) because we want one row per survey (not observation)
 ```
 
 Now we can use this table in `encounter_rate()`:
@@ -216,70 +218,87 @@ Now we can use this table in `encounter_rate()`:
 ```{r}
 flights_per_min <- encounter_rate(
   df_obs_summary = df_obs_survey,
-  survey_units = "min", # survey duration units - defaults to minutes
   wilson_correction = TRUE # Default
  )
 ```
 
-Any surveys with `NA` observations are assumed to have zero observations. The average number of movements observed per minute of survey is `r flights_per_min` flights per minute.
+Any surveys with `NA` observations are assumed to have zero observations, which, if you left join to the survey table by `survey_id`, should be correct. The average number of movements observed per minute of survey is `r flights_per_min` flights per minute.
+
+
+#### TEMP
+
+I'm going to manually do the flight heights thing a see what happens. I'm going to make 1m bins in height, calculate the flux through that strip of 2*EDR wide, 1m high airspace and then average them at the end.
+
+```{r}
+
+sum(unlist(lapply(1:max(df_obs$height), FUN = function(h){
+  df_obs_h <- df_obs[height <= h & height > h-1]
+  er_h <- sum(df_obs_h$size)/sum(df_survey$survey_duration)
+  area <- 2.0*edr_from_distmodel(ds_model)*1
+  er_h/area
+})))
+
+```
+
+```{r}
+dt_plot <- data.table(x = seq(1, max(df_obs$distance), 1))
+
+dt_plot[, y := blacrm::d_hazardRate(r = x,
+                            sigma = exp((ds_model$ddf$ds$par))[2],
+                            b = exp((ds_model$ddf$ds$par))[1],
+                            nu = blacrm::eda_from_distmodel(ds_model))]
+```
 
 
 ### Step 2 - Flux through turbine
 
 This is where we account for
 
+* The flight heights (`mean_flight_height`)
+* The observer's detection model (`eff_detection_width` obtained using `edr_dist_model()`)
 * The size of the turbine (contained in the object made using `define_turbine()`)
-* The proportion of the day active (moderated for the `obs_scale_factor` - see the function help page for more information) (contained in the object made using `define_bird()`)
+* The proportion of the day active (contained in the object made using `define_bird()`)
 * The proportion of the year active (contained in the object made using `define_bird()`)
-* The proportion of flights at RSH (`prop_at_height`)
 
-We first calculate the flight flux for the turbines. This is in units of `flights per minute` (per turbine). The turbine dimensions are in metres.
+We first calculate the observed flux through a vertical airspace. This is in flights per unit time per unit area, in this example the units are minutes and metres squared, respectively.
 
-This is done in two steps, first (if the observations were from point count surveys) we calculate the observed flight flux through vertical airspace using `obs_flux()`. Second we apply this to the "turbine plane" (a rectangular "doorway" defined by the rotor diameter and maximum rotor swept height) using `turbine_flux()` to obtain the flights through the turbine plane per minute.
+Second we apply this to the "turbine plane" (a rectangular "doorway" defined by the rotor diameter and maximum rotor swept height) using `turbine_flights()` to obtain the flights through the turbine plane per minute.
 
 ```{r}
 
 # flights / m / min
 obs_flux_min <- obs_flux(
-  encounter_rate, # numeric per min
+  encounter_rate = flights_per_min, # numeric per min
   eff_detection_width = 2.0*edr_from_distmodel(ds_model),
-  eff_detection_height = TODO,
-  width_units = "m",
-  height_units = "m"
+  mean_flight_height = mean(df_obs$height*df_obs$size)
 )
 
 #flights through turbine / min
 
-flux_turbine_min <- turbine_flux(
+turbine_flights_min <- turbine_flights(
   obs_flux = obs_flux_min,
   rotor_diameter  = v90_single$rotor_diam,
-  prop_below_turbine_max = prop_at_height + prop_below_height
+  hub_height = v90_single$hh
 )
 
 
 ```
 
-In this example, we assume flight flux follows a log normal distribution with mean = `flight_flux_min`. The units are flights / min.
+The observed flight flux is `r obs_flux_min` flights per square metre per minute. Scaling up to the turbine this corresponds to `r turbine_flights_min` flights through the turbine area per minute.
 
-Here we correct it for daily and monthly variability.
+Here we correct it for daily and monthly variability. This can be done by hand but the package includes a helper function which can scale to a year.
 
 ```{r}
-flight_flux_year <- flux_per_year(
-  flux_per_min = flux_turbine_min,
-  prop_day = wte$prop_day,
-  prop_year = wte$prop_year
+turbine_flight_year <- flights_per_year(
+  flights_per_time = turbine_flights_min,
+  time_units = "min",
+  prop_day = wte$prop_day, # diurnal
+  prop_year = wte$prop_year # present all year
 )
 ```
 
-* The units for `flight_flux_year` is flights / year (per turbine).
-
-### Probability of interaction
-
-For a flat utilisation, we can get the probability of interaction using this example
-
-```{r}
-prob_interaction <- prob_interaction_flat(num_turbines = nrow(df_turbines))
-```
+* The units for `turbine_flight_year` is flights / year (per turbine).
+* We expect `r turbine_flight_year` flights through the turbine area each year.
 
 ### Step 3 - Probability of collision given interaction
 
@@ -334,7 +353,7 @@ df_turbines$p_coll_dyn <- prob_collision_dynamic(
 
 ### Step 4 - Total annual collisions (with avoidance)
 
-Now using the calculated yearly flux, the probability of interaction and probability of collision given interaction as well as the expected avoidance rates, we can obtain an estimate of the total number of expected collision per year.
+Now using the calculated yearly interactions (flights through the turbine area) and probability of collision given interaction as well as the expected avoidance rates, we can obtain an estimate of the total number of expected collision per year.
 
 ```{r}
 
@@ -342,8 +361,7 @@ Now using the calculated yearly flux, the probability of interaction and probabi
 df_turbines$n_collision <- n_collision(
   avoidance_rate_static = wte$avoidance_static,
   avoidance_rate_dynamic = wte$avoidance_dynamic,
-  flux_yr = flight_flux_year,
-  p_interaction = prob_interaction,
+  n_flights = turbine_flight_year,
   p_coll_static = df_turbines$p_coll_static,
   p_coll_dynamic = df_turbines$p_coll_dyn
 )
