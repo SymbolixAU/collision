@@ -225,31 +225,6 @@ flights_per_min <- encounter_rate(
 Any surveys with `NA` observations are assumed to have zero observations, which, if you left join to the survey table by `survey_id`, should be correct. The average number of movements observed per minute of survey is `r flights_per_min` flights per minute.
 
 
-#### TEMP
-
-I'm going to manually do the flight heights thing a see what happens. I'm going to make 1m bins in height, calculate the flux through that strip of 2*EDR wide, 1m high airspace and then average them at the end.
-
-```{r}
-
-sum(unlist(lapply(1:max(df_obs$height), FUN = function(h){
-  df_obs_h <- df_obs[height <= h & height > h-1]
-  er_h <- sum(df_obs_h$size)/sum(df_survey$survey_duration)
-  area <- 2.0*edr_from_distmodel(ds_model)*1
-  er_h/area
-})))
-
-```
-
-```{r}
-dt_plot <- data.table(x = seq(1, max(df_obs$distance), 1))
-
-dt_plot[, y := blacrm::d_hazardRate(r = x,
-                            sigma = exp((ds_model$ddf$ds$par))[2],
-                            b = exp((ds_model$ddf$ds$par))[1],
-                            nu = blacrm::eda_from_distmodel(ds_model))]
-```
-
-
 ### Step 2 - Flux through turbine
 
 This is where we account for
@@ -270,7 +245,7 @@ Second we apply this to the "turbine plane" (a rectangular "doorway" defined by 
 obs_flux_min <- obs_flux(
   encounter_rate = flights_per_min, # numeric per min
   eff_detection_width = 2.0*edr_from_distmodel(ds_model),
-  mean_flight_height = mean(df_obs$height*df_obs$size)
+  mean_flight_height = mean(df_obs$height*df_obs$size) # weighted by individuals
 )
 
 #flights through turbine / min
