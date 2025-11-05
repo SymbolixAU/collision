@@ -72,7 +72,7 @@ obs_flux <- function(
   # 
   # if(is.null(survey_weight)){survey_weight <- rep(1, length(survey_duration))}
   
-  observer_vertical_area <- mean_flight_height*eff_detection_width 
+  observer_vertical_area <- 2*mean_flight_height*eff_detection_width 
   
   obs_flux <- encounter_rate/observer_vertical_area # flights/area/time
   
