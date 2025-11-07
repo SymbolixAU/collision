@@ -107,7 +107,7 @@ expect_error(flights_per_year(flights_per_time = flights_per_time, prop_day = pr
 
 # Time_mins----------
 expect_error(flights_per_year(flights_per_time = flights_per_time, prop_day = prop_day, prop_year = prop_year, time_units = "mints")
-             , "In ‘1/mints’, ‘mints’ is not recognized by udunits.")
+             , "In '1/mints', 'mints' is not recognized by udunits.")
 
 ### Invalid input bounds--------------------
 expect_error(flights_per_year(flights_per_time = flights_per_time, prop_day = prop_day, prop_year = -100)
@@ -124,3 +124,4 @@ expect_equal(flights_per_year(flights_per_time = flights_per_time, prop_day = pr
 ## Valid inputs give the correct result---------
 expect_equal(flights_per_year(flights_per_time = flights_per_time, prop_day = prop_day, prop_year = prop_year)
              , flights_per_time * 365.25 * 24 * 60 * prop_day * prop_year)
+

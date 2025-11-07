@@ -1,6 +1,8 @@
-df_obs <- data.frame(size = c(0, 2 , 3, 0), # four surveys
-                      survey_duration = c(20, 20, 18, 20),
-                      survey_weight = c(1,1,1,1))
+df_obs <- data.frame(
+  size = c(0, 2, 3, 0), # four surveys
+  survey_duration = c(20, 20, 18, 20),
+  survey_weight = c(1, 1, 1, 1)
+)
 
 enc_rate <- encounter_rate(df_obs)
 
@@ -9,10 +11,8 @@ enc_rate <- encounter_rate(df_obs)
 expect_error(
   obs_flux(
     encounter_rate = NA,
-    eff_detection_width = 800,
-    eff_detection_height = 350,
-    width_units = "m",
-    height_units = "m"
+    eff_detection_width = 100,
+    mean_flight_height = 100
   ),
   "Numeric input expected"
 )
@@ -20,10 +20,8 @@ expect_error(
 expect_error(
   obs_flux(
     encounter_rate = -0.1,
-    eff_detection_width = 800,
-    eff_detection_height = 350,
-    width_units = "m",
-    height_units = "m"
+    eff_detection_width = 100,
+    mean_flight_height = 100
   ),
   "variable out of bounds"
 )
@@ -32,114 +30,74 @@ expect_error(
 expect_error(
   obs_flux(
     encounter_rate = enc_rate,
-    eff_detection_width = '800',
-    eff_detection_height = 350,
-    width_units = "m",
-    height_units = "m"
+    eff_detection_width = NA,
+    mean_flight_height = 100
   ),
-  "Numeric input expected"
+  "Effective detection width must be numeric and greater than 0"
 )
 
 expect_error(
   obs_flux(
     encounter_rate = enc_rate,
-    eff_detection_width = -800,
-    eff_detection_height = 350,
-    width_units = "m",
-    height_units = "m"
+    eff_detection_width = '100',
+    mean_flight_height = 100
   ),
-  "variable out of bounds"
-)
-
-## eff_detection_height-----------
-expect_error(
-  obs_flux(
-    encounter_rate = enc_rate,
-    eff_detection_width = 800,
-    eff_detection_height = '350',
-    width_units = "m",
-    height_units = "m"
-  ),
-  "Numeric input expected"
+  "Effective detection width must be numeric and greater than 0"
 )
 
 expect_error(
   obs_flux(
     encounter_rate = enc_rate,
-    eff_detection_width = 800,
-    eff_detection_height = -350,
-    width_units = "m",
-    height_units = "m"
+    eff_detection_width = -100,
+    mean_flight_height = 100
   ),
-  "variable out of bounds"
+  "Effective detection width must be numeric and greater than 0"
 )
 
-## width_units-----------
 expect_error(
   obs_flux(
     encounter_rate = enc_rate,
-    eff_detection_width = 800,
-    eff_detection_height = 350,
-    width_units = "abc",
-    height_units = "m"
+    eff_detection_width = 0,
+    mean_flight_height = 100
   ),
-  "‘abc’ is not recognized by udunits"
+  "Effective detection width must be numeric and greater than 0"
 )
 
-expect_warning(
-  obs_flux(
-    encounter_rate = enc_rate,
-    eff_detection_width = 800,
-    eff_detection_height = 350,
-    width_units = "km",
-    height_units = "m"
-  ),
-  "width_units will be converted to metres and"
-)
-
-expect_warning(
-  obs_flux(
-    encounter_rate = enc_rate,
-    eff_detection_width = 800,
-    eff_detection_height = 350,
-    width_units = NULL,
-    height_units = "m"
-  ),
-  "width_units is assumed to be meters"
-)
-
-## height_units--------------
+## mean_flight_height-----------
 expect_error(
   obs_flux(
     encounter_rate = enc_rate,
-    eff_detection_width = 800,
-    eff_detection_height = 350,
-    width_units = "m",
-    height_units = "abc"
+    eff_detection_width = 100,
+    mean_flight_height = NA
   ),
-  "‘abc’ is not recognized by udunits"
+  "Mean flight height must be numeric and greater than 0"
 )
 
-expect_warning(
+expect_error(
   obs_flux(
     encounter_rate = enc_rate,
-    eff_detection_width = 800,
-    eff_detection_height = 350,
-    width_units = "m",
-    height_units = "km"
+    eff_detection_width = 100,
+    mean_flight_height = '100'
   ),
-  "height_units will be converted to metres and"
+  "Mean flight height must be numeric and greater than 0"
 )
 
-expect_warning(
+expect_error(
   obs_flux(
     encounter_rate = enc_rate,
-    eff_detection_width = 800,
-    eff_detection_height = 350,
-    width_units = "m",
-    height_units = NULL
+    eff_detection_width = 100,
+    mean_flight_height = -100
   ),
-  "height_units is assumed to be meters"
+  "Mean flight height must be numeric and greater than 0"
+)
+
+expect_error(
+  obs_flux(
+    encounter_rate = enc_rate,
+    eff_detection_width = 100,
+    mean_flight_height = 0
+  ),
+  "Mean flight height must be numeric and greater than 0"
 )
 
 # Correct inputs give correct outputs----------
@@ -147,11 +105,7 @@ expect_equal(
   obs_flux(
     encounter_rate = enc_rate,
     eff_detection_width = 800,
-    eff_detection_height = 350,
-    width_units = "m",
-    height_units = "m"
+    mean_flight_height = 350
   ),
-  enc_rate / (800 * 350)
+  enc_rate / (2 * 800 * 350)
 )
-
-# Units conversion works properly------------
