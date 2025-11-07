@@ -11,17 +11,20 @@
 #'
 #' @references
 #'   \insertAllCited{}
-#'
-#' @param df_obs_summary data.frame; a data.frame with one row per survey containing at least columns `size` and
-#'    `survey_duration`. It can also optionally include a column `survey_weight` if needed
+#'   
+#' @param df_obs_summary data.frame; a data.frame with one row per survey containing at least columns `size` and 
+#'    `survey_duration` where `size` is the total number of individuals observed in each survey and 
+#'    `survey_duration` is the duration of each survey. It can also optionally include a column `survey_weight` if needed
 #'    to account for stratification etc. The sum of the survey weights must equal the total number of surveys
 #'    (to avoid artificially inflating or deflating the survey effort). When NULL (the default) will 
 #'    weight surveys equally.
 #' @param wilson_correction boolean;  Apply wilson correction if there are
-#'    no observations. Defaults to TRUE (TODO add citation or explanation of wilson correction).
-#'
-#' @return numeric; number of flights observed in one unit time of survey.
-#'
+#'    no observations. Defaults to TRUE \insertCite{Wilson1927}{collision}.
+#'   
+#' @return numeric; number of flights observed in one unit time of survey. 
+#'    If the Wilson correction was used it will return the (approximate) mid-point of the 95% confidence interval 
+#'    (see \url{https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval}).
+#'  
 #' @example examples/flux_example.R
 #'
 #' @importFrom Rdpack reprompt
