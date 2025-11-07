@@ -23,7 +23,7 @@ effective detection radius and the height is the max. height of the turbine
 
 vertical_flux_plane_area(
   hh = 150,
-  rotor_diam = 210 
+  rotor_diam = 210
 )
- 
+
 }
