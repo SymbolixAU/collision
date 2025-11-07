@@ -26,7 +26,8 @@ Suggests:
   ggplot2,
   boot,
   mc2d,
-  parallel
+  parallel,
+  data.table
 Encoding: UTF-8
 RoxygenNote: 7.3.3
 RdMacros: Rdpack

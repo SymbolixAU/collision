@@ -2,7 +2,7 @@ expect_equal(
   n_collision(
     avoidance_rate_static = 0.99,
     avoidance_rate_dynamic = c(0.90, 0.95),
-    flights_yr = 100,
+    n_flights = 100,
     p_coll_static = 0.05,
     p_coll_dynamic = 0.03
   ),
@@ -14,7 +14,7 @@ expect_error(
   n_collision(
     avoidance_rate_static = "0.99",
     avoidance_rate_dynamic = c(0.90, 0.95),
-    flights_yr = 100,
+    n_flights = 100,
     p_coll_static = 0.05,
     p_coll_dynamic = 0.03
   ),
@@ -25,7 +25,7 @@ expect_error(
   n_collision(
     avoidance_rate_static = -0.99,
     avoidance_rate_dynamic = c(0.90, 0.95),
-    flights_yr = 100,
+    n_flights = 100,
     p_coll_static = 0.05,
     p_coll_dynamic = 0.03
   ),
@@ -36,7 +36,7 @@ expect_error(
   n_collision(
     avoidance_rate_static = 0.99,
     avoidance_rate_dynamic = c("", 0.90, 0.95),
-    flights_yr = 100,
+    n_flights = 100,
     p_coll_static = 0.05,
     p_coll_dynamic = 0.03
   ),
@@ -47,7 +47,7 @@ expect_error(
   n_collision(
     avoidance_rate_static = 0.99,
     avoidance_rate_dynamic = c(-0.90, 0.95),
-    flights_yr = 100,
+    n_flights = 100,
     p_coll_static = 0.05,
     p_coll_dynamic = 0.03
   ),
@@ -59,7 +59,7 @@ expect_error(
   n_collision(
     avoidance_rate_static = 0.99,
     avoidance_rate_dynamic = c(0.90, 0.95),
-    flights_yr = "100",
+    n_flights = "100",
     p_coll_static = 0.05,
     p_coll_dynamic = 0.03
   ),
@@ -70,7 +70,7 @@ expect_error(
   n_collision(
     avoidance_rate_static = 0.99,
     avoidance_rate_dynamic = c(0.90, 0.95),
-    flights_yr = -100,
+    n_flights = -100,
     p_coll_static = 0.05,
     p_coll_dynamic = 0.03
   ),
@@ -81,7 +81,7 @@ expect_error(
   n_collision(
     avoidance_rate_static = 0.99,
     avoidance_rate_dynamic = c(0.90, 0.95),
-    flights_yr = 100,
+    n_flights = 100,
     p_coll_static = "0.05",
     p_coll_dynamic = 0.03
   ),
@@ -92,7 +92,7 @@ expect_error(
   n_collision(
     avoidance_rate_static = 0.99,
     avoidance_rate_dynamic = c(0.90, 0.95),
-    flights_yr = 100,
+    n_flights = 100,
     p_coll_static = -0.01,
     p_coll_dynamic = 0.03
   ),
@@ -103,7 +103,7 @@ expect_error(
   n_collision(
     avoidance_rate_static = 0.99,
     avoidance_rate_dynamic = c(0.90, 0.95),
-    flights_yr = 100,
+    n_flights = 100,
     p_coll_static = 0.05,
     p_coll_dynamic = "0.03"
   ),
@@ -114,7 +114,7 @@ expect_error(
   n_collision(
     avoidance_rate_static = 0.99,
     avoidance_rate_dynamic = c(0.90, 0.95),
-    flights_yr = 100,
+    n_flights = 100,
     p_coll_static = 0.05,
     p_coll_dynamic = 12.03
   ),

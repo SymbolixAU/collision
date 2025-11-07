@@ -19,7 +19,8 @@ no observations. Defaults to TRUE \insertCite{Wilson1927}{collision}.}
 }
 \value{
 numeric; number of flights observed in one unit time of survey.
-If the Wilson correction was used it will return the upper limit of the 95\% confidence interval.
+If the Wilson correction was used it will return the (approximate) mid-point of the 95\% confidence interval
+(see \url{https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval}).
 }
 \description{
 This function converts observed flights (movements) and survey duration into the "encounter rate" per minute of survey. This value is uncorrected for the observer's effective detection radius.
@@ -149,8 +150,6 @@ flights_turbine_year
 flights_turbine_year2
 }
 \references{
-Wilson score interval example:
-\url{https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval}
 \insertAllCited{}
 }
 \seealso{
