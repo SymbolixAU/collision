@@ -2,13 +2,12 @@
 % Please edit documentation in R/n_collisions.R
 \name{n_collision}
 \alias{n_collision}
-\title{Calculate annual collision rate with static and dynamic avoidance}
+\title{Calculate collision rate with static and dynamic avoidance}
 \usage{
 n_collision(
   avoidance_rate_static,
   avoidance_rate_dynamic,
-  flux_yr,
-  p_interaction,
+  n_flights,
   p_coll_static,
   p_coll_dynamic
 )
@@ -20,11 +19,8 @@ avoidance rate of static components (tower + static presented area)}
 \item{avoidance_rate_dynamic}{numeric; Number between 0 and 1 representing the
 avoidance rate of dynamic components (moving blade edge)}
 
-\item{flux_yr}{numeric; Flux though the turbine  per year. Calculated from
-\code{\link[=flux_per_year]{flux_per_year()}}}
-
-\item{p_interaction}{numeric; Probability of interaction. Calculated from
-\code{\link[=prob_interaction_flat]{prob_interaction_flat()}}}
+\item{n_flights}{numeric; Flights though the turbine per unit time. Calculated from
+\code{\link[=turbine_flights_year]{turbine_flights_year()}} or similar.}
 
 \item{p_coll_static}{numeric; the probability of collision with static
 turbine components if an interaction occurs and
@@ -37,17 +33,17 @@ and avoidance is zero. Calculated from
 \code{\link[=prob_collision_dynamic]{prob_collision_dynamic()}}}
 }
 \value{
-numeric; number of collisions per year
+numeric; number of collisions per unit time. Time interval
+is the same as referenced by \code{n_flights} input.
 }
 \description{
-Calculate annual collision rate with static and dynamic avoidance
+Calculate collision rate with static and dynamic avoidance
 }
 \examples{
 n_collision(
   avoidance_rate_static = 0.99,
   avoidance_rate_dynamic = c(0.90, 0.95),
-  flux_yr = 100,
-  p_interaction = 0.1,
+  n_flights = 100,
   p_coll_static = 0.05,
   p_coll_dynamic = 0.03
 )

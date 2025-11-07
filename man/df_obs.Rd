@@ -5,7 +5,7 @@
 \alias{df_obs}
 \title{Example observations}
 \format{
-An object of class \code{data.frame} with 120 rows and 7 columns.
+An object of class \code{data.frame} with 120 rows and 6 columns.
 }
 \usage{
 df_obs

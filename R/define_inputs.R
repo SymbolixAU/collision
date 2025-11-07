@@ -51,6 +51,8 @@ define_bird <- function(
     avoidance_static
 ) {
   
+  stopifnot("Species must be of type character" = class(species) == "character")
+  
   sapply( 
     list(bird_length,
          bird_speed,
@@ -163,6 +165,7 @@ define_turbine <- function(
   
  
   # check class - leave value checks to sampling functions
+  stopifnot("model_id must be of type character" = class(model_id) == "character")
   sapply( 
     list( blade_length,
           blade_thickness_narrow,

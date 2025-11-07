@@ -4,50 +4,47 @@
 \alias{encounter_rate}
 \title{Calculate uncorrected observed flights / minute of survey from point transects}
 \usage{
-encounter_rate(df_obs_summary, survey_units = "min", wilson_correction = TRUE)
+encounter_rate(df_obs_summary, wilson_correction = TRUE)
 }
 \arguments{
 \item{df_obs_summary}{data.frame; a data.frame with one row per survey containing at least columns \code{size} and
-\code{survey_duration}. It can also optionally include a column \code{survey_weight} if needed
-to account for stratification etc. When NULL (the default) will
+\code{survey_duration} where \code{size} is the total number of individuals observed in each survey and
+\code{survey_duration} is the duration of each survey. It can also optionally include a column \code{survey_weight} if needed
+to account for stratification etc. The sum of the survey weights must equal the total number of surveys
+(to avoid artificially inflating or deflating the survey effort). When NULL (the default) will
 weight surveys equally.}
 
-\item{survey_units}{character; units of \code{survey_duration}. Defaults to "min".
-Will return a warning if not "min" or "minutes".}
-
 \item{wilson_correction}{boolean;  Apply wilson correction if there are
-no observations. Defaults to TRUE (TODO add citation or explanation of wilson correction).}
+no observations. Defaults to TRUE \insertCite{Wilson1927}{collision}.}
 }
 \value{
-numeric; number of flights observed in one minute of survey.
+numeric; number of flights observed in one unit time of survey.
+If the Wilson correction was used it will return the (approximate) mid-point of the 95\% confidence interval
+(see \url{https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval}).
 }
 \description{
-This function converts observed flights (movements), survey duration into the "encounter rate" per minute of survey. This value is uncorrected for the observer's effective detection area \insertCite{Buckland1993}{collision}.
+This function converts observed flights (movements) and survey duration into the "encounter rate" per minute of survey. This value is uncorrected for the observer's effective detection radius.
 }
 \details{
-The steps to calculate the number of flights through a turbine
-plan includes three steps
+Calculating the number of flights through a turbine
+plane includes three steps
 \itemize{
-\item Calculate the observed flights in a vertical square-metre area from the
+\item Calculate the observed flights in a vertical area from the
 count of observed flights and details of the surveys. See for example
 \code{\link[=obs_flux]{obs_flux()}}
 \item Scale the observed flight flux to an area equivalent to the
-rotor diameter by the maximum height of the turbine, e.g. \code{\link[=turbine_flux]{turbine_flux()}}
-\item Scale the observed flight flux to the time period under study. There's a
-helper function to scale to one year e.g \code{\link[=flux_per_year]{flux_per_year()}}
+rotor diameter by the maximum height of the turbine, e.g. \code{\link[=turbine_flights]{turbine_flights()}}
+\item Scale the flights to the time period under study. There's a
+helper function to scale to one year from minutes e.g \code{\link[=flights_per_year]{flights_per_year()}}
 }
 \subsection{Observed flux from point counts}{
 
-Given a set of observations, survey durations and a related distance model
-(fit using the \code{Distance} package \insertCite{Miller019a}{collision}) we
-calculate the flight flux through
-a rectangle of width of 2*(effective detection radius) and height of the
-observer's effective detection height (see TODO for more info about effective
-detection height) in one minute of observation time.
-
-The optional Wilson Correction can be used to
-generate an flux in the case when no observations are made of the
-species during the survey run.
+Given a set of observations, survey durations, a distribution of flight heights
+and a related distance model (fit using the \code{Distance} package \insertCite{Miller019a}{collision})
+we calculate the flight flux through a rectangle with a width of 2*(effective detection radius)
+and a height of the mean (expected value) of the height distribution (because \eqn{E[X] = \int_{-\infty}^{\infty}xf(x)dx}
+approximates the area in which we expect one flight if we make a simplifying assumption
+of uniform vertical density) in one unit of observation time.
 
 Note the function accepts only single valued inputs, so stochastic inputs must
 be sampled from prior to calling this function. See vignettes for more details
@@ -55,9 +52,9 @@ be sampled from prior to calling this function. See vignettes for more details
 
 \subsection{Scale to turbine}{
 
-\code{\link[=turbine_flux]{turbine_flux()}} converts the flight flux through one metre of vertical space
+\code{\link[=turbine_flights]{turbine_flights()}} converts the flight flux through one unit area of vertical space
 into the number of flights through an arbitrary vertical plane of width equal
-to rotor diameter and height equal to the tip height of the turbine
+to rotor diameter and height equal to the tip height of the turbine.
 
 The time interval is not adjusted (i.e. if you input flights / min, it will
 output flights / min).
@@ -69,7 +66,7 @@ After obtaining the observed flux through a vertical area in a minute,
 we need to scale up to the relevant risk timeframe, often a year.
 
 This can be done manually by the analyst for any time period, but we have
-included a helper function for the case of scaling to one year (\code{\link[=flux_per_year]{flux_per_year()}}).
+included a helper function for the case of scaling to one year (\code{\link[=flights_per_year]{flights_per_year()}}).
 Note this function assumes the flux is the
 average flight flux when active onsite.  If surveys are conducted year round
 and the flux represents the annual average then \code{prop_year} should be 1. If
@@ -96,43 +93,39 @@ surveys during the activity period.
 ## 
 
 df_obs <- data.frame(size = c(0, 2 , 3, 0), # four surveys
-                     survey_duration = c(20, 20, 18, 20),
+                     survey_duration = c(20, 20, 18, 20), # minutes
                      # Optional survey weights to deal with stratification etc
                      survey_weight = c(1,1,1,1))
 
-prop_below_turbine_max <- 1
 rotor_diameter <- 300
 hub_height <- 200
-edr <- 800
-edh <- hub_height+0.5*rotor_diameter # can set to turbine height since all flights below turbine max
+edr <- 800 # derive from distance model
+mean_h <- 60 # derive from height distribution
 
 # flights observed per minute of survey
 flights_per_min <- encounter_rate(
   df_obs_summary = df_obs,
-  survey_units = "min", # Default
   wilson_correction = TRUE # Default
 )
 
-# flights through vertical plane of one metre squared in one minute
+# observed flights through vertical plane of one metre squared in one minute
 flights_per_m2_per_min <- obs_flux(
   encounter_rate = flights_per_min,
-  eff_detection_width = edr,
-  eff_detection_height = edh,
-  width_units = "m", # Default
-  height_units = "m" # Default
+  eff_detection_width = 2*edr,
+  mean_flight_height = mean_h
 )
 
 # scale to turbine width and height
-flights_turbine_min <- turbine_flux(
+flights_turbine_min <- turbine_flights(
   obs_flux = flights_per_m2_per_min,
   rotor_diameter = rotor_diameter,
-  hub_height = hub_height,
-  prop_below_turbine_max = prop_below_turbine_max
+  hub_height = hub_height
 )
 
 # scale to annual flights through area of rotor_diameter x turbine height 
-flights_turbine_year <- flux_per_year(
-  flux_per_min = flights_turbine_min,
+flights_turbine_year <- flights_per_year(
+  flights_per_time = flights_turbine_min,
+  time_units = "min", # Default
   prop_day = 0.5,  #diurnal species
   prop_year = 1    # present all year
 )
@@ -140,18 +133,16 @@ flights_turbine_year <- flux_per_year(
 ## Alternate calc using a wrapper function
 ## to go from observations to turbine flights per year
 ## 
-flights_turbine_year2 <- turbine_flux_year(
+flights_turbine_year2 <- turbine_flights_year(
   survey_type = "point", # only supported option currently
   encounter_rate = flights_per_min,
-  eff_detection_width = edr,
-  eff_detection_height = edh,
+  time_units = "min",
+  eff_detection_width = 2*edr,
+  mean_flight_height = mean_h,
   rotor_diameter = rotor_diameter,
   hub_height = hub_height,
-  prop_below_turbine_max = prop_below_turbine_max,
   prop_day = 0.5,  #diurnal species
-  prop_year = 1,   # present all year
-  width_units = "m", # Default
-  height_units = "m" # Default
+  prop_year = 1   # present all year
 )
 
 #They are the same
@@ -162,6 +153,6 @@ flights_turbine_year2
 \insertAllCited{}
 }
 \seealso{
-\code{\link[=turbine_flux]{turbine_flux()}} and \code{\link[=flux_per_year]{flux_per_year()}} for methods to expand the
-observer flux into the flux through the turbine plane
+\code{\link[=turbine_flights]{turbine_flights()}} and \code{\link[=flights_per_year]{flights_per_year()}} for methods to expand the
+observer flux into flights through the turbine plane
 }

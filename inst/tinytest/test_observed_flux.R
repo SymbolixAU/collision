@@ -1,255 +1,111 @@
-obs_size <- c(1, 1, 2, 1, 3)
-survey_duration <- c(60, 60, 20, 10, 60)
-eff_detection_width <- 100
-survey_units = "min"
-width_units = "m"
-survey_weight = NULL
-wilson_correction = TRUE
-
-# Test basic warnings-------------
-# obs_size
-expect_warning(
-  flight_flux_point(
-    obs_size = c(1, 1, 2, NA, 3),
-    survey_duration,
-    eff_detection_width,
-    survey_units,
-    width_units,
-    survey_weight,
-    wilson_correction
-  ),
-  "NA observations detected - NA observations will be ignored"
+df_obs <- data.frame(
+  size = c(0, 2, 3, 0), # four surveys
+  survey_duration = c(20, 20, 18, 20),
+  survey_weight = c(1, 1, 1, 1)
 )
 
-# NULL obs_size and duration - this fails, we need to add a handler for this
-expect_warning(
-  flight_flux_point(
-    obs_size = NULL,
-    survey_duration = NULL,
-    eff_detection_width,
-    survey_units,
-    width_units,
-    survey_weight,
-    wilson_correction
-  ),
-  "obs_size and survey_duration cannot be NULL"
-)
+enc_rate <- encounter_rate(df_obs)
 
-# survey_duration
-expect_warning(
-  flight_flux_point(
-    obs_size,
-    survey_duration = c(60, NA, 20, 10, 60),
-    eff_detection_width,
-    survey_units,
-    width_units,
-    survey_weight,
-    wilson_correction
+# Test basic input checks-------------
+## encounter_rate----------
+expect_error(
+  obs_flux(
+    encounter_rate = NA,
+    eff_detection_width = 100,
+    mean_flight_height = 100
   ),
-  "NA survey durations detected - NA surveys will be ignored"
+  "Numeric input expected"
 )
 
 expect_error(
-  flight_flux_point(
-    obs_size,
-    survey_duration = c(60, 10, 20, 10),
-    eff_detection_width,
-    survey_units,
-    width_units,
-    survey_weight,
-    wilson_correction
+  obs_flux(
+    encounter_rate = -0.1,
+    eff_detection_width = 100,
+    mean_flight_height = 100
   ),
-  "obs_size, survey_mins must be equal"
+  "variable out of bounds"
 )
 
-# eff_detection_width
+## eff_detection_width-----------
 expect_error(
-  flight_flux_point(
-    obs_size,
-    survey_duration,
-    eff_detection_width = c(1, 2),
-    survey_units,
-    width_units,
-    survey_weight,
-    wilson_correction
-  ),
-  'effective detection width must be length 1'
-)
-
-expect_error(
-  flight_flux_point(
-    obs_size,
-    survey_duration,
+  obs_flux(
+    encounter_rate = enc_rate,
     eff_detection_width = NA,
-    survey_units,
-    width_units,
-    survey_weight,
-    wilson_correction
+    mean_flight_height = 100
   ),
-  'effective detection width must be numeric'
+  "Effective detection width must be numeric and greater than 0"
 )
 
-# Effective detection width is NULL - this fails, needs to be handled
 expect_error(
-  flight_flux_point(
-    obs_size,
-    survey_duration,
-    eff_detection_width = NULL,
-    survey_units,
-    width_units,
-    survey_weight,
-    wilson_correction
+  obs_flux(
+    encounter_rate = enc_rate,
+    eff_detection_width = '100',
+    mean_flight_height = 100
   ),
-  'effective detection width cannot be NULL'
+  "Effective detection width must be numeric and greater than 0"
 )
 
-# survey_units
-expect_warning(
-  flight_flux_point(
-    obs_size,
-    survey_duration,
-    eff_detection_width,
-    survey_units = "hours",
-    width_units,
-    survey_weight,
-    wilson_correction
-  ),
-  'survey duration will be converted to mins and 
-            output will be flights / metre / minute'
-)
-# Survey units = NA / NULL is handled appropriately. This fails atm
 expect_error(
-  flight_flux_point(
-    obs_size,
-    survey_duration,
-    eff_detection_width,
-    survey_units = NA,
-    width_units,
-    survey_weight,
-    wilson_correction
+  obs_flux(
+    encounter_rate = enc_rate,
+    eff_detection_width = -100,
+    mean_flight_height = 100
   ),
-  'survey_units cannot be NA/NULL'
+  "Effective detection width must be numeric and greater than 0"
 )
 
-# width units
-expect_warning(
-  flight_flux_point(
-    obs_size,
-    survey_duration,
-    eff_detection_width,
-    survey_units,
-    width_units = "km",
-    survey_weight,
-    wilson_correction
-  ),
-  'width_units will be converted to metres and 
-            output will be flights / metre / minute'
-)
-
-# Width units = NA / NULL is handled appropriately. This fails atm
 expect_error(
-  flight_flux_point(
-    obs_size,
-    survey_duration,
-    eff_detection_width,
-    survey_units,
-    width_units = NA,
-    survey_weight,
-    wilson_correction
+  obs_flux(
+    encounter_rate = enc_rate,
+    eff_detection_width = 0,
+    mean_flight_height = 100
   ),
-  'width_units cannot be NA/NULL'
+  "Effective detection width must be numeric and greater than 0"
 )
 
-# survey_weights
+## mean_flight_height-----------
 expect_error(
-  flight_flux_point(
-    obs_size,
-    survey_duration,
-    eff_detection_width,
-    survey_units,
-    width_units,
-    survey_weight = NA,
-    wilson_correction
+  obs_flux(
+    encounter_rate = enc_rate,
+    eff_detection_width = 100,
+    mean_flight_height = NA
   ),
-  "survey_weight must be NULL or same length as survey_mins"
+  "Mean flight height must be numeric and greater than 0"
 )
 
-# survey weights has a NA in the vector - this fails atm
 expect_error(
-  flight_flux_point(
-    obs_size,
-    survey_duration,
-    eff_detection_width,
-    survey_units,
-    width_units,
-    survey_weight = c(1, 1, 2, 3, NA),
-    wilson_correction
+  obs_flux(
+    encounter_rate = enc_rate,
+    eff_detection_width = 100,
+    mean_flight_height = '100'
   ),
-  "survey_weight vector cannot have NA"
+  "Mean flight height must be numeric and greater than 0"
 )
 
-# Obs size is empty and wilson correction is FALSE
-# This also throws a error which needs to be checked
-expect_warning(
-  flight_flux_point(
-    obs_size = c(),
-    survey_duration = c(),
-    eff_detection_width,
-    survey_units,
-    width_units,
-    survey_weight,
-    wilson_correction = FALSE
+expect_error(
+  obs_flux(
+    encounter_rate = enc_rate,
+    eff_detection_width = 100,
+    mean_flight_height = -100
   ),
-  "Zero or NA  events exist but Wilson Correction == FALSE. Flight flux will be uncorrected. Is this what you want?"
+  "Mean flight height must be numeric and greater than 0"
 )
 
-# Apply wilson correction when TRUE
-# This also throws a error which needs to be checked
-expect_message(
-  flight_flux_point(
-    obs_size = c(),
-    survey_duration = c(),
-    eff_detection_width,
-    survey_units,
-    width_units,
-    survey_weight,
-    wilson_correction = TRUE
+expect_error(
+  obs_flux(
+    encounter_rate = enc_rate,
+    eff_detection_width = 100,
+    mean_flight_height = 0
   ),
-  "zero observations recorded - applying Wilson Correction"
+  "Mean flight height must be numeric and greater than 0"
 )
 
-# Correct inputs give correct outputs
+# Correct inputs give correct outputs----------
 expect_equal(
-  flight_flux_point(
-    obs_size,
-    survey_duration,
-    eff_detection_width,
-    survey_units,
-    width_units,
-    survey_weight,
-    wilson_correction = FALSE
+  obs_flux(
+    encounter_rate = enc_rate,
+    eff_detection_width = 800,
+    mean_flight_height = 350
   ),
-  sum(obs_size * 1) *
-    length(obs_size) /
-    (eff_detection_width * sum(survey_duration))
+  enc_rate / (2 * 800 * 350)
 )
-
-# Weighted vs un-weighted
-expect_true(flight_flux_point(
-  obs_size,
-  survey_duration,
-  eff_detection_width,
-  survey_units,
-  width_units,
-  survey_weight,
-  wilson_correction = FALSE
-) <
-flight_flux_point(
-  obs_size,
-  survey_duration,
-  eff_detection_width,
-  survey_units,
-  width_units,
-  survey_weight = c(1, 2, 2, 2, 1),
-  wilson_correction = FALSE
-))
