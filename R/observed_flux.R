@@ -54,7 +54,7 @@ obs_flux <- function(
             output will be flights / metre^2 / minute")
   }
 
-  observer_vertical_area <- mean_flight_height*eff_detection_width 
+  observer_vertical_area <- 2.0*mean_flight_height*eff_detection_width 
   
   obs_flux <- encounter_rate/observer_vertical_area # flights/area/time
   

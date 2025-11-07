@@ -9,7 +9,8 @@ encounter_rate(df_obs_summary, wilson_correction = TRUE)
 \arguments{
 \item{df_obs_summary}{data.frame; a data.frame with one row per survey containing at least columns \code{size} and
 \code{survey_duration}. It can also optionally include a column \code{survey_weight} if needed
-to account for stratification etc. When NULL (the default) will
+to account for stratification etc. The sum of the survey weights must equal the total number of surveys
+(to avoid artificially inflating or deflating the survey effort). When NULL (the default) will
 weight surveys equally.}
 
 \item{wilson_correction}{boolean;  Apply wilson correction if there are

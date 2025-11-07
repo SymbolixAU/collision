@@ -14,7 +14,8 @@
 #'
 #' @param df_obs_summary data.frame; a data.frame with one row per survey containing at least columns `size` and
 #'    `survey_duration`. It can also optionally include a column `survey_weight` if needed
-#'    to account for stratification etc. When NULL (the default) will
+#'    to account for stratification etc. The sum of the survey weights must equal the total number of surveys
+#'    (to avoid artificially inflating or deflating the survey effort). When NULL (the default) will 
 #'    weight surveys equally.
 #' @param wilson_correction boolean;  Apply wilson correction if there are
 #'    no observations. Defaults to TRUE (TODO add citation or explanation of wilson correction).
