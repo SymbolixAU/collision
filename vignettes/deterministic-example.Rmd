@@ -1,10 +1,17 @@
 ---
 title: "Deterministic example"
-output: rmarkdown::html_vignette
+output: 
+  bookdown::html_document2:
+    base_format: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Deterministic example}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
+bibliography: ../inst/REFERENCES.bib # a bibtex style bibliography
+biblio-style: apalike
+link-citations: true
+nocite: |
+  @Buckland2001
 editor_options: 
   chunk_output_type: console
 template:
@@ -22,6 +29,8 @@ knitr::opts_chunk$set(
 library(knitr)
 library(collision)
 library(ggplot2)
+
+# for easy summarising and joins
 library(data.table)
 
 # for distance modelling
@@ -31,8 +40,7 @@ library(Distance)
 
 # Deterministic Example
 
-This is a good example to start with. It models a (fictional) site with 2 proposed turbines, all of the same model, and a (fictional) point count survey of Wedge-tailed Eagle. 
-For this example we assume flight density is constant across the site.
+This is a good example to start with. It models a (fictional) site with 2 proposed turbines, all of the same model, and a (fictional) point count survey of Wedge-tailed Eagle. For this example we assume flight density is constant across the site.
 
 We are going to calculate a simple deterministic model output here.  For a stochastic output see the other examples.
 
@@ -92,6 +100,7 @@ For each turbine we need a turbine ID, and a location. Location can be NA if you
 `make_turbine_set` creates the data.frame of turbine inputs, sampled (if needed) and ready for analysis
 
 ```{r}
+
 df_turbines <- data.frame(
   turbine_id = c("T01", "T02"),
   lat = c(-32.512, -32.521),
@@ -198,17 +207,20 @@ For a deterministic model, we need the following 4 steps:
 
 ### Step 1 - Encounter rate
 
-This is where we determine the average encounter rate per unit time of survey. That is the average number of individuals observed in each minute of survey (or whatever unit of time you wish to use). This is basically just $\frac{total\ individuals\ observed}{total\ survey\ time}$, however the function also allows for weighting surveys to account for stratification and can apply the Wilson correction (citation TODO) if there were no observations. The Wilson correction is an estimate of the highest possible encounter rate that could result in zero observations.
+This is where we determine the average encounter rate per unit time of survey. That is the average number of individuals observed in each minute of survey (or whatever unit of time you wish to use). This is basically just $\frac{total\ individuals\ observed}{total\ survey\ time}$, however the function also allows for weighting surveys to account for stratification and can apply the Wilson correction [@Wilson1927] if there were no observations. The Wilson correction is an estimate of the encounter rate ([mid-point of the 95% CI](https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval:~:text=known%20as%20the-,%22plus%20four%20rule%22,-.)) that could result in zero observations.
 
 This function takes as input a `df_obs_summary` data.frame. This object has one row per survey and must contain a column named `survey_duration` and a column named `size` which is the **total** number of individuals observed in each **survey** (not observation). Optionally, it can contain a column named `survey_weight` which has the associated relative weights of each survey (to avoid artificially inflating or deflating the encounter rate `sum(survey_weight)` must equal the number of surveys).
 
 First let's make that table (using `data.table`):
 
 ```{r}
-setDT(df_obs)
-setDT(df_survey)
+dt_obs <- copy(df_obs)
+dt_survey <- copy(df_survey)
 
-df_obs_survey <- df_obs[, .("size" = sum(size)), survey_id][df_survey,
+setDT(dt_obs)
+setDT(dt_survey)
+
+dt_obs_survey <- dt_obs[, .("size" = sum(size)), survey_id][dt_survey,
                                                             on = "survey_id"]
 # need sum(size) because we want one row per survey (not observation)
 ```
@@ -217,7 +229,7 @@ Now we can use this table in `encounter_rate()`:
 
 ```{r}
 flights_per_min <- encounter_rate(
-  df_obs_summary = df_obs_survey,
+  df_obs_summary = dt_obs_survey,
   wilson_correction = TRUE # Default
  )
 ```
@@ -344,3 +356,6 @@ df_turbines$n_collision <- n_collision(
 ## For a final result, sum all turbines
 sum(df_turbines$n_collision)
 ```
+
+---
+## References {-}

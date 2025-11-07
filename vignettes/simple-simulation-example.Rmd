@@ -1,10 +1,15 @@
 ---
 title: "Simple simulation example"
-output: rmarkdown::html_vignette
+output: 
+  bookdown::html_document2:
+    base_format: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Simple simulation example}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
+bibliography: ../inst/REFERENCES.bib # a bibtex style bibliography
+biblio-style: apalike
+link-citations: true
 editor_options: 
   chunk_output_type: console
 ---
@@ -20,10 +25,10 @@ knitr::opts_chunk$set(
 
 ```{r setup, results='hide'}
 library(collision)
-library(Distance)
+library(Distance) # for distance modelling
 library(mc2d)  # for the PERT distribution
 library(ggplot2)
-library(data.table)
+library(data.table) # for easy summarising and joins
 ```
 
 
@@ -44,7 +49,7 @@ The inner functions of the package are designed to take single value inputs. The
   - bird(s): `define_bird()`
   - turbine(s): `define_turbine()`
   - proportion of flights at and below rotor swept height
-  - effective detection radius (EDR): obtained from distance modelling
+  - effective detection radius (EDR): obtained from distance modelling [@Buckland2001]
   - encounter rate: `encounter_rate()`
   - mean flight height
 * Sample from the input distributions into the collision calculations to determine the distribution of possible collision outcomes. 
@@ -85,7 +90,6 @@ v90_single <- define_turbine(
 We make a 'bird' object - a list of key parameters. These parameters can be defined as probability distributions or as single numbers. 
 
 ```{r}
-#TODO issue13 more info on distributions
 
 wte <- define_bird(
   species = "Wedge-tailed Eagle",
@@ -102,7 +106,7 @@ wte <- define_bird(
 
 ```
 
-Note: the Beta PERT distribution (`rpert`) is a good distribution to use if you only have the mode (or mean) and the minimum and maximum parameters for a species (eg. mean body length = 0.95m, range: 0.6-1.2m). See _vignette we haven't made yet_ to see how to fit it.
+Note: the Beta PERT distribution (`rpert`) is a good distribution to use if you only have the mode (or mean) and the minimum and maximum parameters for a species (eg. mean body length = 0.95m, range: 0.6-1.2m). See the **Choosing Distributions**^[Distributions vignette is still in development.] for information on how to fit the distributions.
 
 ### Survey data
 
@@ -114,7 +118,7 @@ The package observations dataset:
 summary(df_obs)
 ```
 
-is a dataset of `r nrow(df_obs)` observations from `r nrow(df_survey)` point count surveys, including the count (`size`) of raptors (and associated distance at first observation (`distance`)).
+is a dataset of `r nrow(df_obs)` observations from `r nrow(df_survey)` point count surveys, including the count (`size`) of raptors and associated distance at first observation (`distance`).
 
 
 And the package survey dataset:
@@ -136,7 +140,7 @@ Between the two of them these tables must include:
 
 #### Effective Detection Radius
 
-For this example, I'm assuming you have done the required distance correction and have arrived at a distance model.
+For this example, we assume you have done the required distance correction and have arrived at a distance model.
 
 ```{r}
 summary(ds_raptor)
@@ -145,7 +149,7 @@ summary(ds_raptor)
 Rather than extracting the EDR from this model (which would give us a single value) we bootstrap the distance model and the EDR to obtain the standard deviation on the estimate of the EDR.
 
 ```{r message = FALSE}
-
+## Define bootstrap-able function
 edr_fun <- function(d = df_obs$survey_id
                     , i = seq_len(nrow(df_obs))
                     , dat = df_obs){
@@ -158,7 +162,7 @@ edr_fun <- function(d = df_obs$survey_id
        formula = ~ 1,
        key = "hn",
        dht_group = TRUE,
-       nadj = 0)
+       nadj = 0) # same arguments used to fit ds_raptor
     , error = function(e) {
       print(e)
       NULL
@@ -170,14 +174,14 @@ edr_fun <- function(d = df_obs$survey_id
   return(edr_boot)
 }
 
-ds_boot <- boot::boot(data = df_obs_survey$survey_id
+ds_boot <- boot::boot(data = df_obs$survey_id
                 , statistic = edr_fun,
                 , sim = "ordinary"
                 , stype = "i"
                 , R = 150
 )
-## bootstraps need to be checked for convergence to make sure you've done enough replicates
-## which is not done in this example
+# bootstraps need to be checked for convergence to make sure you've done enough replicates
+# which is not done in this example
 
 ## Define EDR
 edr <- set_random("rnorm", # normally distributed per CLT
@@ -185,7 +189,7 @@ edr <- set_random("rnorm", # normally distributed per CLT
                   sd = sd(ds_boot$t, na.rm = TRUE)
                   )
 
-## take a look
+## visual check of distribution
 EDR_hist <- sapply(1:1000, FUN = function(i) collision::sample_input(edr) )
 hist(EDR_hist)
 ```
@@ -228,8 +232,7 @@ min_rsh <- v90_single$hh - v90_single$rotor_diam * 0.5
 max_rsh <- v90_single$hh + v90_single$rotor_diam * 0.5
 
 ## calculate ecdf
-## Note - this is a simple example; it's up to the analyst how best to
-## fit the height distribution
+# Note - this is a simple example; it's up to the analyst how best to fit the height distribution
 
 prop_between <- function(dat, i, lwr, upp){
 
@@ -241,7 +244,7 @@ prop_between <- function(dat, i, lwr, upp){
 
 }
 
-## bootstrap prop below RSH
+## bootstrap prop below min RSH
 b <- boot::boot(
   data = df_obs$height,
   statistic = prop_between, stype = "i",
@@ -267,19 +270,24 @@ prop_below_max <- set_random("rnorm", mean = b$t0, sd = sd(b$t))
 
 #### Encounter Rate
 
-This is where we determine the average encounter rate per unit time of survey. That is the average number of individuals observed in each minute of survey (or whatever unit of time you wish to use). This is basically just $\frac{total\ individuals\ observed}{total\ survey\ time}$, however the function also allows for weighting surveys to account for stratification and can apply the Wilson correction (citation TODO) if there were no observations. The Wilson correction is an estimate of the highest possible encounter rate that could result in zero observations.
+This is where we determine the average encounter rate per unit time of survey. That is the average number of individuals observed in each minute of survey (or whatever unit of time you wish to use). This is basically just $\frac{total\ individuals\ observed}{total\ survey\ time}$, however the function also allows for weighting surveys to account for stratification and can apply the Wilson correction [@Wilson1927] if there were no observations.
 
 This function takes as input a `df_obs_summary` data.frame. This object has one row per survey and must contain a column named `survey_duration` and a column named `size` which is the **total** number of individuals observed in each **survey** (not observation). Optionally, it can contain a column named `survey_weight` which has the associated relative weights of each survey (to avoid artificially inflating or deflating the encounter rate `sum(survey_weight)` must equal the number of surveys).
 
 First let's make that table (using `data.table`):
 
 ```{r}
-setDT(df_obs)
-setDT(df_survey)
+dt_obs <- copy(df_obs)
+dt_survey <- copy(df_survey)
 
-df_obs_survey <- df_obs[, .("size" = sum(size)), survey_id][df_survey,
+setDT(dt_obs)
+setDT(dt_survey)
+
+dt_obs_survey <- dt_obs[, .("size" = sum(size)), survey_id][dt_survey,
                                                             on = "survey_id"]
 # need sum(size) because we want one row per survey (not observation)
+
+setnafill(dt_obs_survey, cols = c("size"), fill = 0) # set size to 0 for surveys with no observations
 ```
 
 Now we can use this table in `encounter_rate()`:
@@ -290,7 +298,7 @@ er_fun <- function(dat, i){
   return(encounter_rate(df_obs_summary = dat[i]))
 }
 
-er_boot <- boot::boot(data = df_obs_survey
+er_boot <- boot::boot(data = dt_obs_survey
                 , statistic = er_fun,
                 , sim = "ordinary"
                 , stype = "i"
@@ -306,7 +314,7 @@ encounter_rate <- set_random("rnorm",
                   )
 
 ## take a look
-## 
+
 encounter_rate_hist <- sapply(1:1000, FUN = function(i) collision::sample_input(encounter_rate) )
 hist(encounter_rate_hist)
 ```
@@ -342,12 +350,13 @@ For a breakdown of each step see [the deterministic examples](deterministic-exam
 ## seed for reproducibility
 ## iterations - how many runs
 ## df_turbines  - class `data.frame`
-## wte   - class `birdInput`
+## wte - class `birdInput`
 ## v90_single - class `turbineInput`
 ## prop_at_height - class `randomInput`
 ## prop_below_height - class `randomInput`
 ## edr - class `randomInput`
-## observations - df_obs_survey
+## encounter rate - class `randomInput`
+## mean height - class `randomInput`
 
 
 set.seed(1234)
@@ -440,4 +449,5 @@ lapply(lst_results, function(x) {
   hist(x = _, xlab = "n_collision", main = "Histogram of collision results")
 ```
 
-
+---
+## References {-}

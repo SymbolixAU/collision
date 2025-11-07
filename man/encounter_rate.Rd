@@ -8,15 +8,18 @@ encounter_rate(df_obs_summary, wilson_correction = TRUE)
 }
 \arguments{
 \item{df_obs_summary}{data.frame; a data.frame with one row per survey containing at least columns \code{size} and
-\code{survey_duration}. It can also optionally include a column \code{survey_weight} if needed
-to account for stratification etc. When NULL (the default) will
+\code{survey_duration} where \code{size} is the total number of individuals observed in each survey and
+\code{survey_duration} is the duration of each survey. It can also optionally include a column \code{survey_weight} if needed
+to account for stratification etc. The sum of the survey weights must equal the total number of surveys
+(to avoid artificially inflating or deflating the survey effort). When NULL (the default) will
 weight surveys equally.}
 
 \item{wilson_correction}{boolean;  Apply wilson correction if there are
-no observations. Defaults to TRUE (TODO add citation or explanation of wilson correction).}
+no observations. Defaults to TRUE \insertCite{Wilson1927}{collision}.}
 }
 \value{
 numeric; number of flights observed in one unit time of survey.
+If the Wilson correction was used it will return the upper limit of the 95\% confidence interval.
 }
 \description{
 This function converts observed flights (movements) and survey duration into the "encounter rate" per minute of survey. This value is uncorrected for the observer's effective detection radius.
@@ -146,6 +149,8 @@ flights_turbine_year
 flights_turbine_year2
 }
 \references{
+Wilson score interval example:
+\url{https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval}
 \insertAllCited{}
 }
 \seealso{

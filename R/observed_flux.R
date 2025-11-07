@@ -28,7 +28,7 @@
 #'    is the same as referenced by `encounter_rate` input.
 #'  
 #' @example examples/flux_example.R
-#' 
+#' @export
 #' 
 obs_flux <- function(
     encounter_rate, 
