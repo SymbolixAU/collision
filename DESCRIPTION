@@ -5,6 +5,8 @@ Version: 1.0.0
 Authors@R: c(
   person("Elizabeth", "Stark", ,"estark@symbolix.com.au", role = c("aut", "cre")),
   person("Muir", "Stuart", role = c("aut")),
+  person("Yandell", "Peggy", role = c("aut")),
+  person("Akila", "Sahinya", role = c("ctb")),
   person("Shao", "Ray", role = c("ctb")),
   person("Biosis", role="cph", comment = "Package uses and adapts turbine geometry methods sourced with permission from Biosis' Collision Risk Model")
   )
