@@ -91,9 +91,9 @@ turbine_flights_year <- function(
     prop_day,
     prop_year
 ){
-  
+  # Check if NA/NULL (only checking survey_type, others are checked in their respective functions)
   if (is.null(survey_type) || is.na(survey_type)) stop("survey_type cannot be NA/NULL")
-
+  
   switch (survey_type,
           "point" = {
             obs_flux <- obs_flux(
@@ -105,11 +105,7 @@ turbine_flights_year <- function(
           stop("Only point transects are currently implemented.
          Line transects and digital areal surveys are in development.")
   )
-  
-  # observer_vertical_area <- mean_flight_height*eff_detection_width
-  # 
-  # obs_flux <- encounter_rate/observer_vertical_area # flights/area/min
-  
+
   flights_min <- turbine_flights(
     obs_flux = obs_flux,
     rotor_diameter = rotor_diameter,
