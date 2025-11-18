@@ -1,5 +1,9 @@
 # collision (public beta)
 
+# collsion 1.0.1
+
+* removed incorrect turbine interaction function
+
 # collision 1.0.0
 
 * Major update of flux calculation and algorithm flow

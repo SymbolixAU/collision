@@ -37,10 +37,7 @@ remotes::install_github("SymbolixAU/collision", build_vignettes = TRUE)
 
 ## Note on status
 
-This package is under active development towards v0.1.0 milestone. Active branches:
-
-* `main` : Documented, tested versions for the deterministic model end to end.  Needs population correction but that's it.  Note this is still under verification - the code works but testing and validation continues
-* `issue1` : older code, used as repository for code to be pulled in, documented and tested
+This package is under active development.
 
 See issues for other tasks or to contribute. Branches will be names according to the issue
 
@@ -68,16 +65,6 @@ It estimates:
 * Site activity rate from distance corrected data
 * Number of interactions per year with turbines (this can be extended to include spatial probability), i.e. number of flights per year through the rotor swept area
 * Probability of collision with turbine blades for interacting flights. This uses Band 2009 stage 2 calculation or the Biosis CRM.
-
-## Getting started
-
-
-
-### One bird and one turbine calculation
-
-
-
-
 
 
 
