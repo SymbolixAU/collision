@@ -201,9 +201,8 @@ For a deterministic model, we need the following 4 steps:
 
 * Step 1 - Run `encounter_rate()` - calculate the uncorrected flights per survey minute.
 * Step 2 - Run `obs_flux()`, `turbine_flux()` and `flux_per_year()` - calculate flux through turbine per year. This can also be done in one step using `turbine_flux_year()`.
-* Step 3 - Run `prob_interaction_flat()` - calculate $P(I)$
-* Step 4 - Run `prob_collision_static()` and `prob_collision_dynamic()` - calculate $P(C|I)$ for one interaction
-* Step 5 - Run `n_collisions()` - calculate number of collisions a year
+* Step 3 - Run `prob_collision_static()` and `prob_collision_dynamic()` - calculate $P(C|I)$ for one interaction
+* Step 4 - Run `n_collisions()` - calculate number of collisions a year
 
 ### Step 1 - Encounter rate
 
