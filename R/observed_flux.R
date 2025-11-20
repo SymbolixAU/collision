@@ -4,9 +4,20 @@
 #' (see for example \insertCite{Buckland2001;textual}{collision}) and the mean flight height into an estimate of flight flux
 #'  per unit time per unit area of vertical airspace \insertCite{Smales2013}{collision}.
 #'
-#' @inherit turbine_flights_year details
+#' @details
+#' ## Observed flux from point counts
+#' 
+#' Given an encounter rate ([encounter_rate()]), a distribution of flight heights 
+#' and a related distance model (fit using the `Distance` package \insertCite{Miller019a}{collision}) 
+#' we calculate the flight flux through a rectangle with a width of 2 x (effective detection radius) 
+#' and a height of the 2 x mean (expected value) of the height distribution 
+#' in one unit of observation time.
 #'
-#' @inherit turbine_flights_year references
+#' 
+#' Note the function accepts only single valued inputs, so stochastic inputs must
+#' be sampled from prior to calling this function. For more information, 
+#' see \code{vignette("simple-simulation-example", package = "collision")}.
+#' 
 #'
 #' @seealso [encounter_rate()]
 #'
@@ -27,6 +38,10 @@
 #'    Area units are defined by the units of the width and height, and time interval
 #'    is the same as referenced by `encounter_rate` input.
 #'
+#'
+#' @references
+#'   \insertAllCited{}
+#' 
 #' @example examples/flux_example.R
 #'
 #' @export
