@@ -1,7 +1,7 @@
 Package: collision
 Type: Package
 Title: Collision Risk Model for Wind and Wildlife
-Version: 1.0.1
+Version: 1.0.2
 Authors@R: c(
   person("Elizabeth", "Stark", ,"estark@symbolix.com.au", role = c("aut", "cre")),
   person("Muir", "Stuart", role = c("aut")),

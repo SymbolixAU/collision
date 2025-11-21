@@ -2,9 +2,6 @@
 #'
 #' This function converts observed flights (movements) and survey duration into the "encounter rate" per minute of survey. This value is uncorrected for the observer's effective detection radius.
 #'
-#' @inherit turbine_flights_year details
-#'
-#' @inherit turbine_flights_year references
 #'
 #' @seealso [turbine_flights()] and [flights_per_year()] for methods to expand the
 #' observer flux into flights through the turbine plane
@@ -18,8 +15,8 @@
 #'    to account for stratification etc. The sum of the survey weights must equal the total number of surveys
 #'    (to avoid artificially inflating or deflating the survey effort). When NULL (the default) will 
 #'    weight surveys equally.
-#' @param wilson_correction boolean;  Apply wilson correction if there are
-#'    no observations. Defaults to TRUE \insertCite{Wilson1927}{collision}.
+#' @param wilson_correction boolean;  Apply wilson correction \insertCite{Wilson1927}{collision} if there are
+#'    no observations. Defaults to TRUE.
 #'   
 #' @return numeric; number of flights observed in one unit time of survey. 
 #'    If the Wilson correction was used it will return the (approximate) mid-point of the 95% confidence interval 

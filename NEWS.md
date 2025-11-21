@@ -1,5 +1,9 @@
 # collision (public beta)
 
+# collision 1.0.2
+
+* Updated documentation
+
 # collsion 1.0.1
 
 * removed incorrect turbine interaction function
