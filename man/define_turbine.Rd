@@ -46,9 +46,9 @@ define multiple turbine types on a site}
 
 \item{min_chord}{the chord of the blade at its tip (thinnest point) (m)}
 
-\item{max_nac_h}{max nacelle length (side view) (m)}
+\item{max_nac_h}{max nacelle height (side view) (m)}
 
-\item{max_nac_l}{max nacelle height (side view) (m)}
+\item{max_nac_l}{max nacelle length (side view) (m)}
 
 \item{max_width_nacelle}{diam of nosecone == nacelle room width (back view) (m)}
 

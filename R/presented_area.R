@@ -83,8 +83,8 @@ pa_hub <- function(max_width_nacelle){
 #' 
 #' presented area of the nacelle. Internal function
 #' 
-#' @param max_nac_h  max nacelle length (side view) (m)
-#' @param max_nac_l  max nacelle height (side view) (m)
+#' @param max_nac_h  max nacelle height (side view) (m)
+#' @param max_nac_l  max nacelle length (side view) (m)
 #' @param max_width_nacelle  diameter of nosecone == nacelle room width (back view) (m)
 #' @noRd
 pa_nacelle <- function(max_nac_h, max_nac_l, max_width_nacelle){
