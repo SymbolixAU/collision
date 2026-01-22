@@ -297,6 +297,7 @@ hmin_boot1 <- boot::boot(
 )
 
 prop_below_height1 <- set_random("rnorm", mean = hmin_boot1$t0, sd = sd(hmin_boot1$t))
+# you may need to use a bounded distribution if the proportion is near 0 or 1
 
 ## bootstrap prop below max RSH
 hmax_boot1 <- boot::boot(
@@ -556,7 +557,7 @@ lst_results <- lapply(1:iterations, function(i) {
 })
 ```
 
-Now we have the output of each simulation. We can use them to plot out the histogram of collision results.
+Now we have the output of each simulation. We can use them to plot out the histogram of collision results. This shows the distribution of the long-term average annual collision rate for the wind farm.
 
 ```{r}
 lapply(lst_results, function(x) {

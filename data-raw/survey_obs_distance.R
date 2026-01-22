@@ -32,7 +32,6 @@ df_obs <- structure(
 )
 
 
-
 df_survey <- structure(
   list(
     survey_id = 1:n_survey, 
