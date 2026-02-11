@@ -1,7 +1,7 @@
 Package: collision
 Type: Package
 Title: Collision Risk Model for Wind and Wildlife
-Version: 1.0.3
+Version: 1.0.4
 Authors@R: c(
   person("Elizabeth", "Stark", ,"estark@symbolix.com.au", role = c("aut", "cre")),
   person("Muir", "Stuart", role = c("aut")),
@@ -30,8 +30,7 @@ Suggests:
   boot,
   mc2d,
   parallel,
-  data.table,
-  qpdf
+  data.table
 Encoding: UTF-8
 RoxygenNote: 7.3.3
 RdMacros: Rdpack
