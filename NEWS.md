@@ -1,5 +1,9 @@
 # collision (public beta)
 
+# collision 1.0.3
+
+* Amended `pa_nacelle` and documentation
+
 # collision 1.0.2
 
 * Updated documentation

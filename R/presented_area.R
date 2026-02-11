@@ -90,10 +90,8 @@ pa_hub <- function(max_width_nacelle){
 pa_nacelle <- function(max_nac_h, max_nac_l, max_width_nacelle){
   
   return( rotate_areas(
-    front = max_nac_l * max_nac_h,
-    side = max_width_nacelle * max_nac_h + pa_hub(max_width_nacelle)
-    # front = max_width_nacelle* max_nac_h,
-    # side = max_nac_l * max_nac_h + pa_hub(max_width_nacelle)
+    front = max_width_nacelle* max_nac_h,
+    side = max_nac_l * max_nac_h + pa_hub(max_width_nacelle)
   ))
   
 }
