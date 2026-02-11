@@ -34,9 +34,9 @@ prob_collision_static(
 
 \item{blade_length}{blade length}
 
-\item{max_nac_h}{max nacelle length (side view)}
+\item{max_nac_h}{max nacelle height (side view)}
 
-\item{max_nac_l}{max nacelle height (side view)}
+\item{max_nac_l}{max nacelle length (side view)}
 
 \item{max_width_nacelle}{nacelle room width (back view)}
 
