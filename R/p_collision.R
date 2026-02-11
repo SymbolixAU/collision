@@ -42,8 +42,8 @@ vertical_flux_plane_area <- function(
 #' @param d_top diameter of tower at top
 #' @param hh hub height
 #' @param blade_length blade length
-#' @param max_nac_h  max nacelle length (side view)
-#' @param max_nac_l  max nacelle height (side view)
+#' @param max_nac_h  max nacelle height (side view)
+#' @param max_nac_l  max nacelle length (side view)
 #' @param max_width_nacelle nacelle room width (back view)
 #' @param rotor_diam rotor diameter (m)
 #' @param tilt_deg Blade tilt in degrees
