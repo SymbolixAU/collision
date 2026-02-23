@@ -138,8 +138,11 @@ Between the two of them these tables must include:
 * Duration of the surveys in minutes
 * Count of individuals in each survey (`size`)
 
-We fit a distance model and extract the effective detection radius (EDR). The effective detection radius is the radius of a circle, such that if 100% of flights were observed within this circle, the expected number of flights detected is the same as for the actual survey (which has decaying detectability
-with distance).
+We fit a distance model and extract the effective detection radius (EDR) or effective detection (half) width for point and line transects respectively. 
+
+For point count/transects the effective detection radius is the radius of a circle, such that if 100% of flights were observed within this circle, the expected number of flights detected is the same as for the actual survey (which has decaying detectability with distance).
+
+For line transects the effective detection (half) width is the perpendicular width from the line, such that if 100% of flights were observed within a strip transect of this (half) width,  the expected number of flights detected is the same as for the actual survey (which has decaying detectability with distance).
 
 ```{r}
 ds_model <- ds(
