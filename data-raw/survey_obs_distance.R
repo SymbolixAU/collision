@@ -19,7 +19,7 @@ set.seed(2026)
 n_survey <- 100L
 n_obs <- 120L
 
-df_obs <- structure(
+df_lineobs <- structure(
   list(
     distance = round(rweibull(n_obs, shape = 2, scale = 900)), 
     size = round(rpert(n_obs, min = 0.5, mode = 1, max = 3.5, shape = 6)), 
@@ -32,7 +32,7 @@ df_obs <- structure(
 )
 
 
-df_survey <- structure(
+df_line_survey <- structure(
   list(
     survey_id = 1:n_survey, 
     survey_duration = rep(45, n_survey),
