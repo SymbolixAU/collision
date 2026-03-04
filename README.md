@@ -1,55 +1,102 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# collision
-
-collision
 <img src="man/figures/logo.png" align="right" height="120" alt="" />
 
-<!-- badges: start -->
+# collision
 
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-<!-- badges: end -->
+## Collision of what?
 
-## Installation
+This is an R package that uses ecological data from field surveys and
+literature to predict the long term average collision rate between a
+species of bird and wind turbines. It is a specific type of model called
+an (Avian) Collision Risk Model (CRM).
+
+## Who’s it for?
+
+`{collision}` is designed for use as part of the environmental impact
+assessment process that wind developers undertake when planning for a
+new wind farm. It can also be used to compare and combine estimates
+across multiple sites for cumulative impact assessment; an important
+process for industry and regulators to manage the level of wind
+development that’s sustainable without having unintended consequences
+for vulnerable species.
+
+It’s designed in such a way that it is applicable to onshore and
+offshore wind and for resident and migrating species.
+
+## Is it peer reviewed?
+
+We are finalising independent peer review of this package and the
+underlying methodology currently as part of a package of work under the
+Australian Government’s Renewables Environmental Research Initiative.
+More details will be available in mid 2026.
+
+We are also preparing a journal paper to document the maths and
+validation tests publicly.
+
+This package was developed by contribution of code and maths from
+[Symbolix](www.symbolix.com.au) and [Biosis](www.biosis.com.au). The
+turbine model geometry and calculation of collision given turbine
+interaction is drawn from Smales et. al (2013)[^1]
+
+## What are the terms of use?
+
+{collision} is made available under a GPL-3 licence.
+
+The citation for the package is:
+
+``` r
+citation("collision")
+#> To cite package 'collision' in publications use:
+#> 
+#>   Stark E, Stuart M, Peggy Y (2026). _collision: Collision Risk Model
+#>   for Wind and Wildlife_. R package version 1.0.4, commit
+#>   850d6064a1f78e8726adcb53dc0b6b900daaf501,
+#>   <https://github.com/SymbolixAU/collision>.
+#> 
+#> A BibTeX entry for LaTeX users is
+#> 
+#>   @Manual{,
+#>     title = {collision: Collision Risk Model for Wind and Wildlife},
+#>     author = {Elizabeth Stark and Muir Stuart and Yandell Peggy},
+#>     year = {2026},
+#>     note = {R package version 1.0.4, commit 850d6064a1f78e8726adcb53dc0b6b900daaf501},
+#>     url = {https://github.com/SymbolixAU/collision},
+#>   }
+```
+
+## Quick start
 
 You can install the development version of collision from
 [GitHub](https://github.com/) with:
 
-NOTE: while this package is in closed testing, you will need to be
-invited to the repo (contact the package author with your request and
-your github account details) and you will need to set the environment
-variable “GITHUB_PAT” - see <https://github.com/settings/tokens> for
-more information
-
 ``` r
 # install.packages("remotes")
-Sys.setenv("GITHUB_PAT" = "<your token goes here>")
 remotes::install_github("SymbolixAU/collision", build_vignettes = TRUE)
 ```
 
-## Note on status
+## Is it finished and ready for use?
 
-This package is under active development towards v0.1.0 milestone.
-Active branches:
+Ha! Is an open source project ever finished?
 
-- `main` : Documented, tested versions for the internal P(C\|I)
-  functions (static and dynamic). See
-  <https://github.com/SymbolixAU/collision/issues/2> for most recent
-  Pull Request work
-- `issue1` : older code, used as repository for code to be pulled in,
-  documented and tested
+But seriously, the methodology and the mathematics of this package are
+stable. The package itself is being finalised based on recent peer
+reviews and upcoming consultations. New and updated vignettes are being
+added as we think of them. To see what we are currently working on go to
+the [issues log](https://github.com/SymbolixAU/collision/issues).
 
-See issues for other tasks or to contribute. Branches will be names
-according to the issue
+### Can I help?
 
-## About
+The best way to log a suggestion, feature, issue or bug is via the
+[issues log](https://github.com/SymbolixAU/collision/issues) as a
+starting point. We will accept pull requests but only if discussed and
+agreed via a logged issue first.
 
-This package was developed by contribution of code and maths from
-[Symbolix](www.symbolix.com.au) and [Biosis](www.biosis.com.au), and
-also draws from open source code (TODO ADD IN REFS). It is made
-available under a GPL-3 licence.
+## Aren’t there already CRMs?
+
+Yes - this has been an active area of development and research for 40
+years[^2]
 
 The main deviation of this package from other examples is the
 flexibility it affords the analyst. In Australia, CRM is required for
@@ -60,19 +107,28 @@ short term migrants) or spatial modelling (e.g. different relative risk
 per turbine). Basic usage is below but the vignettes will work through
 specific examples.
 
-The number of collisions per year is calculated as:
+### The maths in a nutshell
 
-$N_{C}= N_{I} \times P(C|I) \times (1 - \alpha)$, where $N_{I}$ is the
-number of interactions with turbines, $P(C|I)$ is the probability of
-collision given interaction, and $\alpha$ is the probability of turbine
-(meso + macro) avoidance, i.e. birds modifying their flight patterns in
-the presence of turbines, to go around, above, below or to dynamically
-avoid the sweeping blade.
+The number of collisions per year can be conceptualised as
 
-$N_{I}$ is calculated based on activity rate (flights per year per km^2)
-and the area occupied by turbines. $P(C|I)$ is calculated properties of
-the turbine and the archetype bird species and $\alpha$ is generated
-from literature review.
+$N_{C}= N_{I} \times P(C|I) \times (1 - \alpha)$, where
+
+$N_{I}$ is the number of interactions with a given turbine, $P(C|I)$ is
+the probability of collision given interaction, and $\alpha$ is the
+probability of turbine (meso + macro) avoidance, i.e. birds modifying
+their flight patterns in the presence of turbines, to go around, above,
+below or to dynamically avoid the sweeping blade.
+
+$N_{I}$ is calculated based on a flight flux rate - the number of
+flights through a given *vertical* area in a given time period. This
+number requires field survey observations and survey metadata of the
+duration and effective radius/width surveyed.
+
+$P(C|I)$ is calculated from of the turbine and the archetype bird
+species and $\alpha$ is generated from literature review. In this
+package $P(C|I)$ accounts for flights from any direction and the
+probability of collision with the static turbine as a whole, and with
+the dynamic component (moving blade).
 
 This package offers an R package for using and comparing different
 approaches to stochastic modelling of collision rates between birds and
@@ -81,54 +137,18 @@ turbines.
 It estimates:
 
 - Site activity rate from distance corrected data
-- Number of interactions per year with turbines (this can be extended to
-  include spatial probability), i.e. number of flights per year through
-  the rotor swept area
-- Probability of collision with turbine blades for interacting flights.
-  This uses Band 2009 stage 2 calculation or the Biosis CRM.
+- Number of interactions per year per turbine (this can be extended to
+  include spatial probability).
+- Probability of collision with turbine blades for interacting flights
+  based on Smales et al (2013)^{1}.
 
-## Getting started
+[^1]: Smales, Ian, Stuart Muir, Charles Meredith, and Robert Baird.
+    2013. “A Description of the Biosis Model to Assess Risk of Bird
+    Collisions with Wind Turbines.” Wildlife Society Bulletin 37 (1):
+    59–65. <https://doi.org/10.1002/wsb.257>.
 
-### One bird and one turbine calculation
-
-## History and provenance
-
-Collision risk models (CRMs) predict the long-term average annual
-collision rate between birds and wind turbines. The onshore wind energy
-industry in Australia developed specific, data collection and CRM to
-account for how birds make use of terrestrial habitats. This package is
-an evolution that cpatures the strengths of the Australian approach,
-while integrating the key developments (e.g. stochastic inputs) from
-Europe and the UK.
-
-A brief history of Australian CRM is below:
-
-- 2000;2009: Band \[UK\] (Open source) [TODO LINK]()
-  - $P(C|I)$ worksheet
-  - simple methods for $n$ and $P(I)$ (which are largely superceded)
-  - Calculation of one value for whole site
-- \~2004:
-  [Biosis](https://wildlife.onlinelibrary.wiley.com/doi/10.1002/wsb.257)
-  - Developed in and for Australia - accounts for resident species
-  - \*\* $n$ from field counts\*\*
-  - \*\* $P(I)$ from geometric calc\*\*
-  - Slightly amended P(C\|I) allows for flights through at any
-    direction, not just up or downwind
-- 2008: Nature Advisory (+ Symbolix) \[Aus\]
-  - $n$ from distance corrected field counts
-  - \*\* $P(I)$ from flight paths or scenario \*\*
-    - Spatial, per turbine calc
-  - $P(C|I)$ from Band 2009
-- 2012: Band updated guidance
-  - Added flight ‘flux’ calculation -from bird speed and field counts
-    - Sensitive to bird flight speed estimate (Madsen & Cook 2015)
-- 2015: Madsen & Cook \[UK\] (Open source)
-  - **Stochastic (simulation) allows uncertainty in inputs**
-  - Based on Band 2012/2009
-  - Whole site only
-- 2024: `collision` (this package)
-  - $n$ from distance corrected field counts
-  - $P(I)$ from flight paths or scenario
-    - Spatial, per turbine calc
-  - $P(C|I)$ from Band 2009
-  - **Stochastic**
+[^2]: Cook, Aonghais S. C. P., Eldina Salkanovic, Elizabeth Masden, Hsiu
+    Eik Lee, and Alexander Holm Kiilerich. 2025. A Critical Appraisal of
+    40 Years of Avian Collision Risk Modelling: How Have We Got Here and
+    Where Do We Go Next? *Environmental Impact Assessment Review* 110
+    (January): 107717. <https://doi.org/10.1016/j.eiar.2024.107717>.

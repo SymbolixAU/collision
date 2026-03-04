@@ -1,14 +1,16 @@
 Package: collision
 Type: Package
-Title: Collision Risk Model for Wind and Wildlife
+Title: Per-turbine Collision Risk Model for predicting avian collision with on-shore and off-shore wind turbines
 Version: 1.0.4
 Authors@R: c(
-  person("Elizabeth", "Stark", ,"estark@symbolix.com.au", role = c("aut", "cre")),
+  person("Elizabeth", "Stark", ,"estark@symbolix.com.au", role = c("aut", "cre"), 
+    comment = c(ORCID = "0009-0002-6337-5021")),
   person("Muir", "Stuart", role = c("aut")),
   person("Yandell", "Peggy", role = c("aut")),
   person("Akila", "Sahinya", role = c("ctb")),
   person("Shao", "Ray", role = c("ctb")),
-  person("Biosis", role="cph", comment = "Package uses and adapts turbine geometry methods sourced with permission from Biosis' Collision Risk Model")
+  person("Biosis", role="cph", comment = "Package uses and adapts turbine geometry methods sourced with permission from Biosis' Collision Risk Model"),
+  person("Symbolix", role="cph")
   )
 Maintainer: Elizabeth Stark <estark@symbolix.com.au>
 Description: This package contains a stochastic avian - wind turbine collision risk model that enables distance sampling and per-turbine calculations.
