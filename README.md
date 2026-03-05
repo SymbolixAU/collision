@@ -1,9 +1,9 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-<img src="man/figures/logo.png" align="right" height="120" alt="" />
-
 # collision
+
+<img src="man/figures/logo.png" align="right" height="120" alt="" />
 
 ## Collision of what?
 
