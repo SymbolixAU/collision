@@ -3,7 +3,7 @@
 
 # collision
 
-<img src="man/figures/logo.png" align="right" height="120" alt="" />
+<!-- <img src="man/figures/logo.png" align="right" height="120" alt="" /> -->
 
 ## Collision of what?
 
