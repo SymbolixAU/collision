@@ -1,7 +1,5 @@
 # collision
 
-![](reference/figures/logo.png)
-
 ## Collision of what?
 
 This is an R package that uses ecological data from field surveys and
