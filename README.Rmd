@@ -34,7 +34,7 @@ We are finalising independent peer review of this package and the underlying met
 
 We are also preparing a journal paper to document the maths and validation tests publicly.
 
-This package was developed by contribution of code and maths from [Symbolix](www.symbolix.com.au) and [Biosis](www.biosis.com.au). The turbine model geometry and calculation of collision given turbine interaction is drawn from Smales et. al (2013)^[Smales, Ian, Stuart Muir, Charles Meredith, and Robert Baird. 2013. “A Description of the Biosis Model to Assess Risk of Bird Collisions with Wind Turbines.” Wildlife Society Bulletin 37 (1): 59–65. https://doi.org/10.1002/wsb.257.]
+This package was developed by contribution of code and maths from [Symbolix](https://www.symbolix.com.au) and [Biosis](https://www.biosis.com.au). The turbine model geometry and calculation of collision given turbine interaction is drawn from Smales et. al (2013)^[Smales, Ian, Stuart Muir, Charles Meredith, and Robert Baird. 2013. “A Description of the Biosis Model to Assess Risk of Bird Collisions with Wind Turbines.” Wildlife Society Bulletin 37 (1): 59–65. https://doi.org/10.1002/wsb.257.]
 
 ## What are the terms of use?
 
