@@ -332,7 +332,8 @@ df_turbines$p_coll_dyn <- prob_collision_dynamic(
   bird_length = wte$bird_length,
   bird_speed = wte$bird_speed,
   prop_at_height = prop_at_height,
-  prop_below_height = prop_below_height
+  prop_below_height = prop_below_height,
+  prop_operational = v90_single$prop_operational
 )
 
 

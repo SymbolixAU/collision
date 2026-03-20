@@ -145,6 +145,9 @@ prob_collision_static <- function(
 #' @param bird_speed numeric; Average flight speed (m/sec)
 #' @param prop_at_height proportion of flights at rotor swept height
 #' @param prop_below_height proportion of flights below rotor swept height
+#' @param prop_operational  numeric; Proportion of a 24 hour day that turbines
+#' are operational. A single number or distribution information using 
+#' [set_random]. Default 1. See [define_turbine()] for more detail.
 #'
 #' @return numeric; probability of collision with leading edge of blade.
 #'         Range from 0 to 1
@@ -178,7 +181,8 @@ prob_collision_dynamic <- function(
   bird_length,
   bird_speed,
   prop_at_height,
-  prop_below_height
+  prop_below_height,
+  prop_operational = 1
 ) {
   
   stopifnot(
@@ -208,5 +212,5 @@ prob_collision_dynamic <- function(
   presented_area <- presented_area * prop_at_height /
     (prop_at_height+prop_below_height)
   
-  return(presented_area/turbine_plane_area)
+  return(presented_area/turbine_plane_area*prop_operational)
 }
