@@ -163,7 +163,9 @@ print(w_from_distmodel(ds_model)) # truncation distance / max distance in m
 
 `prop_at_height` is either a single value or distribution information which represents the proportion of flights at rotor swept height while `prop_below_height` is the proportion of flights below rotor swept height.
 
-A simple, single value example of this is given below
+In this example (and in most cases) we are desktop truncating the observations to the height of the turbine. So `prop_at_height` and `prop_below_height` should sum to 1. Desktop truncating is the most straightforward way to avoid artificially inflating or deflating the flux through the turbine window.
+
+A simple, single value example of this is given below.
 
 ```{r}
 
@@ -183,17 +185,15 @@ ggplot(data = as.data.frame(df_obs),
 # calculate ecdf (empirical cumulative distribution function)
 # Note - this is a simple example; it's up to the analyst how best to 
 ## fit the height distribution
-cdf_height <- ecdf(df_obs$height)
+cdf_height <- ecdf(df_obs[df_obs$height <= max_rsh, "height"])
 
-prop_at_height <- cdf_height(round(max_rsh)) - cdf_height(round(min_rsh))
-prop_below_height <- cdf_height(round(min_rsh))
-
+prop_below_height <- cdf_height(min_rsh)
+prop_at_height <- 1 - prop_below_height
 
 ```
 
 * Proportion at height: `r prop_at_height`
 * Proportion below height: `r prop_below_height`
-* Proportion above height: `r 1.0 - (prop_at_height + prop_below_height)`
 
 
 ## Modelling
@@ -209,7 +209,7 @@ For a deterministic model, we need the following 4 steps:
 
 This is where we determine the average encounter rate per unit time of survey. That is the average number of individuals observed in each minute of survey (or whatever unit of time you wish to use). This is basically just $\frac{total\ individuals\ observed}{total\ survey\ time}$, however the function also allows for weighting surveys to account for stratification and can apply the Wilson correction [@Wilson1927] if there were no observations. The Wilson correction is an estimate of the encounter rate ([mid-point of the 95% CI](https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval:~:text=known%20as%20the-,%22plus%20four%20rule%22,-.)) that could result in zero observations.
 
-This function takes as input a `df_obs_summary` data.frame. This object has one row per survey and must contain a column named `survey_duration` and a column named `size` which is the **total** number of individuals observed in each **survey** (not observation). Optionally, it can contain a column named `survey_weight` which has the associated relative weights of each survey (to avoid artificially inflating or deflating the encounter rate `sum(survey_weight)` must equal the number of surveys).
+This function takes as input a `df_obs_summary` data.frame. This object has one row per survey and must contain a column named `survey_duration` and a column named `size` which is the **total** number of individuals observed below the maximum turbine height (unless using another method to estimate effective detection height) in each **survey** (not observation). Optionally, it can contain a column named `survey_weight` which has the associated relative weights of each survey (to avoid artificially inflating or deflating the encounter rate `sum(survey_weight)` must equal the number of surveys).
 
 First let's make that table (using `data.table`):
 
@@ -220,7 +220,7 @@ dt_survey <- copy(df_survey)
 setDT(dt_obs)
 setDT(dt_survey)
 
-dt_obs_survey <- dt_obs[, .("size" = sum(size)), survey_id][dt_survey,
+dt_obs_survey <- dt_obs[height <= max_rsh, .("size" = sum(size)), survey_id][dt_survey,
                                                             on = "survey_id"]
 # need sum(size) because we want one row per survey (not observation)
 ```
@@ -234,14 +234,13 @@ flights_per_min <- encounter_rate(
  )
 ```
 
-Any surveys with `NA` observations are assumed to have zero observations, which, if you left join to the survey table by `survey_id`, should be correct. The average number of movements observed per minute of survey is `r flights_per_min` flights per minute.
+Any surveys with `NA` observations are assumed to have zero observations, which, if you left join to the survey table by `survey_id` (like we did above), should be correct. The average number of movements observed per minute of survey is `r flights_per_min` flights per minute.
 
 
 ### Step 2 - Flux through turbine
 
 This is where we account for
 
-* The flight heights (`mean_flight_height`)
 * The observer's detection model (`eff_detection_width` obtained using `edr_dist_model()`)
 * The size of the turbine (contained in the object made using `define_turbine()`)
 * The proportion of the day active (contained in the object made using `define_bird()`)
@@ -257,7 +256,7 @@ Second we apply this to the "turbine plane" (a rectangular "doorway" defined by 
 obs_flux_min <- obs_flux(
   encounter_rate = flights_per_min, # numeric per min
   eff_detection_width = 2.0*edr_from_distmodel(ds_model),
-  mean_flight_height = mean(df_obs$height*df_obs$size) # weighted by individuals
+  eff_detection_height = max_rsh
 )
 
 #flights through turbine / min
