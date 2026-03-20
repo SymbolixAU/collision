@@ -226,6 +226,9 @@ hist(EDR_hist)
 In order to determine the flight flux we need to integrate the distribution of the heights. This is because unlike with the EDR we can't fit a distance model to the heights because distance modelling relies on the assumption that the birds are uniformly distributed which we know is not the case in vertical space. 
 
 We can use the mean height to model the height distribution as a uniform density with the same mean.
+# TEO: I am a little confused by this statement since we define mean_h using
+# a normal distribution below. Is this saying uniform in the sense that it is the 
+# same?
 
 ```{r}
 

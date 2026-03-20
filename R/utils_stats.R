@@ -1,3 +1,6 @@
+# TEO: This function doesn't appear to have been used anywhere?
+# Just making sure that I didn't miss anything. 
+
 
 #' Given a mean and standard deviation, solves for log normal distribution 
 #' parameters meanlog and sdlog. 

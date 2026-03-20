@@ -1,3 +1,11 @@
+# TEO: Is there a concern about mixing conceptual units?
+# The width of the window is how far from the observer
+# you have perfect detection probability.
+# The height of the window is the averge observed 
+# flight height, so there is no reliance/incorporation 
+# of detection probability. 
+
+
 #' Calculate observed flights / time / area from point transects
 #'
 #' This function converts the uncorrected encounter rate, the effective detection radius

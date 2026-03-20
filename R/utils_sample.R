@@ -71,6 +71,11 @@ is.randInput <- function(x) inherits(x, "randInput")
 #' is.randInput(var1) # should be true
 #' sample_input(var1) # random
 #' sample_input(var1, n=10) # samole 10 values
+
+
+# TEO: Is there a typo above? "# sample"?
+
+
 #'
 #' sample_input(17)  # fixed input
 #' sample_input(17, n=10)  # fixed input, replicated

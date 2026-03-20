@@ -34,6 +34,7 @@ vertical_flux_plane_area <- function(
 #'
 #' @details
 #' Presented areas are the sum of static  components, where
+# TEO: an extra space between "static" and "components"? This likely renders with no issue. 
 #'  static components are the tower below rotor height, tower above rotor height,
 #'  rotor and nacelle/nosecone
 #'

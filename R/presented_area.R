@@ -1,6 +1,34 @@
 #' Rotate areas
 #' 
 #' Rotate shape through 180 degrees. Internal function
+
+# TEO: I think it would be helpful to add further description to this function,
+# even though it is internal to the function. This seems to be 
+# the estimated average area as a rectangular object
+# with areas of "front" and "side" is rotated from
+# looking at the "front" to the "side" through to the
+# "front" across 180 degrees. We are estimating the integral
+# of the perceived area across theta where theta is
+# the number of degrees of rotation. 
+# Maybe add a couple more examples to help explain what
+# is expected from this calculation:
+#   rotate_areas(1, 2) should be between 1 and 2 (since it is the
+# average viewed area and the smallest area is the front at 1,
+# and the largest area viewed is the side at 2).
+#   rotate_areas(2, 1) = rotate_areas(1, 2)
+#   rotate_areas(2, 2) is bigger than 2 since the perceived
+# area is almost always bigger than 2, except when 
+# theta = 0, pi / 2, and pi.
+
+# TEO: Using this average implies that the birds are equally 
+# likely to perceive the rectangular object from any angle. 
+# Does it fully capture the area? What about pi < theta < 2 * pi?
+# No, by rotating through 0 to pi we have "seen" all of the 
+# possible areas, and, using the equal likelihood of 
+# perception assumption, those areas have the same likelihood
+# of being perceived as the areas for theta between 
+# 0 and pi, so the average perceived area is the same. 
+
 #' 
 #' @param front area of front-view in metres squared
 #' @param side area of side-view in metres squared
@@ -10,6 +38,7 @@
 #' @examples
 #' \dontrun{
 #' rotate_areas(1,2)
+#' rotate_areas(2, 1)
 #' }
 #' 
 rotate_areas <- function(front, side){
@@ -90,7 +119,7 @@ pa_hub <- function(max_width_nacelle){
 pa_nacelle <- function(max_nac_h, max_nac_l, max_width_nacelle){
   
   return( rotate_areas(
-    front = max_width_nacelle* max_nac_h,
+    front = max_width_nacelle * max_nac_h,
     side = max_nac_l * max_nac_h + pa_hub(max_width_nacelle)
   ))
   
@@ -125,6 +154,19 @@ pa_rotor <- function(tilt_deg, max_chord, min_chord,
   
   return(rotate_areas(front = 3.*pa_blade_normal,
                       side = 2.*pa_blade_oblique))
+# TEO: Why are we scaling these by 3 and 2? 
+# This would imply that we expect the front
+# to happen with a higher likelihood than the side.
+# Shouldn't we use front = pa_blade_oblique
+# and side = pa_blade_normal since that 
+# orientation matches the nacelle calculation?
+# Does the 3 and 2 try to account for the
+# number of blades? If we look at the turbine from the 
+# normal perspective, we see three blades. If we look
+# from the oblique perspective, we sort of see only 2 
+# (I think 2 might be an overestimate, but the computation
+# gets very complicated to estimate what it really is). 
+
   
 }
 
@@ -148,6 +190,11 @@ eff_blade_thickness <- function(max_width_nacelle,
   
   if(is.null(rotor_diam)) rotor_diam <- 2 * blade_length + max_width_nacelle
   
+# TEO: I have no way to verify if this equation is
+# accurate, but it make intuitive sense (if
+# blade length, blade width, and nacelle width
+# increase this equation generally produces an 
+# increase in effective swept volume).
   eff_swept_volume <- 2.* pi * (
     
     (1./6.)*(
@@ -237,6 +284,12 @@ pa_dynamic <- function(s_rot,
   if(is.null(rotor_diam)) rotor_diam <- 2 * blade_length + max_width_nacelle
   
   n_blades <- 3.0
+
+
+# TEO: This is the first time that the number of blades has been
+# used. Should we allow users to set this?
+
+
   
   transit_length_m <- eff_blade_thickness(max_width_nacelle, 
                                           blade_length, 
@@ -257,6 +310,21 @@ pa_dynamic <- function(s_rot,
   
   return(rotate_areas(swept_area_transit, 
                       side = transit_length_m*(blade_length*1.5))
+# TEO: I am not sure that we need the 1.5 scalar here. 
+# This may be due to my lack of understanding of the 
+# effective blade width equation, but if we 
+# look at the turbine from the side, transit_length * blade_length
+# is the area that the blade covers if we turn it into a 
+# rectangle. I think this 1.5 is like the scalar of
+# 2 in the pa_rotor function. I would argue that these two
+# scalars should be the same? 
+# Should there be a temporal component to 
+# transit_length_m*(blade_length*1.5))? Or is that what
+# the 1.5 is doing? 
+# If the turbine were spinning infinitely fast, 
+# should the side area be transect_length_m * blade_length * 2?
+
+
   )
   
 }

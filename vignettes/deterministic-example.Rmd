@@ -254,6 +254,11 @@ Second we apply this to the "turbine plane" (a rectangular "doorway" defined by 
 ```{r}
 
 # flights / m / min
+
+
+# TEO: Should this be flights / m^2 / min? 
+
+
 obs_flux_min <- obs_flux(
   encounter_rate = flights_per_min, # numeric per min
   eff_detection_width = 2.0*edr_from_distmodel(ds_model),
@@ -274,6 +279,15 @@ turbine_flights_min <- turbine_flights(
 The observed flight flux is `r obs_flux_min` flights per square metre per minute. Scaling up to the turbine this corresponds to `r turbine_flights_min` flights through the turbine area per minute.
 
 Here we correct it for daily and monthly variability. This can be done by hand but the package includes a helper function which can scale to a year.
+
+
+# TEO: Is variability the right word here? The correction is more about use than variation.
+# Maybe daily and monthly use?
+# Also, prop_year doesn't have a monthly association based
+# on the definition as "proportion of the year (relative to the time 
+# period of the survey) the bird is active onsite", so should we say
+# "yearly" use? 
+
 
 ```{r}
 turbine_flight_year <- flights_per_year(

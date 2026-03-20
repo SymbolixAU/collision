@@ -107,6 +107,11 @@ define_bird <- function(
 #' @param blade_thickness_wide the thickness of the blade (side on) at its widest point (m)
 #' @param d_base diameter of tower at base (m)
 #' @param d_rotormin diameter of tower at base of rotor (m)
+
+# TEO: Based on this description, is this the same as the d_top?
+# When I think of the base of the rotor, I think of the hub.
+# Maybe "diameter of the tower at the minimum rotor swept height"?
+
 #' @param d_top diameter of tower at top (m)
 #' @param hh hub height (m)
 #' @param max_chord the chord of the blade at its widest point (m)
@@ -120,6 +125,8 @@ define_bird <- function(
 #' @param prop_operational numeric; Proportion of a 24 hour day that turbines
 #' are operational. A single number or distribution information using 
 #' [set_random]. Default 1
+# TEO: Should we allow for a different number of turbine blades than 3? 
+
 #'
 #' @examples
 #' 

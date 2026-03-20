@@ -49,8 +49,16 @@ While the dynamic component is "the area swept by the leading edges of rotor bla
 
 To calculate the probability of collision (of one bird with one turbine) will consider a bird with no avoidance behaviour, and compare the `collision` approach to the basic Band approach, where flights at rotor swept height are assumed to be uniformly distributed. 
 
+# TEO: The first clause here feels incomplete (as in no subject in the sentence), which makes the second clause struggle. 
+# Maybe "The probability of collision (of one bird with one turbine) will be calculated considering a bird with no avoidance behaviour using the `collision` approach, and that approach will be compared to the basic Band..."?
+# Also, we seem to be making the same assumption as the Band model in that the proportion of flights at rotor swept height are assumed to be uniform.
+# I think the Band model assumes uniform flight height within hight bands, and the `collision` approach is to use a taller flight height window (i.e. Band 
+# looks at every 1 meter of flight height and `collision` looks at "below rotor swept" and "above rotor swept" as the height windows).  
+
+
 We've coded an internal function `collision:::p_collision_band` for testing purposes (note the three colons - this function is just for testing) but for the purposes of this vignette we will also use the `stochLAB::get_avg_prob_collision()` package. 
 
+# TEO: At the very end of this sentence, the reference to "stochLAB::get_avg_prob_collision()" is to a function and not a package, right?
 
 Step one is to set up a turbine - here's an example based basically on a Vestas 90, set up using the `define_turbine` function:
 
@@ -86,6 +94,26 @@ Let's calculate the collision probability for a Wedge-tailed Eagle and the V90.
 
 
 ```{r}
+
+# TEO: For prop_at_height and prop_below_height: to mimic how Band style
+# models estimate the probability of collision (first by calculating
+# the probability using area then incorportating flight height), 
+# can we set prop_at_height and prop_below_height to assume a uniform
+# flight height and take that aspect out of the computation so that 
+# the comparison is more equal?
+v90_single$hh - v90_single$blade_length
+# 21 meters from the base to the bottom of the rotor swept area.
+
+equal <- c(21, v90_single$rotor_diam) / (21 + v90_single$rotor_diam)
+# 0.1865009 0.8134991
+
+# TEO: I also think this would be a good place to highlight how
+# `collision` is different from Band-style estimators in that
+# we aren't doing two steps (calculate probability of collision
+# in the uniform flight height case, then applying [i.e. integrating]
+# the estimated flight heights). In `collision` the steps happen
+# simulatenously. 
+
 
 p_coll_static <- prob_collision_static(
   d_base = v90_single$d_base,
@@ -124,6 +152,11 @@ p_coll_dyn + p_coll_static
 
 ```
 
+# TEO: Should we update this section? I don't think we have
+# used edr in this vignette to this point, so maybe that was from
+# an earlier version of prob_collision_static and/or 
+# prob_collision_dynamic?
+
 ### Hang on - what's that `edr`?
 
 Note we set our effective detection radius (`edr`) to half the rotor diameter. Normally this parameter is calculated via distance sampling [@Buckland2001]. As the effective detection increases, this probability of collision given interaction also decreases. 
@@ -135,6 +168,12 @@ As the effective detection radius increases, this also influences the flight den
 ### Back to Business - whats' Band say?
 
 ```{r}
+
+# TEO: Should we use gliding birds? Both of these calculations
+# below use flapping birds. Since the collision model relies more
+# heavily on a bird's speed than its width, it seems that we would be
+# minimizing the profile of the bird when it is at risk, which, I think,
+# would be more like gliding birds than flapping birds? 
 
 stochLAB::get_avg_prob_collision(
   flight_speed = wte$bird_speed, #m/s
@@ -152,6 +191,10 @@ stochLAB::get_avg_prob_collision(
 
 
 # using the 2007 smaller profile from the spreadsheet
+
+# TEO: Does the above comment still apply? 
+
+
 collision:::p_collision_band(
   max_chord = v90_single$blade_thickness_wide,
   pitch_deg = 30, 
