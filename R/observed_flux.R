@@ -33,9 +33,9 @@
 #'    which is usually 2 x effective detection radius. Must be in the same units as `eff_detection_height`.
 #' @param eff_detection_height numeric; The effective detection height. Because the 
 #' density of flights typically decreases with increasing height, the assumption of uniform
-#' density required for traditional distance correction doesn't hold so the observer's
+#' density required for traditional distance correction doesn't hold. So the observer's
 #' detection function is effectively convolved with the flight height distribution 
-#' of the bird. Therefore in most cases we recommend using the maximum tip height of the turbine
+#' of the bird. Therefore, in most cases we recommend using the maximum tip height of the turbine
 #' as the "effective detection height" and desktop truncating the observations to
 #' that height. This is the simplest way to avoid artificially inflating or deflating 
 #' the flux through the turbine. It is possible to use another method to estimate

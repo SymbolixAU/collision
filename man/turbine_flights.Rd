@@ -44,7 +44,8 @@ output flights / min).
 ## # Step by step
 ## 
 
-df_obs <- data.frame(size = c(0, 2 , 3, 0), # four surveys
+# four surveys
+df_obs <- data.frame(size = c(0, 2 , 3, 0), # individuals observed per survey (below the maximum rotor swept height)
                      survey_duration = c(20, 20, 18, 20), # minutes
                      # Optional survey weights to deal with stratification etc
                      survey_weight = c(1,1,1,1))
@@ -52,7 +53,7 @@ df_obs <- data.frame(size = c(0, 2 , 3, 0), # four surveys
 rotor_diameter <- 300
 hub_height <- 200
 edr <- 800 # derive from distance model
-mean_h <- 60 # derive from height distribution
+max_rsh <- hub_height + rotor_diameter/2
 
 # flights observed per minute of survey
 flights_per_min <- encounter_rate(
@@ -64,7 +65,7 @@ flights_per_min <- encounter_rate(
 flights_per_m2_per_min <- obs_flux(
   encounter_rate = flights_per_min,
   eff_detection_width = 2*edr,
-  mean_flight_height = mean_h
+  eff_detection_height = max_rsh
 )
 
 # scale to turbine width and height
@@ -90,7 +91,7 @@ flights_turbine_year2 <- turbine_flights_year(
   encounter_rate = flights_per_min,
   time_units = "min",
   eff_detection_width = 2*edr,
-  mean_flight_height = mean_h,
+  eff_detection_height = max_rsh,
   rotor_diameter = rotor_diameter,
   hub_height = hub_height,
   prop_day = 0.5,  #diurnal species
