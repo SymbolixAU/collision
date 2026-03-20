@@ -55,10 +55,13 @@ surveys during the activity period.
 ## 
 
 # four surveys
-df_obs <- data.frame(size = c(0, 2 , 3, 0), # individuals observed per survey (below the maximum rotor swept height)
-                     survey_duration = c(20, 20, 18, 20), # minutes
-                     # Optional survey weights to deal with stratification etc
-                     survey_weight = c(1,1,1,1))
+# Note the observation data should include observations within max rotor swept height
+df_obs <- data.frame(
+  size = c(0, 2 , 3, 0), #individuals observed per survey (below max rotor swept height)
+  survey_duration = c(20, 20, 18, 20), # minutes
+  # Optional survey weights to deal with stratification etc
+  survey_weight = c(1,1,1,1)
+)
 
 rotor_diameter <- 300
 hub_height <- 200
