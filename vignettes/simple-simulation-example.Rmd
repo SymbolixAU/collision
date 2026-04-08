@@ -128,6 +128,23 @@ wte <- define_bird(
 
 Note: the Beta PERT distribution (`rpert`) is a good distribution to use if you only have the mode (or mean) and the minimum and maximum parameters for a species (eg. mean body length = 0.95m, range: 0.6-1.2m). See the **Choosing Distributions**^[Distributions vignette is still in development.] for information on how to fit the distributions.
 
+### Define a Set of Turbines
+
+The basic template for the model outputs is a `data.frame` of turbine inputs.  These can be read in from a csv, or you can set them up with a few basic pieces of information and the turbine definition above.  
+
+For each turbine we need a turbine ID, and a location. Location can be NA if you are not including any spatial modelling.
+
+```{r}
+df_turbines <- data.frame(
+  turbine_id = c("T01", "T02", "T03", "T04"),
+  model = rep(c("Turbine 180", "Turbine 150"), each = 2),
+  lat = c(-32.512, -32.521, -32.523, -32.516),
+  lon = c(143.441, 143.442, 143.444, 143.447)
+)
+```
+
+
+
 ### Survey data
 
 Now we need to determine the input values from the observations. In order to determine the error on the estimate of the parameter we use the bootstrap method to repeatedly resample the distribution. This is just an example of how you can obtain the distribution, it is up to the analyst to determine how best to model these parameters.
@@ -348,20 +365,6 @@ encounter_rate_hist2 <- sapply(1:1000, FUN = function(i) collision::sample_input
 hist(encounter_rate_hist2)
 ```
 
-## Define a set of turbines
-
-The basic template for the model outputs is a `data.frame` of turbine inputs.  These can be read in from a csv, or you can set them up with a few basic pieces of information and the turbine definition above.  
-
-For each turbine we need a turbine ID, and a location. Location can be NA if you are not including any spatial modelling.
-
-```{r}
-df_turbines <- data.frame(
-  turbine_id = c("T01", "T02", "T03", "T04"),
-  model = rep(c("Turbine 180", "Turbine 150"), each = 2),
-  lat = c(-32.512, -32.521, -32.523, -32.516),
-  lon = c(143.441, 143.442, 143.444, 143.447)
-)
-```
 
 ### Run the simulation
 
