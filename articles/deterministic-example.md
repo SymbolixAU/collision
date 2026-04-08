@@ -453,7 +453,8 @@ df_turbines$p_coll_dyn <- prob_collision_dynamic(
   bird_length = wte$bird_length,
   bird_speed = wte$bird_speed,
   prop_at_height = prop_at_height,
-  prop_below_height = prop_below_height
+  prop_below_height = prop_below_height,
+  prop_operational = v90_single$prop_operational
 )
 ```
 
@@ -477,7 +478,7 @@ df_turbines$n_collision <- n_collision(
 
 ## For a final result, sum all turbines
 sum(df_turbines$n_collision)
-#> [1] 0.2053805
+#> [1] 0.2012758
 ```
 
 ------------------------------------------------------------------------

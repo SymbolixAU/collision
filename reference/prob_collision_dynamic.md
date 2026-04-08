@@ -16,7 +16,8 @@ prob_collision_dynamic(
   bird_length,
   bird_speed,
   prop_at_height,
-  prop_below_height
+  prop_below_height,
+  prop_operational = 1
 )
 ```
 
@@ -66,6 +67,15 @@ prob_collision_dynamic(
 - prop_below_height:
 
   proportion of flights below rotor swept height
+
+- prop_operational:
+
+  numeric; Proportion of a 24 hour day that turbines are operational. A
+  single number or distribution information using
+  [set_random](https://symbolixau.github.io/collision/reference/set_random.md).
+  Default 1. See
+  [`define_turbine()`](https://symbolixau.github.io/collision/reference/define_turbine.md)
+  for more detail.
 
 ## Value
 

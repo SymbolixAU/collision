@@ -492,7 +492,8 @@ and the V90 turbine model.</p>
 <span>  bird_length <span class="op">=</span> <span class="va">wte</span><span class="op">$</span><span class="va">bird_length</span>,</span>
 <span>  bird_speed <span class="op">=</span> <span class="va">wte</span><span class="op">$</span><span class="va">bird_speed</span>,</span>
 <span>  prop_at_height <span class="op">=</span> <span class="va">prop_at_height</span>,</span>
-<span>  prop_below_height <span class="op">=</span> <span class="va">prop_below_height</span></span>
+<span>  prop_below_height <span class="op">=</span> <span class="va">prop_below_height</span>,</span>
+<span>  prop_operational <span class="op">=</span> <span class="va">v90_single</span><span class="op">$</span><span class="va">prop_operational</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -515,7 +516,7 @@ number of expected collision per year.</p>
 <span></span>
 <span><span class="co">## For a final result, sum all turbines</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">df_turbines</span><span class="op">$</span><span class="va">n_collision</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.2053805</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.2012758</span></span></code></pre></div>
 <hr>
 </div>
 </div>

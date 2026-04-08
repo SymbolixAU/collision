@@ -143,11 +143,12 @@ p_coll_dyn <- prob_collision_dynamic(
   bird_length = wte$bird_length,
   bird_speed = wte$bird_speed,
   prop_at_height = 0.75,
-  prop_below_height = 0.2
+  prop_below_height = 0.2,
+  prop_operational = v90_single$prop_operational
 )
 
 p_coll_dyn + p_coll_static
-#> [1] 0.07960969
+#> [1] 0.07869908
 ```
 
 #### Hang on - what’s that `edr`?

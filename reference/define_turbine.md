@@ -1,6 +1,6 @@
 # define_turbine
 
-make a list of turbine parameters for input into the default CRM
+Make a list of turbine parameters for input into the default CRM.
 
 ## Usage
 
@@ -30,8 +30,7 @@ define_turbine(
 
 - model_id:
 
-  character; Label for turbine model - allows the user to define
-  multiple turbine types on a site
+  character; Label for turbine model
 
 - blade_length:
 
@@ -102,12 +101,12 @@ define_turbine(
 
 ## Value
 
-list where items define the value or stochastic distribution for each
+list whose items define the value or stochastic distribution for each
 parameter
 
 ## Details
 
-Makes a list of parameters for the a given turbine
+Makes a list of parameters for the a given turbine.
 
 ## Details
 
@@ -119,6 +118,12 @@ Each input to this function must be either
 
 - a single number representing the average (preferably median) of the
   variable
+
+If this object is being defined for multiple turbines of the same model
+`prop_operational` should be the average between all turbines. For
+example if there are two turbines, and one is operational for 24 hours
+while the other is operational for 18 hours each day, then
+`prop_operational = (0.75 + 1)/2 = 0.875`.
 
 ## Examples
 

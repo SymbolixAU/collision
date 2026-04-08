@@ -18,7 +18,7 @@
   : extract data from distance model
 
 - [`define_bird()`](https://symbolixau.github.io/collision/reference/define_bird.md)
-  : make a list of bird parameters for input into CRM
+  : Make a list of bird parameters for input into CRM
 
 - [`define_turbine()`](https://symbolixau.github.io/collision/reference/define_turbine.md)
   : define_turbine

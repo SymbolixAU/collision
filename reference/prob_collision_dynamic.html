@@ -55,7 +55,8 @@
 <span>  <span class="va">bird_length</span>,</span>
 <span>  <span class="va">bird_speed</span>,</span>
 <span>  <span class="va">prop_at_height</span>,</span>
-<span>  <span class="va">prop_below_height</span></span>
+<span>  <span class="va">prop_below_height</span>,</span>
+<span>  prop_operational <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -105,6 +106,12 @@
 
 <dt id="arg-prop-below-height">prop_below_height<a class="anchor" aria-label="anchor" href="#arg-prop-below-height"></a></dt>
 <dd><p>proportion of flights below rotor swept height</p></dd>
+
+
+<dt id="arg-prop-operational">prop_operational<a class="anchor" aria-label="anchor" href="#arg-prop-operational"></a></dt>
+<dd><p>numeric; Proportion of a 24 hour day that turbines
+are operational. A single number or distribution information using
+<a href="set_random.html">set_random</a>. Default 1. See <code><a href="define_turbine.html">define_turbine()</a></code> for more detail.</p></dd>
 
 </dl></div>
     <div class="section level2">

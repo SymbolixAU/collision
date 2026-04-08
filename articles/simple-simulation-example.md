@@ -607,7 +607,8 @@ lst_results <- lapply(1:iterations, function(i) {
     bird_length = bird_i$bird_length,
     bird_speed = bird_i$bird_speed,
     prop_at_height = prop_at_height1_i,
-    prop_below_height = prop_below_height1_i
+    prop_below_height = prop_below_height1_i,
+    prop_operational = turbines1_i$prop_operational
   )
   
   df_turbines_results[df_turbines_results$model == "Turbine 150",
@@ -622,7 +623,8 @@ lst_results <- lapply(1:iterations, function(i) {
     bird_length = bird_i$bird_length,
     bird_speed = bird_i$bird_speed,
     prop_at_height = prop_at_height2_i,
-    prop_below_height = prop_below_height2_i
+    prop_below_height = prop_below_height2_i,
+    prop_operational = turbines2_i$prop_operational
   )
 
 

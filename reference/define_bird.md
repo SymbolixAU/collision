@@ -1,4 +1,4 @@
-# make a list of bird parameters for input into CRM
+# Make a list of bird parameters for input into CRM
 
 Makes a list of avian biological parameters for the bird(s) being
 modelled as a function directly in R. This function is designed for
@@ -55,7 +55,7 @@ define_bird(
 
 ## Value
 
-list where items define the value or stochastic distribution f or each
+list whose items define the value or stochastic distribution for each
 parameter
 
 ## Details
