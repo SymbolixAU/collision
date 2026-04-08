@@ -2,19 +2,19 @@
 % Please edit documentation in R/encounter_rate.R
 \name{encounter_rate}
 \alias{encounter_rate}
-\title{Calculate uncorrected observed flights / minute of survey from point transects}
+\title{Calculate uncorrected observed flights / minute of survey from point transects.}
 \usage{
 encounter_rate(df_obs_summary, wilson_correction = TRUE)
 }
 \arguments{
 \item{df_obs_summary}{data.frame; a data.frame with one row per survey containing at least columns \code{size} and
-\code{survey_duration} where \code{size} is the total number of individuals observed in each survey and
-\code{survey_duration} is the duration of each survey. It can also optionally include a column \code{survey_weight} if needed
-to account for stratification etc. The sum of the survey weights must equal the total number of surveys
-(to avoid artificially inflating or deflating the survey effort). When NULL (the default) will
+\code{survey_duration} where \code{size} is the total number of individuals observed \strong{below the maximum height of the turbine}
+in each survey and \code{survey_duration} is the duration of each survey. It can also optionally include a column
+\code{survey_weight} if needed to account for stratification etc. The sum of the survey weights must equal the total
+number of surveys (to avoid artificially inflating or deflating the survey effort). When NULL (the default) will
 weight surveys equally.}
 
-\item{wilson_correction}{boolean;  Apply wilson correction \insertCite{Wilson1927}{collision} if there are
+\item{wilson_correction}{boolean; Apply Wilson correction \insertCite{Wilson1927}{collision} if there are
 no observations. Defaults to TRUE.}
 }
 \value{
@@ -25,6 +25,10 @@ If the Wilson correction was used it will return the (approximate) mid-point of 
 \description{
 This function converts observed flights (movements) and survey duration into the "encounter rate" per minute of survey. This value is uncorrected for the observer's effective detection radius.
 }
+\details{
+Note: We recommend to desktop truncating the observation data to the maximum height of the turbine in most cases, as this is the simplest way to avoid artificially inflating or deflating the flux through the turbine.
+However, it is up to the analyst discretion and they may choose another method to account for the effective detection height.
+}
 \examples{
 
 ## A simple example of calculating flux from a point count and
@@ -34,15 +38,19 @@ This function converts observed flights (movements) and survey duration into the
 ## # Step by step
 ## 
 
-df_obs <- data.frame(size = c(0, 2 , 3, 0), # four surveys
-                     survey_duration = c(20, 20, 18, 20), # minutes
-                     # Optional survey weights to deal with stratification etc
-                     survey_weight = c(1,1,1,1))
+# four surveys
+# Note the observation data should include observations within max rotor swept height
+df_obs <- data.frame(
+  size = c(0, 2 , 3, 0), #individuals observed per survey (below max rotor swept height)
+  survey_duration = c(20, 20, 18, 20), # minutes
+  # Optional survey weights to deal with stratification etc
+  survey_weight = c(1,1,1,1)
+)
 
 rotor_diameter <- 300
 hub_height <- 200
 edr <- 800 # derive from distance model
-mean_h <- 60 # derive from height distribution
+max_rsh <- hub_height + rotor_diameter/2
 
 # flights observed per minute of survey
 flights_per_min <- encounter_rate(
@@ -54,7 +62,7 @@ flights_per_min <- encounter_rate(
 flights_per_m2_per_min <- obs_flux(
   encounter_rate = flights_per_min,
   eff_detection_width = 2*edr,
-  mean_flight_height = mean_h
+  eff_detection_height = max_rsh
 )
 
 # scale to turbine width and height
@@ -80,7 +88,7 @@ flights_turbine_year2 <- turbine_flights_year(
   encounter_rate = flights_per_min,
   time_units = "min",
   eff_detection_width = 2*edr,
-  mean_flight_height = mean_h,
+  eff_detection_height = max_rsh,
   rotor_diameter = rotor_diameter,
   hub_height = hub_height,
   prop_day = 0.5,  #diurnal species
