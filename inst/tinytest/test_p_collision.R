@@ -124,10 +124,11 @@ dyn_chk <- prob_collision_dynamic(
   bird_length = wte$bird_length,
   bird_speed = wte$bird_speed,
   prop_at_height = 0.75,
-  prop_below_height = 0.2
+  prop_below_height = 0.2,
+  prop_operational = 0.8
 )
 
-expect_equal(dyn_chk, 0.045530, tolerance = 0.00001)
+expect_equal(dyn_chk, 0.036424, tolerance = 0.00001)
 
 ## Throws error when prop_at_height and/or prop_below_height are NA/not numeric-----
 expect_error(
@@ -142,9 +143,9 @@ expect_error(
     bird_length = wte$bird_length,
     bird_speed = wte$bird_speed,
     prop_at_height = '0.75',
-    prop_below_height = 0.2
+    prop_below_height = 0.25
   ),
-  "prop_at_height and prop_below_height should be numeric"
+  "Numeric input expected"
 )
 
 expect_error(
@@ -159,9 +160,27 @@ expect_error(
     bird_length = wte$bird_length,
     bird_speed = wte$bird_speed,
     prop_at_height = 0.75,
-    prop_below_height = '0.2'
+    prop_below_height = '0.25'
   ),
-  "prop_at_height and prop_below_height should be numeric"
+  "Numeric input expected"
+)
+
+expect_error(
+  prob_collision_dynamic(
+    rpm = v90_single$rpm,
+    blade_length = v90_single$blade_length,
+    max_width_nacelle = v90_single$max_width_nacelle,
+    rotor_diam = v90_single$rotor_diam,
+    blade_thickness_wide = v90_single$blade_thickness_wide,
+    blade_thickness_narrow = v90_single$blade_thickness_narrow,
+    hh = v90_single$hh,
+    bird_length = wte$bird_length,
+    bird_speed = wte$bird_speed,
+    prop_at_height = 0.75,
+    prop_below_height = 0.25,
+    prop_operational = '0.5'
+  ),
+  "Numeric input expected"
 )
 
 ## Prop at height and prop below height should add up to a value between 0 and 1-----
