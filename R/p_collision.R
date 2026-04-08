@@ -186,16 +186,16 @@ prob_collision_dynamic <- function(
   prop_operational = 1
 ) {
   
-  stopifnot(
-    "prop_at_height and prop_below_height should be numeric" = is.numeric(
-      prop_at_height
-    ) &&
-      is.numeric(prop_below_height)
-  )
-  
 
+  check_num_bounds(x = prop_at_height, min = 0, max = 1)
+  check_num_bounds(x = prop_below_height, min = 0, max = 1)
+  check_num_bounds(x = prop_operational, min = 0, max = 1)
   check_num_bounds(x = prop_at_height + prop_below_height, min = 0, max = 1)
 
+  # props should equal one but allow a tolerance
+  if( prop_at_height + prop_below_height > 1.001)warning(
+    "Expecting prop_at_height + prop_below_height to add up to 1...Please check")
+  
   turbine_plane_area <- vertical_flux_plane_area(hh = hh,
                                               rotor_diam = rotor_diam)
 
