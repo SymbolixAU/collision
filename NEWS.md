@@ -3,7 +3,7 @@
 # collision 1.1.9000 (version 1.1 development)
 
 * [issue40](https://github.com/SymbolixAU/collision/issues/40) improved handling of height of observed flux window to align with the max height of the turbine.
-* 
+* [issue41](https://github.com/SymbolixAU/collision/issues/41) bug fix to ensure the proportion of time a turbine is operational is accounted for in the `p_collision_dynamic` function.
 
 # collision 1.0.4
 
