@@ -1,4 +1,4 @@
-#' make a list of bird parameters for input into CRM
+#' Make a list of bird parameters for input into CRM
 #'
 #' Makes a list of avian biological parameters for the bird(s) being modelled
 #' as a function directly in R. This function is designed for R-based workflows.
@@ -15,8 +15,7 @@
 #'  - a single number representing the average (preferably median) of the
 #'    variable
 #
-#' @returns list where items define the value or stochastic distribution f
-#'    or each parameter
+#' @returns list whose items define the value or stochastic distribution for each parameter
 #'
 #' @param species char; species identifier
 #' @param bird_length Length of archetype bird (metres), or distribution
@@ -82,9 +81,9 @@ define_bird <- function(
 
 #' define_turbine
 #' 
-#' make a list of turbine parameters for input into the default CRM
+#' Make a list of turbine parameters for input into the default CRM.
 #'
-#' Makes a list of parameters for the a given turbine
+#' Makes a list of parameters for the a given turbine.
 #'
 #' # Details
 #'
@@ -95,13 +94,17 @@ define_bird <- function(
 #' up stochastic inputs.
 #'  - a single number representing the average (preferably median) of the
 #' variable
+#' 
+#' If this object is being defined for multiple turbines of the same model
+#' `prop_operational` should be the average between all turbines. For example 
+#' if there are two turbines, and one is operational for 24 hours while the other 
+#' is operational for 18 hours each day, then `prop_operational = (0.75 + 1)/2 = 0.875`.
 #'
 #'
-#' @returns list where items define the value or stochastic distribution for
+#' @returns list whose items define the value or stochastic distribution for
 #' each parameter
 #'
-#' @param model_id character; Label for turbine model - allows the user to 
-#'define multiple turbine types on a site
+#' @param model_id character; Label for turbine model
 #' @param blade_length blade length (m)
 #' @param blade_thickness_narrow the thickness of the blade (side on) at its thinnest point (m)
 #' @param blade_thickness_wide the thickness of the blade (side on) at its widest point (m)
