@@ -44,7 +44,6 @@ This is a good example to start with. It models a (fictional) site with 2 propos
 
 We are going to calculate a simple deterministic model output here.  For a stochastic output see the other examples.
 
-
 ## Setup inputs
 
 ### Define turbine model
@@ -71,6 +70,11 @@ v90_single <- define_turbine(
   tilt_deg = 6,
   prop_operational = 0.98
 )
+
+## Note 
+##    max height is defined as hh + rotor_diam/2
+##    min height is defined as hh - rotor_diam/2
+## so these parameters are not needed separately
 ```
 
 
@@ -94,22 +98,21 @@ wte <- define_bird(
 
 The basic template for the model outputs is a `data.frame` of turbine inputs.  These can be read in from a csv, or you can set them up with a few basic pieces of information and the turbine definition above.  
 
-For each turbine we need a turbine ID, and a location. Location can be NA if you are not including any spatial modelling.
-
-
-`make_turbine_set` creates the data.frame of turbine inputs, sampled (if needed) and ready for analysis
+For each turbine we need a turbine ID, and a location. It is good practice to include a `model_id`  that matches the model turbine you have defined for use.
 
 ```{r}
 
 df_turbines <- data.frame(
   turbine_id = c("T01", "T02"),
+  model_id = c("Vesta V90"),
   lat = c(-32.512, -32.521),
   lon = c(143.441, 143.442)
 )
+
 ```
 
 
-### Survey, observation and detection radius
+### Gather survey, observation and detection radius data
 
 Use the provided survey data to fit a (very simple) distance model. **NOTE** Please see [Distance](https://distancesampling.org/Distance/index.html) and the references therein for a complete primer on doing and interpreting Distance analysis. 
 
@@ -121,7 +124,6 @@ summary(df_obs)
 
 is a dataset of `r nrow(df_obs)` observations from `r nrow(df_survey)` point count surveys, including the count (`size`) of raptors (and associated distance at first observation (`distance`)).
 
-
 And the package survey dataset:
 
 ```{r}
@@ -130,16 +132,17 @@ summary(df_survey)
 
 is a dataset of the metadata for the `r nrow(df_survey)` point count surveys, including the duration of each survey.
 
-It's very important that the field data include any surveys with no sightings as well as positive detections. 
+It's **very important** that the field data include any surveys with no sightings as well as positive detections. 
 
 Between the two of them these tables must include:
 
-* Distance to the bird at first sighting in metres. If transect sampling, this is usually the perpendicular (right-angle) distance from the transect line.
-* Duration of the surveys in minutes
-* Count of individuals in each survey (`size`)
+* Distance to the bird at first sighting in metres. If line-transect sampling, this is usually the perpendicular (right-angle) distance from the transect line.
+* Duration of each survey in minutes
+* Count of individuals in each observation (`size`).
 
-We fit a distance model and extract the effective detection radius (EDR). The effective detection radius is the radius of a circle, such that if 100% of flights were observed within this circle, the expected number of flights detected is the same as for the actual survey (which has decaying detectability
-with distance).
+We fit a detection function to the distance observations and extract the effective detection radius (EDR). The effective detection radius is the radius of a circle, such that if 100% of flights were observed within this circle, the expected number of flights detected is the same as for the actual survey (which has decaying detectability with distance).
+
+(**NOTE** This same process works for the Effective Strip half Width or ESW for line transects. The ESW is the effective perpendicular distance an observer can see out one side of a line transect).
 
 ```{r}
 ds_model <- ds(
@@ -163,7 +166,7 @@ print(w_from_distmodel(ds_model)) # truncation distance / max distance in m
 
 `prop_at_height` is either a single value or distribution information which represents the proportion of flights at rotor swept height while `prop_below_height` is the proportion of flights below rotor swept height.
 
-In this example (and in most cases) we are desktop truncating the observations to the height of the turbine. So `prop_at_height` and `prop_below_height` should sum to 1. Desktop truncating is the most straightforward way to avoid artificially inflating or deflating the flux through the turbine window.
+In this example we are desktop truncating the observations to the height of the turbine^[This is the simplest way to calculate the flight flux through the height of the turbine and is most suitable when the field observations include heights. If you have an independent source of flight heights more analysis may be required, but the priciple remains - we consider only those flights below the max rotor swept height. ]. So `prop_at_height` and `prop_below_height` should sum to 1. Desktop truncating is the most straightforward way to avoid artificially inflating or deflating the flux through the turbine window.
 
 A simple, single value example of this is given below.
 
