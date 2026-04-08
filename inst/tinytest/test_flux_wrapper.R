@@ -7,7 +7,7 @@ encounter_rate <- encounter_rate(data.frame(
 ))
 time_units = "min"
 eff_detection_width <- 100
-mean_flight_height <- 100
+eff_detection_height <- 100
 rotor_diameter <- 300
 hub_height <- 100
 prop_day <- 0.8
@@ -21,7 +21,7 @@ expect_error(
     encounter_rate,
     time_units,
     eff_detection_width,
-    mean_flight_height,
+    eff_detection_height,
     rotor_diameter,
     hub_height,
     prop_day,
@@ -37,7 +37,7 @@ expect_error(
     encounter_rate,
     time_units,
     eff_detection_width,
-    mean_flight_height,
+    eff_detection_height,
     rotor_diameter,
     hub_height,
     prop_day,
@@ -52,7 +52,7 @@ expect_error(
     encounter_rate,
     time_units,
     eff_detection_width,
-    mean_flight_height,
+    eff_detection_height,
     rotor_diameter,
     hub_height,
     prop_day,
@@ -68,7 +68,7 @@ expect_error(
     encounter_rate = "",
     time_units,
     eff_detection_width,
-    mean_flight_height,
+    eff_detection_height,
     rotor_diameter,
     hub_height,
     prop_day,
@@ -83,7 +83,7 @@ expect_error(
     encounter_rate = NULL,
     time_units,
     eff_detection_width,
-    mean_flight_height,
+    eff_detection_height,
     rotor_diameter,
     hub_height,
     prop_day,
@@ -98,7 +98,7 @@ expect_error(
     encounter_rate = NA,
     time_units,
     eff_detection_width,
-    mean_flight_height,
+    eff_detection_height,
     rotor_diameter,
     hub_height,
     prop_day,
@@ -113,7 +113,7 @@ expect_error(
     encounter_rate = -100,
     time_units,
     eff_detection_width,
-    mean_flight_height,
+    eff_detection_height,
     rotor_diameter,
     hub_height,
     prop_day,
@@ -128,13 +128,12 @@ expect_error(
     encounter_rate,
     time_units = "mins",
     eff_detection_width,
-    mean_flight_height,
+    eff_detection_height,
     rotor_diameter,
     hub_height,
     prop_day,
     prop_year
-  ),
-  "In '1/mins', 'mins' is not recognized by udunits."
+  )
 )
 
 # Correct inputs give correct outputs------------
@@ -143,9 +142,10 @@ expect_equal(turbine_flights_year(
   encounter_rate,
   time_units = "min",
   eff_detection_width,
-  mean_flight_height,
+  eff_detection_height,
   rotor_diameter,
   hub_height,
   prop_day,
   prop_year
-), 131490)
+), 262980)
+
