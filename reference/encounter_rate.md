@@ -1,4 +1,4 @@
-# Calculate uncorrected observed flights / minute of survey from point transects
+# Calculate uncorrected observed flights / minute of survey from point transects.
 
 This function converts observed flights (movements) and survey duration
 into the "encounter rate" per minute of survey. This value is
@@ -16,16 +16,17 @@ encounter_rate(df_obs_summary, wilson_correction = TRUE)
 
   data.frame; a data.frame with one row per survey containing at least
   columns `size` and `survey_duration` where `size` is the total number
-  of individuals observed in each survey and `survey_duration` is the
-  duration of each survey. It can also optionally include a column
-  `survey_weight` if needed to account for stratification etc. The sum
-  of the survey weights must equal the total number of surveys (to avoid
-  artificially inflating or deflating the survey effort). When NULL (the
-  default) will weight surveys equally.
+  of individuals observed **below the maximum height of the turbine** in
+  each survey and `survey_duration` is the duration of each survey. It
+  can also optionally include a column `survey_weight` if needed to
+  account for stratification etc. The sum of the survey weights must
+  equal the total number of surveys (to avoid artificially inflating or
+  deflating the survey effort). When NULL (the default) will weight
+  surveys equally.
 
 - wilson_correction:
 
-  boolean; Apply wilson correction (Wilson 1927) if there are no
+  boolean; Apply Wilson correction (Wilson 1927) if there are no
   observations. Defaults to TRUE.
 
 ## Value
@@ -34,6 +35,14 @@ numeric; number of flights observed in one unit time of survey. If the
 Wilson correction was used it will return the (approximate) mid-point of
 the 95% confidence interval (see
 <https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval>).
+
+## Details
+
+Note: We recommend to desktop truncating the observation data to the
+maximum height of the turbine in most cases, as this is the simplest way
+to avoid artificially inflating or deflating the flux through the
+turbine. However, it is up to the analyst discretion and they may choose
+another method to account for the effective detection height.
 
 ## References
 
@@ -61,15 +70,19 @@ plane
 ## # Step by step
 ## 
 
-df_obs <- data.frame(size = c(0, 2 , 3, 0), # four surveys
-                     survey_duration = c(20, 20, 18, 20), # minutes
-                     # Optional survey weights to deal with stratification etc
-                     survey_weight = c(1,1,1,1))
+# four surveys
+# Note the observation data should include observations within max rotor swept height
+df_obs <- data.frame(
+  size = c(0, 2 , 3, 0), #individuals observed per survey (below max rotor swept height)
+  survey_duration = c(20, 20, 18, 20), # minutes
+  # Optional survey weights to deal with stratification etc
+  survey_weight = c(1,1,1,1)
+)
 
 rotor_diameter <- 300
 hub_height <- 200
 edr <- 800 # derive from distance model
-mean_h <- 60 # derive from height distribution
+max_rsh <- hub_height + rotor_diameter/2
 
 # flights observed per minute of survey
 flights_per_min <- encounter_rate(
@@ -81,7 +94,7 @@ flights_per_min <- encounter_rate(
 flights_per_m2_per_min <- obs_flux(
   encounter_rate = flights_per_min,
   eff_detection_width = 2*edr,
-  mean_flight_height = mean_h
+  eff_detection_height = max_rsh
 )
 
 # scale to turbine width and height
@@ -107,7 +120,7 @@ flights_turbine_year2 <- turbine_flights_year(
   encounter_rate = flights_per_min,
   time_units = "min",
   eff_detection_width = 2*edr,
-  mean_flight_height = mean_h,
+  eff_detection_height = max_rsh,
   rotor_diameter = rotor_diameter,
   hub_height = hub_height,
   prop_day = 0.5,  #diurnal species
@@ -116,7 +129,7 @@ flights_turbine_year2 <- turbine_flights_year(
 
 #They are the same
 flights_turbine_year
-#> [1] 9219.05
+#> [1] 3160.817
 flights_turbine_year2
-#> [1] 9219.05
+#> [1] 3160.817
 ```

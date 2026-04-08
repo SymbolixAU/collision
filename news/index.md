@@ -1,5 +1,12 @@
 # Changelog
 
+## collision 1.1.9000 (version 1.1 development)
+
+- [issue40](https://github.com/SymbolixAU/collision/issues/40) improved
+  handling of height of observed flux window to align with the max
+  height of the turbine.
+- 
+
 ## collision 1.0.4
 
 - Adjusted “simple-simulation-example” vignette

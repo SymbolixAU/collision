@@ -194,7 +194,7 @@ It estimates:
 
 - [`encounter_rate()`](https://symbolixau.github.io/collision/reference/encounter_rate.md)
   : Calculate uncorrected observed flights / minute of survey from point
-  transects
+  transects.
 
 - [`flights_per_year()`](https://symbolixau.github.io/collision/reference/flights_per_year.md)
   : Convert flights per minute to flights per year

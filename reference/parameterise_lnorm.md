@@ -39,5 +39,5 @@ flight_flux_min <- set_random("rlnorm",
                             meanlog = log_rate$mean, 
                             sdlog = log_rate$sd)
 sample_input(flight_flux_min)
-#> [1] 0.001969485
+#> [1] 0.001862538
 ```

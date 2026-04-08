@@ -1,14 +1,14 @@
 # Calculate observed flights / time / area from point transects
 
 This function converts the uncorrected encounter rate, the effective
-detection radius (see for example Buckland et al. (2001) ) and the mean
-flight height into an estimate of flight flux per unit time per unit
-area of vertical airspace (Smales et al. 2013) .
+detection radius (see for example Buckland et al. (2001) ) and the
+effective detection height into an estimate of flight flux per unit time
+per unit area of vertical airspace (Smales et al. 2013) .
 
 ## Usage
 
 ``` r
-obs_flux(encounter_rate, eff_detection_width, mean_flight_height)
+obs_flux(encounter_rate, eff_detection_width, eff_detection_height)
 ```
 
 ## Arguments
@@ -24,18 +24,29 @@ obs_flux(encounter_rate, eff_detection_width, mean_flight_height)
 
   numeric; Allows you to manually specify the effective detection width,
   which is usually 2 x effective detection radius. Must be in the same
-  units as `mean_flight_height`.
+  units as `eff_detection_height`.
 
-- mean_flight_height:
+- eff_detection_height:
 
-  numeric; The mean of the distribution of the flight heights. Must be
-  in the same units as `eff_detection_width`.
+  numeric; The effective detection height. Because the density of
+  flights typically decreases with increasing height, the assumption of
+  uniform density required for traditional distance correction doesn't
+  hold. So the observer's detection function is effectively convolved
+  with the flight height distribution of the bird. Therefore, in most
+  cases we recommend using the maximum tip height of the turbine as the
+  "effective detection height" and desktop truncating the observations
+  to that height. This is the simplest way to avoid artificially
+  inflating or deflating the flux through the turbine. It is possible to
+  use another method to estimate an effective detection height but we
+  leave this to the analyst's judgement. Must be in the same units as
+  `eff_detection_width`.
 
 ## Value
 
 numeric; number of flights through a vertical plane of unit area per
 unit time. Area units are defined by the units of the width and height,
-and time interval is the same as referenced by `encounter_rate` input.
+and time interval is the same as referenced by the `encounter_rate`
+input.
 
 ## Details
 
@@ -46,8 +57,9 @@ Given an encounter rate
 a distribution of flight heights and a related distance model (fit using
 the `Distance` package (Miller et al. 2019) ) we calculate the flight
 flux through a rectangle with a width of 2 x (effective detection
-radius) and a height of the 2 x mean (expected value) of the height
-distribution in one unit of observation time.
+radius) and a height equal to the effective detection height (typically
+set to the tip height of the proposed turbine) in one unit of
+observation time.
 
 Note the function accepts only single valued inputs, so stochastic
 inputs must be sampled from prior to calling this function. For more
@@ -110,15 +122,19 @@ turbine plane
 ## # Step by step
 ## 
 
-df_obs <- data.frame(size = c(0, 2 , 3, 0), # four surveys
-                     survey_duration = c(20, 20, 18, 20), # minutes
-                     # Optional survey weights to deal with stratification etc
-                     survey_weight = c(1,1,1,1))
+# four surveys
+# Note the observation data should include observations within max rotor swept height
+df_obs <- data.frame(
+  size = c(0, 2 , 3, 0), #individuals observed per survey (below max rotor swept height)
+  survey_duration = c(20, 20, 18, 20), # minutes
+  # Optional survey weights to deal with stratification etc
+  survey_weight = c(1,1,1,1)
+)
 
 rotor_diameter <- 300
 hub_height <- 200
 edr <- 800 # derive from distance model
-mean_h <- 60 # derive from height distribution
+max_rsh <- hub_height + rotor_diameter/2
 
 # flights observed per minute of survey
 flights_per_min <- encounter_rate(
@@ -130,7 +146,7 @@ flights_per_min <- encounter_rate(
 flights_per_m2_per_min <- obs_flux(
   encounter_rate = flights_per_min,
   eff_detection_width = 2*edr,
-  mean_flight_height = mean_h
+  eff_detection_height = max_rsh
 )
 
 # scale to turbine width and height
@@ -156,7 +172,7 @@ flights_turbine_year2 <- turbine_flights_year(
   encounter_rate = flights_per_min,
   time_units = "min",
   eff_detection_width = 2*edr,
-  mean_flight_height = mean_h,
+  eff_detection_height = max_rsh,
   rotor_diameter = rotor_diameter,
   hub_height = hub_height,
   prop_day = 0.5,  #diurnal species
@@ -165,7 +181,7 @@ flights_turbine_year2 <- turbine_flights_year(
 
 #They are the same
 flights_turbine_year
-#> [1] 9219.05
+#> [1] 3160.817
 flights_turbine_year2
-#> [1] 9219.05
+#> [1] 3160.817
 ```

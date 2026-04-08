@@ -30,9 +30,9 @@ density is constant across the site.
 We are going to calculate a simple deterministic model output here. For
 a stochastic output see the other examples.
 
-### Setup inputs
+### Define inputs
 
-#### Define turbine model
+#### Turbine model
 
 Step one is to set up a turbine - here’s an example based on a Vestas
 90, set up using the `define_turbine` function:
@@ -57,9 +57,14 @@ v90_single <- define_turbine(
   tilt_deg = 6,
   prop_operational = 0.98
 )
+
+## Note 
+##    max height is defined as hh + rotor_diam/2
+##    min height is defined as hh - rotor_diam/2
+## so these parameters are not needed separately
 ```
 
-#### Define bird
+#### Bird species
 
 Now we need a bird (see `define_bird`)
 
@@ -75,34 +80,27 @@ wte <- define_bird(
 )
 ```
 
-#### Define a set of turbines
+#### Turbine layout
 
 The basic template for the model outputs is a `data.frame` of turbine
 inputs. These can be read in from a csv, or you can set them up with a
 few basic pieces of information and the turbine definition above.
 
-For each turbine we need a turbine ID, and a location. Location can be
-NA if you are not including any spatial modelling.
-
-`make_turbine_set` creates the data.frame of turbine inputs, sampled (if
-needed) and ready for analysis
+For each turbine we need a turbine ID, and a location. It is good
+practice to include a `model_id` that matches the model turbine you have
+defined for use.
 
 ``` r
 
 df_turbines <- data.frame(
   turbine_id = c("T01", "T02"),
+  model_id = c("Vesta V90"),
   lat = c(-32.512, -32.521),
   lon = c(143.441, 143.442)
 )
 ```
 
-#### Survey, observation and detection radius
-
-Use the provided survey data to fit a (very simple) distance model.
-**NOTE** Please see
-[Distance](https://distancesampling.org/Distance/index.html) and the
-references therein for a complete primer on doing and interpreting
-Distance analysis.
+#### Survey data
 
 The package observations dataset:
 
@@ -144,22 +142,30 @@ summary(df_survey)
 is a dataset of the metadata for the 100 point count surveys, including
 the duration of each survey.
 
-It’s very important that the field data include any surveys with no
+It’s **very important** that the field data include any surveys with no
 sightings as well as positive detections.
 
 Between the two of them these tables must include:
 
-- Distance to the bird at first sighting in metres. If transect
+- Distance to the bird at first sighting in metres. If line-transect
   sampling, this is usually the perpendicular (right-angle) distance
   from the transect line.
-- Duration of the surveys in minutes
-- Count of individuals in each survey (`size`)
+- Duration of each survey in minutes
+- Count of individuals in each observation (`size`).
 
-We fit a distance model and extract the effective detection radius
-(EDR). The effective detection radius is the radius of a circle, such
-that if 100% of flights were observed within this circle, the expected
-number of flights detected is the same as for the actual survey (which
-has decaying detectability with distance).
+We fit a detection function to the distance observations and extract the
+effective detection radius (EDR). The effective detection radius is the
+radius of a circle, such that if 100% of flights were observed within
+this circle, the expected number of flights detected is the same as for
+the actual survey (which has decaying detectability with distance).
+
+- **NOTE** Please see
+  [Distance](https://distancesampling.org/Distance/index.html) and the
+  references therein for a complete primer on doing and interpreting
+  Distance analysis.
+- **NOTE** This same process works for the Effective Strip half Width or
+  ESW for line transects. The ESW is the effective perpendicular
+  distance an observer can see out one side of a line transect).
 
 ``` r
 ds_model <- ds(
@@ -188,14 +194,38 @@ print(w_from_distmodel(ds_model)) # truncation distance / max distance in m
 #> [1] 1878
 ```
 
-### Calculate proportion at height and below height
+### Flight heights
 
 `prop_at_height` is either a single value or distribution information
 which represents the proportion of flights at rotor swept height while
 `prop_below_height` is the proportion of flights below rotor swept
 height.
 
-A simple, single value example of this is given below
+In order to determine the flight flux we need an effective detection
+height, but unlike with the EDR we can’t fit a distance model to the
+heights because distance modelling relies on the assumption that the
+birds are uniformly distributed at all distances, which we know is not
+the case in vertical space (i.e. the density of flights tends to drop
+off with increasing height).
+
+The simplest way to avoid biasing the estimate by artificially inflating
+or deflating the flux through the turbine is to desktop
+truncate[¹](#fn1) the observations to the maximum tip height of the
+turbine and use that as the effective detection height (all the
+observations can still be used to fit the observer’s detection function
+since it is just used for the horizontal distance correction). Other
+methods for estimating an effective detection height can be used, but
+this method is the most straightforward and will work well in almost all
+cases. In this example (and in most cases) we are desktop truncating the
+observations to the height of the turbine. So `prop_at_height` and
+`prop_below_height` should sum to 1.
+
+The proportion of flights at and below rotor swept height account for
+the amount of flights at risk of being struck by the blades of the
+turbine. We only need to calculate a distribution for
+`prop_below_height` since `prop_at_height = 1 - prop_below_height`.
+
+A simple, single value example of this is given below.
 
 ``` r
 
@@ -221,17 +251,16 @@ ggplot(data = as.data.frame(df_obs),
 # calculate ecdf (empirical cumulative distribution function)
 # Note - this is a simple example; it's up to the analyst how best to 
 ## fit the height distribution
-cdf_height <- ecdf(df_obs$height)
+cdf_height <- ecdf(df_obs[df_obs$height <= max_rsh, "height"])
 
-prop_at_height <- cdf_height(round(max_rsh)) - cdf_height(round(min_rsh))
-prop_below_height <- cdf_height(round(min_rsh))
+prop_below_height <- cdf_height(min_rsh)
+prop_at_height <- 1 - prop_below_height
 ```
 
-- Proportion at height: 0.0333333
+- Proportion at height: 1
 - Proportion below height: 0
-- Proportion above height: 0.9666667
 
-### Modelling
+### Run the model
 
 For a deterministic model, we need the following 4 steps:
 
@@ -264,13 +293,19 @@ encounter rate ([mid-point of the 95%
 CI](https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval:~:text=known%20as%20the-,%22plus%20four%20rule%22,-.))
 that could result in zero observations.
 
+As discussed above, we are desktop truncating to the maximum rotor swept
+height of the turbine, so this encounter rate will be the encounter of
+birds at risk height.
+
 This function takes as input a `df_obs_summary` data.frame. This object
 has one row per survey and must contain a column named `survey_duration`
 and a column named `size` which is the **total** number of individuals
-observed in each **survey** (not observation). Optionally, it can
-contain a column named `survey_weight` which has the associated relative
-weights of each survey (to avoid artificially inflating or deflating the
-encounter rate `sum(survey_weight)` must equal the number of surveys).
+observed below the maximum turbine height (unless using another method
+to estimate effective detection height) in each **survey** (not
+observation). Optionally, it can contain a column named `survey_weight`
+which has the associated relative weights of each survey (to avoid
+artificially inflating or deflating the encounter rate
+`sum(survey_weight)` must equal the number of surveys).
 
 First let’s make that table (using `data.table`):
 
@@ -281,7 +316,7 @@ dt_survey <- copy(df_survey)
 setDT(dt_obs)
 setDT(dt_survey)
 
-dt_obs_survey <- dt_obs[, .("size" = sum(size)), survey_id][dt_survey,
+dt_obs_survey <- dt_obs[height <= max_rsh, .("size" = sum(size)), survey_id][dt_survey,
                                                             on = "survey_id"]
 # need sum(size) because we want one row per survey (not observation)
 ```
@@ -299,15 +334,14 @@ flights_per_min <- encounter_rate(
 ```
 
 Any surveys with `NA` observations are assumed to have zero
-observations, which, if you left join to the survey table by
-`survey_id`, should be correct. The average number of movements observed
-per minute of survey is 0.0346667 flights per minute.
+observations, which, if you left join to the survey table by `survey_id`
+(like we did above), should be correct. The average number of movements
+observed per minute of survey is 0.0015556 flights per minute.
 
 #### Step 2 - Flux through turbine
 
 This is where we account for
 
-- The flight heights (`mean_flight_height`)
 - The observer’s detection model (`eff_detection_width` obtained using
   `edr_dist_model()`)
 - The size of the turbine (contained in the object made using
@@ -318,8 +352,9 @@ This is where we account for
   [`define_bird()`](https://symbolixau.github.io/collision/reference/define_bird.md))
 
 We first calculate the observed flux through a vertical airspace. This
-is in flights per unit time per unit area, in this example the units are
-minutes and metres squared, respectively.
+is in flights per unit time per unit area (assuming we are below max
+turbine height), in this example the units are minutes and metres
+squared, respectively.
 
 Second we apply this to the “turbine plane” (a rectangular “doorway”
 defined by the rotor diameter and maximum rotor swept height) using
@@ -332,7 +367,7 @@ to obtain the flights through the turbine plane per minute.
 obs_flux_min <- obs_flux(
   encounter_rate = flights_per_min, # numeric per min
   eff_detection_width = 2.0*edr_from_distmodel(ds_model),
-  mean_flight_height = mean(df_obs$height*df_obs$size) # weighted by individuals
+  eff_detection_height = max_rsh
 )
 
 #flights through turbine / min
@@ -344,9 +379,10 @@ turbine_flights_min <- turbine_flights(
 )
 ```
 
-The observed flight flux is 8.7283936^{-9} flights per square metre per
-minute. Scaling up to the turbine this corresponds to 8.8586911^{-5}
-flights through the turbine area per minute.
+The observed flight flux is 6.6665046^{-9} flights per square meter per
+minute (below max turbine height). Scaling up to the turbine this
+corresponds to 6.7660221^{-5} flights through the turbine area per
+minute.
 
 Here we correct it for daily and monthly variability. This can be done
 by hand but the package includes a helper function which can scale to a
@@ -362,9 +398,15 @@ turbine_flight_year <- flights_per_year(
 ```
 
 - The units for `turbine_flight_year` is flights / year (per turbine).
-- We expect 23.2965859 flights through the turbine area each year.
+- We expect 17.793285 flights through the turbine area each year.
+
+This is the expected number of interactions per turbine per year with no
+avoidance.
 
 #### Step 3 - Probability of collision given interaction
+
+This is the probability a given flight through the turbine window will
+collide, assuming no avoidance.
 
 Our approach considers both the static ($P(C)_{s}$) and dynamic
 components ($P(C)_{dyn}$)
@@ -435,7 +477,7 @@ df_turbines$n_collision <- n_collision(
 
 ## For a final result, sum all turbines
 sum(df_turbines$n_collision)
-#> [1] 0.2689028
+#> [1] 0.2053805
 ```
 
 ------------------------------------------------------------------------
@@ -451,3 +493,9 @@ Wilson, Edwin B. 1927. “Probable Inference, the Law of Succession, and
 Statistical Inference.” *Journal of the American Statistical
 Association* 22 (158): 209–12.
 <https://doi.org/10.1080/01621459.1927.10502953>.
+
+------------------------------------------------------------------------
+
+1.  If you have an independent source of flight heights more analysis
+    may be required, but the principle remains - we consider only those
+    flights below the max rotor swept height

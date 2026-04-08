@@ -101,7 +101,7 @@ numeric; probability of collision with static turbine. Range from 0 to 1
 
 Presented areas are the sum of static components, where static
 components are the tower below rotor height, tower above rotor height,
-rotor and nacelle/nosecone
+rotor and nacelle/nosecone.
 
 ## Examples
 

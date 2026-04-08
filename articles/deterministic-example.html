@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">collision</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -99,10 +99,10 @@ density is constant across the site.</p>
 <p>We are going to calculate a simple deterministic model output here.
 For a stochastic output see the other examples.</p>
 <div class="section level3">
-<h3 id="setup-inputs">Setup inputs<a class="anchor" aria-label="anchor" href="#setup-inputs"></a>
+<h3 id="define-inputs">Define inputs<a class="anchor" aria-label="anchor" href="#define-inputs"></a>
 </h3>
 <div class="section level4">
-<h4 id="define-turbine-model">Define turbine model<a class="anchor" aria-label="anchor" href="#define-turbine-model"></a>
+<h4 id="turbine-model">Turbine model<a class="anchor" aria-label="anchor" href="#turbine-model"></a>
 </h4>
 <p>Step one is to set up a turbine - here’s an example based on a Vestas
 90, set up using the <code>define_turbine</code> function:</p>
@@ -125,10 +125,15 @@ For a stochastic output see the other examples.</p>
 <span>  rotor_diam <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tilt_deg <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>  prop_operational <span class="op">=</span> <span class="fl">0.98</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Note </span></span>
+<span><span class="co">##    max height is defined as hh + rotor_diam/2</span></span>
+<span><span class="co">##    min height is defined as hh - rotor_diam/2</span></span>
+<span><span class="co">## so these parameters are not needed separately</span></span></code></pre></div>
 </div>
 <div class="section level4">
-<h4 id="define-bird">Define bird<a class="anchor" aria-label="anchor" href="#define-bird"></a>
+<h4 id="bird-species">Bird species<a class="anchor" aria-label="anchor" href="#bird-species"></a>
 </h4>
 <p>Now we need a bird (see <code>define_bird</code>)</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -143,31 +148,27 @@ For a stochastic output see the other examples.</p>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
-<h4 id="define-a-set-of-turbines">Define a set of turbines<a class="anchor" aria-label="anchor" href="#define-a-set-of-turbines"></a>
+<h4 id="turbine-layout">Turbine layout<a class="anchor" aria-label="anchor" href="#turbine-layout"></a>
 </h4>
 <p>The basic template for the model outputs is a <code>data.frame</code>
 of turbine inputs. These can be read in from a csv, or you can set them
 up with a few basic pieces of information and the turbine definition
 above.</p>
-<p>For each turbine we need a turbine ID, and a location. Location can
-be NA if you are not including any spatial modelling.</p>
-<p><code>make_turbine_set</code> creates the data.frame of turbine
-inputs, sampled (if needed) and ready for analysis</p>
+<p>For each turbine we need a turbine ID, and a location. It is good
+practice to include a <code>model_id</code> that matches the model
+turbine you have defined for use.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">df_turbines</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  turbine_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"T01"</span>, <span class="st">"T02"</span><span class="op">)</span>,</span>
+<span>  model_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Vesta V90"</span><span class="op">)</span>,</span>
 <span>  lat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">32.512</span>, <span class="op">-</span><span class="fl">32.521</span><span class="op">)</span>,</span>
 <span>  lon <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">143.441</span>, <span class="fl">143.442</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
-<h4 id="survey-observation-and-detection-radius">Survey, observation and detection radius<a class="anchor" aria-label="anchor" href="#survey-observation-and-detection-radius"></a>
+<h4 id="survey-data">Survey data<a class="anchor" aria-label="anchor" href="#survey-data"></a>
 </h4>
-<p>Use the provided survey data to fit a (very simple) distance model.
-<strong>NOTE</strong> Please see <a href="https://distancesampling.org/Distance/index.html" class="external-link">Distance</a> and
-the references therein for a complete primer on doing and interpreting
-Distance analysis.</p>
 <p>The package observations dataset:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">df_obs</span><span class="op">)</span></span>
@@ -200,21 +201,33 @@ distance at first observation (<code>distance</code>)).</p>
 <span><span class="co">#&gt;  Max.   :100.00   Max.   :45</span></span></code></pre></div>
 <p>is a dataset of the metadata for the 100 point count surveys,
 including the duration of each survey.</p>
-<p>It’s very important that the field data include any surveys with no
-sightings as well as positive detections.</p>
+<p>It’s <strong>very important</strong> that the field data include any
+surveys with no sightings as well as positive detections.</p>
 <p>Between the two of them these tables must include:</p>
 <ul>
-<li>Distance to the bird at first sighting in metres. If transect
+<li>Distance to the bird at first sighting in metres. If line-transect
 sampling, this is usually the perpendicular (right-angle) distance from
 the transect line.</li>
-<li>Duration of the surveys in minutes</li>
-<li>Count of individuals in each survey (<code>size</code>)</li>
+<li>Duration of each survey in minutes</li>
+<li>Count of individuals in each observation (<code>size</code>).</li>
 </ul>
-<p>We fit a distance model and extract the effective detection radius
-(EDR). The effective detection radius is the radius of a circle, such
-that if 100% of flights were observed within this circle, the expected
-number of flights detected is the same as for the actual survey (which
-has decaying detectability with distance).</p>
+<p>We fit a detection function to the distance observations and extract
+the effective detection radius (EDR). The effective detection radius is
+the radius of a circle, such that if 100% of flights were observed
+within this circle, the expected number of flights detected is the same
+as for the actual survey (which has decaying detectability with
+distance).</p>
+<ul>
+<li>
+<strong>NOTE</strong> Please see <a href="https://distancesampling.org/Distance/index.html" class="external-link">Distance</a> and
+the references therein for a complete primer on doing and interpreting
+Distance analysis.</li>
+<li>
+<strong>NOTE</strong> This same process works for the Effective
+Strip half Width or ESW for line transects. The ESW is the effective
+perpendicular distance an observer can see out one side of a line
+transect).</li>
+</ul>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Distance/man/ds.html" class="external-link">ds</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">df_obs</span>,</span>
@@ -240,13 +253,38 @@ has decaying detectability with distance).</p>
 </div>
 </div>
 <div class="section level3">
-<h3 id="calculate-proportion-at-height-and-below-height">Calculate proportion at height and below height<a class="anchor" aria-label="anchor" href="#calculate-proportion-at-height-and-below-height"></a>
+<h3 id="flight-heights">Flight heights<a class="anchor" aria-label="anchor" href="#flight-heights"></a>
 </h3>
 <p><code>prop_at_height</code> is either a single value or distribution
 information which represents the proportion of flights at rotor swept
 height while <code>prop_below_height</code> is the proportion of flights
 below rotor swept height.</p>
-<p>A simple, single value example of this is given below</p>
+<p>In order to determine the flight flux we need an effective detection
+height, but unlike with the EDR we can’t fit a distance model to the
+heights because distance modelling relies on the assumption that the
+birds are uniformly distributed at all distances, which we know is not
+the case in vertical space (i.e. the density of flights tends to drop
+off with increasing height).</p>
+<p>The simplest way to avoid biasing the estimate by artificially
+inflating or deflating the flux through the turbine is to desktop
+truncate<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;If you have an independent source of flight heights more
+analysis may be required, but the principle remains - we consider only
+those flights below the max rotor swept height&lt;/p&gt;"><sup>1</sup></a>
+the observations to the maximum tip height of the turbine and use that
+as the effective detection height (all the observations can still be
+used to fit the observer’s detection function since it is just used for
+the horizontal distance correction). Other methods for estimating an
+effective detection height can be used, but this method is the most
+straightforward and will work well in almost all cases. In this example
+(and in most cases) we are desktop truncating the observations to the
+height of the turbine. So <code>prop_at_height</code> and
+<code>prop_below_height</code> should sum to 1.</p>
+<p>The proportion of flights at and below rotor swept height account for
+the amount of flights at risk of being struck by the blades of the
+turbine. We only need to calculate a distribution for
+<code>prop_below_height</code> since
+<code>prop_at_height = 1 - prop_below_height</code>.</p>
+<p>A simple, single value example of this is given below.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># rotor_diam / 2 is better than using blade length because it </span></span>
@@ -268,18 +306,17 @@ below rotor swept height.</p>
 <span><span class="co"># calculate ecdf (empirical cumulative distribution function)</span></span>
 <span><span class="co"># Note - this is a simple example; it's up to the analyst how best to </span></span>
 <span><span class="co">## fit the height distribution</span></span>
-<span><span class="va">cdf_height</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/ecdf.html" class="external-link">ecdf</a></span><span class="op">(</span><span class="va">df_obs</span><span class="op">$</span><span class="va">height</span><span class="op">)</span></span>
+<span><span class="va">cdf_height</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/ecdf.html" class="external-link">ecdf</a></span><span class="op">(</span><span class="va">df_obs</span><span class="op">[</span><span class="va">df_obs</span><span class="op">$</span><span class="va">height</span> <span class="op">&lt;=</span> <span class="va">max_rsh</span>, <span class="st">"height"</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">prop_at_height</span> <span class="op">&lt;-</span> <span class="fu">cdf_height</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">max_rsh</span><span class="op">)</span><span class="op">)</span> <span class="op">-</span> <span class="fu">cdf_height</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">min_rsh</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">prop_below_height</span> <span class="op">&lt;-</span> <span class="fu">cdf_height</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">min_rsh</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">prop_below_height</span> <span class="op">&lt;-</span> <span class="fu">cdf_height</span><span class="op">(</span><span class="va">min_rsh</span><span class="op">)</span></span>
+<span><span class="va">prop_at_height</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">-</span> <span class="va">prop_below_height</span></span></code></pre></div>
 <ul>
-<li>Proportion at height: 0.0333333</li>
+<li>Proportion at height: 1</li>
 <li>Proportion below height: 0</li>
-<li>Proportion above height: 0.9666667</li>
 </ul>
 </div>
 <div class="section level3">
-<h3 id="modelling">Modelling<a class="anchor" aria-label="anchor" href="#modelling"></a>
+<h3 id="run-the-model">Run the model<a class="anchor" aria-label="anchor" href="#run-the-model"></a>
 </h3>
 <p>For a deterministic model, we need the following 4 steps:</p>
 <ul>
@@ -309,15 +346,20 @@ stratification and can apply the Wilson correction <span class="citation">(<a hr
 there were no observations. The Wilson correction is an estimate of the
 encounter rate (<a href="https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval:~:text=known%20as%20the-,%22plus%20four%20rule%22,-." class="external-link">mid-point
 of the 95% CI</a>) that could result in zero observations.</p>
+<p>As discussed above, we are desktop truncating to the maximum rotor
+swept height of the turbine, so this encounter rate will be the
+encounter of birds at risk height.</p>
 <p>This function takes as input a <code>df_obs_summary</code>
 data.frame. This object has one row per survey and must contain a column
 named <code>survey_duration</code> and a column named <code>size</code>
-which is the <strong>total</strong> number of individuals observed in
-each <strong>survey</strong> (not observation). Optionally, it can
-contain a column named <code>survey_weight</code> which has the
-associated relative weights of each survey (to avoid artificially
-inflating or deflating the encounter rate
-<code>sum(survey_weight)</code> must equal the number of surveys).</p>
+which is the <strong>total</strong> number of individuals observed below
+the maximum turbine height (unless using another method to estimate
+effective detection height) in each <strong>survey</strong> (not
+observation). Optionally, it can contain a column named
+<code>survey_weight</code> which has the associated relative weights of
+each survey (to avoid artificially inflating or deflating the encounter
+rate <code>sum(survey_weight)</code> must equal the number of
+surveys).</p>
 <p>First let’s make that table (using <code>data.table</code>):</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dt_obs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">df_obs</span><span class="op">)</span></span>
@@ -326,7 +368,7 @@ inflating or deflating the encounter rate
 <span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setDT.html" class="external-link">setDT</a></span><span class="op">(</span><span class="va">dt_obs</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setDT.html" class="external-link">setDT</a></span><span class="op">(</span><span class="va">dt_survey</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">dt_obs_survey</span> <span class="op">&lt;-</span> <span class="va">dt_obs</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="st">"size"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">size</span><span class="op">)</span><span class="op">)</span>, <span class="va">survey_id</span><span class="op">]</span><span class="op">[</span><span class="va">dt_survey</span>,</span>
+<span><span class="va">dt_obs_survey</span> <span class="op">&lt;-</span> <span class="va">dt_obs</span><span class="op">[</span><span class="va">height</span> <span class="op">&lt;=</span> <span class="va">max_rsh</span>, <span class="fu">.</span><span class="op">(</span><span class="st">"size"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">size</span><span class="op">)</span><span class="op">)</span>, <span class="va">survey_id</span><span class="op">]</span><span class="op">[</span><span class="va">dt_survey</span>,</span>
 <span>                                                            on <span class="op">=</span> <span class="st">"survey_id"</span><span class="op">]</span></span>
 <span><span class="co"># need sum(size) because we want one row per survey (not observation)</span></span></code></pre></div>
 <p>Now we can use this table in <code><a href="../reference/encounter_rate.html">encounter_rate()</a></code>:</p>
@@ -339,16 +381,15 @@ inflating or deflating the encounter rate
 <span><span class="co">#&gt; TRUE): NA observations detected - NA observation size will be assumed to be 0</span></span></code></pre></div>
 <p>Any surveys with <code>NA</code> observations are assumed to have
 zero observations, which, if you left join to the survey table by
-<code>survey_id</code>, should be correct. The average number of
-movements observed per minute of survey is 0.0346667 flights per
-minute.</p>
+<code>survey_id</code> (like we did above), should be correct. The
+average number of movements observed per minute of survey is 0.0015556
+flights per minute.</p>
 </div>
 <div class="section level4">
 <h4 id="step-2---flux-through-turbine">Step 2 - Flux through turbine<a class="anchor" aria-label="anchor" href="#step-2---flux-through-turbine"></a>
 </h4>
 <p>This is where we account for</p>
 <ul>
-<li>The flight heights (<code>mean_flight_height</code>)</li>
 <li>The observer’s detection model (<code>eff_detection_width</code>
 obtained using <code>edr_dist_model()</code>)</li>
 <li>The size of the turbine (contained in the object made using
@@ -359,8 +400,9 @@ obtained using <code>edr_dist_model()</code>)</li>
 using <code><a href="../reference/define_bird.html">define_bird()</a></code>)</li>
 </ul>
 <p>We first calculate the observed flux through a vertical airspace.
-This is in flights per unit time per unit area, in this example the
-units are minutes and metres squared, respectively.</p>
+This is in flights per unit time per unit area (assuming we are below
+max turbine height), in this example the units are minutes and metres
+squared, respectively.</p>
 <p>Second we apply this to the “turbine plane” (a rectangular “doorway”
 defined by the rotor diameter and maximum rotor swept height) using
 <code><a href="../reference/turbine_flights.html">turbine_flights()</a></code> to obtain the flights through the turbine
@@ -371,7 +413,7 @@ plane per minute.</p>
 <span><span class="va">obs_flux_min</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/obs_flux.html">obs_flux</a></span><span class="op">(</span></span>
 <span>  encounter_rate <span class="op">=</span> <span class="va">flights_per_min</span>, <span class="co"># numeric per min</span></span>
 <span>  eff_detection_width <span class="op">=</span> <span class="fl">2.0</span><span class="op">*</span><span class="fu"><a href="../reference/data_from_distmodel.html">edr_from_distmodel</a></span><span class="op">(</span><span class="va">ds_model</span><span class="op">)</span>,</span>
-<span>  mean_flight_height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">df_obs</span><span class="op">$</span><span class="va">height</span><span class="op">*</span><span class="va">df_obs</span><span class="op">$</span><span class="va">size</span><span class="op">)</span> <span class="co"># weighted by individuals</span></span>
+<span>  eff_detection_height <span class="op">=</span> <span class="va">max_rsh</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#flights through turbine / min</span></span>
@@ -381,9 +423,10 @@ plane per minute.</p>
 <span>  rotor_diameter  <span class="op">=</span> <span class="va">v90_single</span><span class="op">$</span><span class="va">rotor_diam</span>,</span>
 <span>  hub_height <span class="op">=</span> <span class="va">v90_single</span><span class="op">$</span><span class="va">hh</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>The observed flight flux is 8.7283936^{-9} flights per square metre
-per minute. Scaling up to the turbine this corresponds to 8.8586911^{-5}
-flights through the turbine area per minute.</p>
+<p>The observed flight flux is 6.6665046^{-9} flights per square meter
+per minute (below max turbine height). Scaling up to the turbine this
+corresponds to 6.7660221^{-5} flights through the turbine area per
+minute.</p>
 <p>Here we correct it for daily and monthly variability. This can be
 done by hand but the package includes a helper function which can scale
 to a year.</p>
@@ -397,13 +440,16 @@ to a year.</p>
 <ul>
 <li>The units for <code>turbine_flight_year</code> is flights / year
 (per turbine).</li>
-<li>We expect 23.2965859 flights through the turbine area each
-year.</li>
+<li>We expect 17.793285 flights through the turbine area each year.</li>
 </ul>
+<p>This is the expected number of interactions per turbine per year with
+no avoidance.</p>
 </div>
 <div class="section level4">
 <h4 id="step-3---probability-of-collision-given-interaction">Step 3 - Probability of collision given interaction<a class="anchor" aria-label="anchor" href="#step-3---probability-of-collision-given-interaction"></a>
 </h4>
+<p>This is the probability a given flight through the turbine window
+will collide, assuming no avoidance.</p>
 <p>Our approach considers both the static
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>C</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>s</mi></msub></mrow><annotation encoding="application/x-tex">P(C)_{s}</annotation></semantics></math>)
 and dynamic components
@@ -469,7 +515,7 @@ number of expected collision per year.</p>
 <span></span>
 <span><span class="co">## For a final result, sum all turbines</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">df_turbines</span><span class="op">$</span><span class="va">n_collision</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.2689028</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.2053805</span></span></code></pre></div>
 <hr>
 </div>
 </div>
@@ -491,6 +537,7 @@ Statistical Association</em> 22 (158): 209–12. <a href="https://doi.org/10.108
 </div>
 </div>
 </div>
+
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>

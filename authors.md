@@ -11,6 +11,8 @@
 
 - **Akila Sahinya**. Contributor.
 
+- **Roberts Lucinda**. Contributor.
+
 - **Shao Ray**. Contributor.
 
 - **Biosis**. Copyright holder.  
@@ -26,14 +28,14 @@ Source:
 
 Stark E, Stuart M, Peggy Y (2026). *collision: Per-turbine Collision
 Risk Model for predicting avian collision with on-shore and off-shore
-wind turbines*. R package version 1.0.4,
+wind turbines*. R package version 1.1.9000,
 <https://github.com/SymbolixAU/collision>.
 
     @Manual{,
       title = {collision: Per-turbine Collision Risk Model for predicting avian collision with on-shore and off-shore wind turbines},
       author = {Elizabeth Stark and Muir Stuart and Yandell Peggy},
       year = {2026},
-      note = {R package version 1.0.4},
+      note = {R package version 1.1.9000},
       url = {https://github.com/SymbolixAU/collision},
     }
 
