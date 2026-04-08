@@ -520,8 +520,9 @@ lst_results <- lapply(1:iterations, function(i) {
   edr_i <- sample_input(edr)
   
   turbines1_i <- sample_input(turbine_model1)
-  prop_below_height1_i <- sample_input(prop_below_height1)
+  prop_below_height1_i <- max( sample_input(prop_below_height1), 0)
   prop_at_height1_i <- 1-prop_below_height1_i
+  
   er1_i <- sample_input(flights_per_min1)
   
   turbines2_i <- sample_input(turbine_model2)

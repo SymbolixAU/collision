@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">collision</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -565,8 +565,9 @@ collisions a year</li>
 <span>  <span class="va">edr_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sample_input.html">sample_input</a></span><span class="op">(</span><span class="va">edr</span><span class="op">)</span></span>
 <span>  </span>
 <span>  <span class="va">turbines1_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sample_input.html">sample_input</a></span><span class="op">(</span><span class="va">turbine_model1</span><span class="op">)</span></span>
-<span>  <span class="va">prop_below_height1_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sample_input.html">sample_input</a></span><span class="op">(</span><span class="va">prop_below_height1</span><span class="op">)</span></span>
+<span>  <span class="va">prop_below_height1_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span> <span class="fu"><a href="../reference/sample_input.html">sample_input</a></span><span class="op">(</span><span class="va">prop_below_height1</span><span class="op">)</span>, <span class="fl">0</span><span class="op">)</span></span>
 <span>  <span class="va">prop_at_height1_i</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">-</span><span class="va">prop_below_height1_i</span></span>
+<span>  </span>
 <span>  <span class="va">er1_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sample_input.html">sample_input</a></span><span class="op">(</span><span class="va">flights_per_min1</span><span class="op">)</span></span>
 <span>  </span>
 <span>  <span class="va">turbines2_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sample_input.html">sample_input</a></span><span class="op">(</span><span class="va">turbine_model2</span><span class="op">)</span></span>
