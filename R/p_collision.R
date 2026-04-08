@@ -33,9 +33,9 @@ vertical_flux_plane_area <- function(
 #' areas to the total airspace of rotor diameter and rotor swept height.
 #'
 #' @details
-#' Presented areas are the sum of static  components, where
+#' Presented areas are the sum of static components, where
 #'  static components are the tower below rotor height, tower above rotor height,
-#'  rotor and nacelle/nosecone
+#'  rotor and nacelle/nosecone.
 #'
 #' @param d_base diameter of tower at base
 #' @param d_rotormin diameter of tower at base of rotor
@@ -133,6 +133,7 @@ prob_collision_static <- function(
 
 
 #' Probability of collision with leading edge of blade
+#' 
 #'
 #' @param rpm rotor speed (RPM)
 #' @param blade_length blade length
