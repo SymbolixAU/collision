@@ -11,7 +11,13 @@
 #' output flights / min).
 #' 
 #' @param obs_flux numeric; number of flights through one unit area of vertical space
-#'    per unit time as output by [obs_flux()] or similar
+#'    per unit time as output by [obs_flux()] or similar.
+#' @param spatial_correction numeric; factor to correct flux for spatial considerations. 
+#'    Either the cluster correction factor as output by [cluster_correction_a()]/ 
+#'    [cluster_correction_l()] or similar (assuming flat activity across the site) 
+#'    or a correction based on the spatial distribution of flights on the site. 
+#'    Defaults to 1.
+#'    TODO make better words
 #' @param rotor_diameter numeric; rotor diameter. Must be in the equivalent units to 
 #'    the unit area of `obs_flux` (i.e., if the `obs_flux` is per m\eqn{^2}, `rotor_diameter` must be in m).
 #' @param hub_height numeric; hub height. Must be in the equivalent units to 
@@ -26,13 +32,14 @@
 #' @example examples/flux_example.R
 #'
 #' @export
-turbine_flights <- function(obs_flux, rotor_diameter, hub_height) {
+turbine_flights <- function(obs_flux, spatial_correction = 1, rotor_diameter, hub_height) {
   check_num_bounds(obs_flux, min = 0)
+  check_num_bounds(spatial_correction, min = 0)
   check_num_bounds(rotor_diameter, min = 0)
   check_num_bounds(hub_height, min = 0)
   
   turbine_height <- hub_height + 0.5*rotor_diameter
-  res <- obs_flux * rotor_diameter * turbine_height
+  res <- obs_flux * spatial_correction * rotor_diameter * turbine_height
   return(res)
 }
 

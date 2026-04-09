@@ -251,13 +251,15 @@ This is where we account for
 
 * The observer's detection model (`eff_detection_width` obtained using `edr_dist_model()`)
 * The size of the turbine (contained in the object made using `define_turbine()`)
+* The turbine layout
 * The proportion of the day active (contained in the object made using `define_bird()`)
 * The proportion of the year active (contained in the object made using `define_bird()`)
 
 We first calculate the observed flux through a vertical airspace. This is in flights per unit time per unit area (assuming we are below max turbine height), in this example the units are minutes and metres squared, respectively. 
 
+Second we calculate the cluster correction factor (or the spatial flights pdf if you are doing a spatial model). 
 
-Second we apply this to the "turbine plane" (a rectangular "doorway" defined by the rotor diameter and maximum rotor swept height) using `turbine_flights()` to obtain the flights through the turbine plane per minute.
+We then apply these to the "turbine plane" (a rectangular "doorway" defined by the rotor diameter and maximum rotor swept height) using `turbine_flights()` to obtain the flights through the turbine plane per minute.
 
 ```{r}
 
@@ -268,10 +270,15 @@ obs_flux_min <- obs_flux(
   eff_detection_height = max_rsh
 )
 
+effective_flux <- cluster_correction_a(
+  df_turbines = df_turbines,
+  eff_detection_width = 2*edr_from_distmodel(ds_model))
+
 #flights through turbine / min
 
 turbine_flights_min <- turbine_flights(
   obs_flux = obs_flux_min,
+  spatial_correction = effective_flux,
   rotor_diameter  = v90_single$rotor_diam,
   hub_height = v90_single$hh
 )
@@ -280,7 +287,6 @@ turbine_flights_min <- turbine_flights(
 ```
 
 The observed flight flux is `r obs_flux_min` flights per square meter per minute (below max turbine height). Scaling up to the turbine this corresponds to `r turbine_flights_min` flights through the turbine area per minute.
-
 
 Here we correct it for daily and monthly variability. This can be done by hand but the package includes a helper function which can scale to a year.
 
@@ -296,7 +302,7 @@ turbine_flight_year <- flights_per_year(
 * The units for `turbine_flight_year` is flights / year (per turbine).
 * We expect `r turbine_flight_year` flights through the turbine area each year.
 
-This is the expected number of interactions per turbine per year with no avoidance. 
+This is the expected number of interactions^["interaction" just refers to a flight through the turbine cylinder. Below the rotor swept height a bird could be a blade length from the tower and it would still count as an interaction for our purposes. This is then accounted for in the probability of collision.] per turbine per year with no avoidance. 
 
 ### Step 3 - Probability of collision given interaction
 

@@ -84,6 +84,7 @@ turbine_flights_year <- function(
     time_units = "min",
     eff_detection_width,
     eff_detection_height,
+    spatial_correction = 1,
     rotor_diameter,
     hub_height,
     prop_day,
@@ -106,6 +107,7 @@ turbine_flights_year <- function(
 
   flights_min <- turbine_flights(
     obs_flux = obs_flux,
+    spatial_correction = spatial_correction,
     rotor_diameter = rotor_diameter,
     hub_height = hub_height
   )
