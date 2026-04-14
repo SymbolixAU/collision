@@ -1,6 +1,6 @@
 # Tests for cluster_correction_a and cluster_correction_l
 
-# Helper: simple 2-turbine data.frame
+# Helper df
 two_turbines <- data.frame(lon = c(0, 0.01), lat = c(51, 51))
 
 # cluster_correction_a----------------------
@@ -12,8 +12,6 @@ expect_equal(length(result_a), 1L)
 expect_true(is.finite(result_a))
 
 ## Single turbine: correction factor should be ~1 ---------------------------
-# sf computes spherical area, which differs slightly from planar pi*r^2,
-# so we allow a small tolerance rather than expecting exactly 1.
 one_turbine <- data.frame(lon = 0, lat = 51)
 expect_equal(
   cluster_correction_a(one_turbine, eff_detection_width = 500),
@@ -22,15 +20,11 @@ expect_equal(
 )
 
 ## Very widely spaced turbines: factor close to 1 ---------------------------
-# Turbines far apart so EDAs don't overlap; each turbine contributes one full EDA.
 far_turbines <- data.frame(lon = c(0, 10), lat = c(51, 51))
 result_far <- cluster_correction_a(far_turbines, eff_detection_width = 500)
 expect_equal(result_far, 1, tolerance = 0.05)
 
 ## Overlapping EDAs: factor lower than non-overlapping case -----------------
-# Turbines very close together relative to detection width; their EDAs nearly
-# fully overlap, so the correction factor should be much less than for
-# non-overlapping turbines.
 close_turbines <- data.frame(lon = c(0, 0.0001), lat = c(51, 51))
 result_close <- cluster_correction_a(close_turbines, eff_detection_width = 5000)
 expect_true(result_close < result_far)
@@ -116,8 +110,6 @@ expect_error(
 )
 
 ## Input validation: eff_detection_width type/length -----------------------
-# Note: a character value causes an arithmetic error before the stopifnot fires,
-# because EDA = pi*(eff_detection_width/2)^2 is evaluated first.
 expect_error(cluster_correction_a(two_turbines, eff_detection_width = '500'))
 expect_error(
   cluster_correction_a(two_turbines, eff_detection_width = c(500, 600)),
@@ -135,7 +127,6 @@ expect_error(
 )
 
 ## Input validation: NA eff_detection_width --------------------------------
-# is.numeric(NA) is FALSE, so the "single numeric value" check fires first.
 expect_error(
   cluster_correction_a(two_turbines, eff_detection_width = NA),
   'eff_detection_width must be a single numeric value'
