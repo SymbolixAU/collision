@@ -14,9 +14,11 @@
 #' @param eff_detection_width numeric; the effective detection width,
 #'    which is usually 2 x effective detection radius.
 #'    
-#' @return numeric; the cluster correction factor - the average number 
+#' @return numeric; the cluster correction factor - the average number
 #'    of turbines per EDA (effective detection area).
-#'    
+#'
+#' @importFrom sf st_as_sf st_buffer st_make_valid st_union st_area
+#' @importFrom units drop_units
 #' @export
 cluster_correction_a <- function(df_turbines, eff_detection_width){
   # df_turbines needs turbine ids and lat/lon
@@ -30,6 +32,15 @@ cluster_correction_a <- function(df_turbines, eff_detection_width){
   # https://stackoverflow.com/questions/1667310/combined-area-of-overlapping-circles
   # but I don't want to spend my day on that rn
   
+  stopifnot(
+    "df_turbines must be a data.frame" =
+      is.data.frame(df_turbines)
+  )
+  stopifnot(
+    "df_turbines must have at least one row" =
+      nrow(df_turbines) >= 1
+  )
+  
   EDA <- pi*(eff_detection_width/2)^2
   n_turbines <- nrow(df_turbines)
   
@@ -42,9 +53,65 @@ cluster_correction_a <- function(df_turbines, eff_detection_width){
                                                                    "latitude",
                                                                    "y")]
   
+  stopifnot(
+    "df_turbines must contain a longitude column named lon, long, longitude, or x" =
+      length(lon_col) >= 1
+  )
+  stopifnot(
+    "df_turbines must contain a latitude column named lat, latitude, or y" =
+      length(lat_col) >= 1
+  )
+  
+  if (length(lon_col) > 1) {
+    warning(
+      "multiple possible longitude columns detected: ",
+      paste(lon_col, collapse = ", "),
+      ". Using the first match: ", lon_col[1]
+    )
+    lon_col <- lon_col[1]
+  }
+  if (length(lat_col) > 1) {
+    warning(
+      "multiple possible latitude columns detected: ",
+      paste(lat_col, collapse = ", "),
+      ". Using the first match: ", lat_col[1]
+    )
+    lat_col <- lat_col[1]
+  }
+  
+  stopifnot(
+    "NA values detected in longitude column" =
+      !any(is.na(df_turbines[[lon_col]]))
+  )
+  stopifnot(
+    "NA values detected in latitude column" =
+      !any(is.na(df_turbines[[lat_col]]))
+  )
+  
+  stopifnot(
+    "longitude values appear out of WGS 84 range (-180 to 180)" =
+      all(df_turbines[[lon_col]] >= -180 & df_turbines[[lon_col]] <= 180)
+  )
+  stopifnot(
+    "latitude values appear out of WGS 84 range (-90 to 90)" =
+      all(df_turbines[[lat_col]] >= -90 & df_turbines[[lat_col]] <= 90)
+  )
+  
+  stopifnot(
+    "eff_detection_width must be a single numeric value" =
+      is.numeric(eff_detection_width) && length(eff_detection_width) == 1
+  )
+  stopifnot(
+    "eff_detection_width must be greater than 0" =
+      eff_detection_width > 0
+  )
+  stopifnot(
+    "NA detected in eff_detection_width" =
+      !is.na(eff_detection_width)
+  )
+  
   sf_turb <- sf::st_as_sf(df_turbines, coords = c(lon_col, lat_col), crs = 4326)
 
-  
   sf_turb_buffer <- sf::st_make_valid(
     sf::st_buffer(x = sf_turb,
                   dist = eff_detection_width/2))
@@ -84,5 +151,32 @@ cluster_correction_l <- function(avg_min_distance, eff_detection_width){
   # TODO: I would like to have the option to input df_turbines here and have it calculate the avg min distance
   # but I think that requires better knowledge of R to do in a relatively speedy way
   # ES suggested spatialdatatable::dtHaversine?
+  
+  stopifnot(
+    "avg_min_distance must be a single numeric value" =
+      is.numeric(avg_min_distance) && length(avg_min_distance) == 1
+  )
+  stopifnot(
+    "NA detected in avg_min_distance" =
+      !is.na(avg_min_distance)
+  )
+  stopifnot(
+    "avg_min_distance must be greater than 0" =
+      avg_min_distance > 0
+  )
+  
+  stopifnot(
+    "eff_detection_width must be a single numeric value" =
+      is.numeric(eff_detection_width) && length(eff_detection_width) == 1
+  )
+  stopifnot(
+    "NA detected in eff_detection_width" =
+      !is.na(eff_detection_width)
+  )
+  stopifnot(
+    "eff_detection_width must be greater than 0" =
+      eff_detection_width > 0
+  )
+  
   return(eff_detection_width/avg_min_distance)
 }
