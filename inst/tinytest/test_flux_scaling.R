@@ -5,6 +5,7 @@
 # obs_flux
 
 obs_flux <- 5
+spatial_correction <- 0.8
 rotor_diameter <- 300
 hub_height <- 1
 ### Invalid Inputs-----------------
@@ -52,13 +53,14 @@ expect_error(turbine_flights(obs_flux, rotor_diameter, -100)
              , "variable out of bounds")
 
 ## Zero obs_flux or diameter gives 0 turbine_flights----------
-expect_equal(turbine_flights(0, rotor_diameter, hub_height), 0)
-expect_equal(turbine_flights(obs_flux, 0, hub_height), 0)
-expect_equal(turbine_flights(0, 0, hub_height), 0)
+expect_equal(turbine_flights(0, rotor_diameter, spatial_correction, hub_height), 0)
+expect_equal(turbine_flights(obs_flux, 0, spatial_correction, hub_height), 0)
+expect_equal(turbine_flights(0, 0, 0, hub_height), 0)
 
 ## Valid inputs give the correct result---------
-expect_equal(turbine_flights(obs_flux, rotor_diameter, hub_height)
-             , obs_flux * rotor_diameter * (hub_height + 0.5*rotor_diameter))
+expect_equal(turbine_flights(obs_flux, spatial_correction,rotor_diameter, hub_height)
+             , obs_flux * spatial_correction * 
+               rotor_diameter * (hub_height + 0.5*rotor_diameter))
 
 # flights per year--------------------------
 ## Test if data inputs are checked appropriately----------------
