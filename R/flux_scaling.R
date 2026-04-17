@@ -32,7 +32,10 @@
 #' @example examples/flux_example.R
 #'
 #' @export
-turbine_flights <- function(obs_flux, spatial_correction = 1, rotor_diameter, hub_height) {
+turbine_flights <- function(obs_flux, 
+                            spatial_correction = 1, 
+                            rotor_diameter, 
+                            hub_height) {
   check_num_bounds(obs_flux, min = 0)
   check_num_bounds(spatial_correction, min = 0)
   check_num_bounds(rotor_diameter, min = 0)

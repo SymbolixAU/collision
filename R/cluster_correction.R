@@ -1,13 +1,17 @@
 #' Correct for turbine clusters
 #' 
-#' TODO description
+#' The construction of the CRM requires that the flight flux through the observed 
+#' window be scaled to the size of a turbine and then applied to each turbine. If 
+#' If the (effective) detection range of the observer overlaps multiple turbines
+#' the flux needs to be scaled appropriate over the turbines in the observation
+#' range.
 #' 
 #' @details
-#' If the turbine layout is more compact and/or your EDR is large, then the 
-#' effective detection area contains more than one turbine. 
+#' If the turbine layout is more compact and/or your effective detection width is large, then the effective detection area contains more than one turbine. 
 #' The observed flux needs to be weighted to account for the effective turbines 
-#' in the observed area. This accounts for the fact that an observed flight can 
-#' only interact with one turbine at any given time. TODO
+#' in the observed area. This accounts for the fact that the observed flux is an instantaneous measure and cannot interact with multiple turbinesat once.
+#' 
+#' This correction is derived from different assumptions but fulfils a similar model correction as the \code{sqrt(n_turbines)} in 
 #' 
 #' @param df_turbines data.frame; a data.frame with one row per turbine, 
 #'    containing the coordinates of each turbine in WGS 84
@@ -25,12 +29,10 @@ cluster_correction_a <- function(df_turbines, eff_detection_width){
   # lat column can be "lat", "latitude" or "y" (any case)
   # lon column can be "lon", "long", "longitude" or "x" (any case)
   # currently have it requiring WGS 84 but might be better to add a CRS input?
-  
-  # TODO (low priority) I think this needs to be optimised better - it's kinda 
-  # slow when doing it in a loop in the stochastic example 
-  # to do it mathematically this is a good reference 
-  # https://stackoverflow.com/questions/1667310/combined-area-of-overlapping-circles
-  # but I don't want to spend my day on that rn
+  # 
+  # 
+  # 
+  # 
   
   stopifnot(
     "df_turbines must be a data.frame" =
@@ -47,11 +49,15 @@ cluster_correction_a <- function(df_turbines, eff_detection_width){
   lon_col <- names(df_turbines)[tolower(names(df_turbines)) %in% c("lon",
                                                                    "longitude",
                                                                    "long",
-                                                                   "x")]
+                                                                   "x",
+                                                                   "easting",
+                                                                   "northing")]
   
   lat_col <- names(df_turbines)[tolower(names(df_turbines)) %in% c("lat",
                                                                    "latitude",
-                                                                   "y")]
+                                                                   "y",
+                                                                   "easting",
+                                                                   "northing")]
   
   stopifnot(
     "df_turbines must contain a longitude column named lon, long, longitude, or x" =
