@@ -25,7 +25,7 @@ expect_error(
     rotor_diameter,
     hub_height,
     prop_day,
-    prop_year
+    prop_year,
   ),
   "Only point transects are currently implemented.
          Line transects and digital areal surveys are in development."
