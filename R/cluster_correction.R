@@ -35,7 +35,8 @@
 
 #' @rdname cluster_correction
 #'
-#' @param eff_detection_width numeric; the effective detection (half) width or effective detection radius
+#' @param eff_detection_width numeric; the total effective detection width which is 
+#'     2 x effective detection radius or 2 x effective strip (half) width. 
 #' @param df_turbines data.frame; a data.frame with one row per turbine, 
 #'    containing the coordinates of each turbine as latitude, longitude pairs. 
 #'    Coordinate columns can be named (lon, long, longitude, x) and (lat, latitude, y)
@@ -69,12 +70,12 @@ cluster_correction_a <- function(eff_detection_width, df_turbines, crs = 4326){
   sf_turbines <- df_to_projsf(df_turbines, crs) # internal helper function
   
   ## total area with no overlap
-  area_separate <- nrow(df_turbines)* pi*(eff_detection_width)^2  #half width==radius
+  area_separate <- nrow(df_turbines)* pi*(eff_detection_width*0.5)^2  #half width==radius
   
   ## area buffered by EDA
   sf_turb_buffer <- sf::st_make_valid(
     sf::st_buffer(x = sf_turbines,
-                  dist = eff_detection_width,
+                  dist = eff_detection_width*0.5,
                   nQuadSegs = 360))
   
   ## union
@@ -138,7 +139,7 @@ cluster_correction_a <- function(eff_detection_width, df_turbines, crs = 4326){
 #'  corr1; corr2
 #' 
 #' @export
-cluster_correction_l <- function(eff_detection_width = NULL,
+cluster_correction_l <- function(eff_detection_width,
                                  avg_min_distance = NULL,
                                  df_turbines = NULL,
                                  crs = 4326){
@@ -244,7 +245,7 @@ df_to_projsf <- function(df_turbines, crs){
   }
     
   check_num_bounds(sf::st_coordinates(sf_turbines)[, "X"], 150000, 1e6 )
-  check_num_bounds(abs(sf::st_coordinates(sf_turbines)[, "Y"]), -1.e6, 10.e6  )
+  check_num_bounds(abs(sf::st_coordinates(sf_turbines)[, "Y"]), 1.e6, 10.e6  )
   
   
   return(sf_turbines)
