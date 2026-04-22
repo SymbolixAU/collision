@@ -14,8 +14,7 @@ per unit time as output by \code{\link[=obs_flux]{obs_flux()}} or similar.}
 Either the cluster correction factor as output by \code{\link[=cluster_correction_a]{cluster_correction_a()}}/
 \code{\link[=cluster_correction_l]{cluster_correction_l()}} or similar (assuming flat activity across the site)
 or a correction based on the spatial distribution of flights on the site.
-Defaults to 1.
-TODO make better words}
+Defaults to 1.}
 
 \item{rotor_diameter}{numeric; rotor diameter. Must be in the equivalent units to
 the unit area of \code{obs_flux} (i.e., if the \code{obs_flux} is per m\eqn{^2}, \code{rotor_diameter} must be in m).}

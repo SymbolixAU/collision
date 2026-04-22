@@ -123,7 +123,7 @@ expect_error(
 ## Input validation: NA eff_detection_width --------------------------------
 expect_error(
   cluster_correction_a(df_turbines = two_turbines, eff_detection_width = NA),
-  'eff_detection_width must be a single numeric value'
+  'Numeric input expected'
 )
 
 # cluster_correction_l----------------------------------------------------------
@@ -204,3 +204,4 @@ expect_error(
   cluster_correction_l(avg_min_distance = 1000, eff_detection_width = NA),
   'Numeric input expected'
 )
+

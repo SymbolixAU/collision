@@ -6,6 +6,9 @@
 \usage{
 lonlat_to_utm(lonlat)
 }
+\arguments{
+\item{lonlat}{a lon, lat coordinate pair}
+}
 \description{
 Equation from https://r.geocompx.org/reproj-geo-data#which-crs
 }

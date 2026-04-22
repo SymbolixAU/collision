@@ -2,6 +2,7 @@
 #' 
 #' Equation from https://r.geocompx.org/reproj-geo-data#which-crs
 #' 
+#' @param lonlat a lon, lat coordinate pair
 #' 
 lonlat_to_utm = function(lonlat) {
   

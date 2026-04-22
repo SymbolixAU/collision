@@ -17,7 +17,6 @@
 #'    [cluster_correction_l()] or similar (assuming flat activity across the site) 
 #'    or a correction based on the spatial distribution of flights on the site. 
 #'    Defaults to 1.
-#'    TODO make better words
 #' @param rotor_diameter numeric; rotor diameter. Must be in the equivalent units to 
 #'    the unit area of `obs_flux` (i.e., if the `obs_flux` is per m\eqn{^2}, `rotor_diameter` must be in m).
 #' @param hub_height numeric; hub height. Must be in the equivalent units to 

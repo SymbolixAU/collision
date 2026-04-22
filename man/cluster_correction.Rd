@@ -9,7 +9,7 @@
 cluster_correction_a(eff_detection_width, df_turbines, crs = 4326)
 
 cluster_correction_l(
-  eff_detection_width = NULL,
+  eff_detection_width,
   avg_min_distance = NULL,
   df_turbines = NULL,
   crs = 4326
@@ -86,7 +86,7 @@ df_turbines <- data.frame(
 ##option 1 - provide the average distance between turbine neighbours
 
 sf_turbines <- sf::st_as_sf(df_turbines, 
-  coords = c(lon_col, lat_col), 
+  coords = c("lon", "lat"), 
   crs = 4326)
   
 idx <- sf::st_nearest_feature(sf_turbines)

@@ -63,6 +63,11 @@
 #' @param survey_type character; type of survey. Currently just point transects
 #'   but methods for line transects and digital areal surveys are in development.
 #' @inheritParams obs_flux
+#' @param spatial_correction numeric; factor to correct flux for spatial considerations. 
+#'    Either the cluster correction factor as output by [cluster_correction_a()]/ 
+#'    [cluster_correction_l()] or similar (assuming flat activity across the site) 
+#'    or a correction based on the spatial distribution of flights on the site. 
+#'    Defaults to 1 (no correction).
 #' @inheritParams turbine_flights
 #' @param time_units Time units of `encounter_rate`. Defaults to "min" (i.e. flights per minute).
 #' @param prop_day numeric; number between 0 and 1 representing the proportion

@@ -228,8 +228,9 @@ dt_survey <- copy(df_survey)
 setDT(dt_obs)
 setDT(dt_survey)
 
-dt_obs_survey <- dt_obs[height <= max_rsh, .("size" = sum(size)), survey_id][dt_survey,
-                                                            on = "survey_id"]
+dt_obs_survey <- dt_obs[height <= max_rsh, .("size" = sum(size)), survey_id
+                        ][dt_survey,
+                          on = "survey_id"]
 # need sum(size) because we want one row per survey (not observation)
 ```
 
@@ -271,8 +272,8 @@ obs_flux_min <- obs_flux(
 )
 
 effective_flux <- cluster_correction_a(
-  df_turbines = df_turbines,
-  eff_detection_width = 2*edr_from_distmodel(ds_model))
+  eff_detection_width = 2*edr_from_distmodel(ds_model),
+  df_turbines = df_turbines)
 
 #flights through turbine / min
 

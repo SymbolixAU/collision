@@ -143,6 +143,7 @@ expect_equal(turbine_flights_year(
   time_units = "min",
   eff_detection_width,
   eff_detection_height,
+  1,
   rotor_diameter,
   hub_height,
   prop_day,

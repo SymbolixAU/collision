@@ -417,8 +417,8 @@ lst_results <- lapply(1:iterations, function(i) {
   # Step 1.5 calculate the cluster correction
   
   df_turbines_results$cluster_corr <- cluster_correction_a(
-    df_turbines = df_turbines_results,
-    eff_detection_width = 2*edr_i
+    eff_detection_width = 2*edr_i,
+    df_turbines = df_turbines_results
   )
   
   # Step 2 calculate flux through turbine per year
