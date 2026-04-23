@@ -11,7 +11,8 @@ obs_flux(encounter_rate, eff_detection_width, eff_detection_height)
 as output by \code{\link[=encounter_rate]{encounter_rate()}} or similar.}
 
 \item{eff_detection_width}{numeric; Allows you to manually specify the effective detection width,
-which is usually 2 x effective detection radius. Must be in the same units as \code{eff_detection_height}.}
+which is usually 2 x effective detection radius or 2 x effective strip (half) width.
+Must be in the same units as \code{eff_detection_height}.}
 
 \item{eff_detection_height}{numeric; The effective detection height. Because the
 density of flights typically decreases with increasing height, the assumption of uniform

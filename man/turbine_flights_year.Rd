@@ -10,6 +10,7 @@ turbine_flights_year(
   time_units = "min",
   eff_detection_width,
   eff_detection_height,
+  spatial_correction = 1,
   rotor_diameter,
   hub_height,
   prop_day,
@@ -26,7 +27,8 @@ as output by \code{\link[=encounter_rate]{encounter_rate()}} or similar.}
 \item{time_units}{Time units of \code{encounter_rate}. Defaults to "min" (i.e. flights per minute).}
 
 \item{eff_detection_width}{numeric; Allows you to manually specify the effective detection width,
-which is usually 2 x effective detection radius. Must be in the same units as \code{eff_detection_height}.}
+which is usually 2 x effective detection radius or 2 x effective strip (half) width.
+Must be in the same units as \code{eff_detection_height}.}
 
 \item{eff_detection_height}{numeric; The effective detection height. Because the
 density of flights typically decreases with increasing height, the assumption of uniform
@@ -38,6 +40,12 @@ that height. This is the simplest way to avoid artificially inflating or deflati
 the flux through the turbine. It is possible to use another method to estimate
 an effective detection height but we leave this to the analyst's judgement.
 Must be in the same units as \code{eff_detection_width}.}
+
+\item{spatial_correction}{numeric; factor to correct flux for spatial considerations.
+Either the cluster correction factor as output by \code{\link[=cluster_correction_a]{cluster_correction_a()}}/
+\code{\link[=cluster_correction_l]{cluster_correction_l()}} or similar (assuming flat activity across the site)
+or a correction based on the spatial distribution of flights on the site.
+Defaults to 1 (no correction).}
 
 \item{rotor_diameter}{numeric; rotor diameter. Must be in the equivalent units to
 the unit area of \code{obs_flux} (i.e., if the \code{obs_flux} is per m\eqn{^2}, \code{rotor_diameter} must be in m).}

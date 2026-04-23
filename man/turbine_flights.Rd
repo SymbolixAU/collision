@@ -4,11 +4,17 @@
 \alias{turbine_flights}
 \title{Convert observed flight flux to number of flights through turbine plane (i.e. interactions).}
 \usage{
-turbine_flights(obs_flux, rotor_diameter, hub_height)
+turbine_flights(obs_flux, spatial_correction = 1, rotor_diameter, hub_height)
 }
 \arguments{
 \item{obs_flux}{numeric; number of flights through one unit area of vertical space
-per unit time as output by \code{\link[=obs_flux]{obs_flux()}} or similar}
+per unit time as output by \code{\link[=obs_flux]{obs_flux()}} or similar.}
+
+\item{spatial_correction}{numeric; factor to correct flux for spatial considerations.
+Either the cluster correction factor as output by \code{\link[=cluster_correction_a]{cluster_correction_a()}}/
+\code{\link[=cluster_correction_l]{cluster_correction_l()}} or similar (assuming flat activity across the site)
+or a correction based on the spatial distribution of flights on the site.
+Defaults to 1.}
 
 \item{rotor_diameter}{numeric; rotor diameter. Must be in the equivalent units to
 the unit area of \code{obs_flux} (i.e., if the \code{obs_flux} is per m\eqn{^2}, \code{rotor_diameter} must be in m).}

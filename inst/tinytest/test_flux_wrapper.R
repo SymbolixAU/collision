@@ -25,7 +25,7 @@ expect_error(
     rotor_diameter,
     hub_height,
     prop_day,
-    prop_year
+    prop_year,
   ),
   "Only point transects are currently implemented.
          Line transects and digital areal surveys are in development."
@@ -143,6 +143,7 @@ expect_equal(turbine_flights_year(
   time_units = "min",
   eff_detection_width,
   eff_detection_height,
+  1,
   rotor_diameter,
   hub_height,
   prop_day,

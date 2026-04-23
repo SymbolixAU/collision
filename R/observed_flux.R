@@ -30,7 +30,8 @@
 #' @param encounter_rate numeric; number of flights observed per unit time of survey
 #'    as output by [encounter_rate()] or similar.
 #' @param eff_detection_width numeric; Allows you to manually specify the effective detection width,
-#'    which is usually 2 x effective detection radius. Must be in the same units as `eff_detection_height`.
+#'    which is usually 2 x effective detection radius or 2 x effective strip (half) width. 
+#'    Must be in the same units as `eff_detection_height`.
 #' @param eff_detection_height numeric; The effective detection height. Because the 
 #' density of flights typically decreases with increasing height, the assumption of uniform
 #' density required for traditional distance correction doesn't hold. So the observer's
