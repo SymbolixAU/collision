@@ -128,7 +128,7 @@ expect_error(
 
 # cluster_correction_l----------------------------------------------------------
 
-## Basic correctness: result equals eff_detection_width / avg_min_distance----
+## Basic correctness: result equals avg_min_distance / eff_detection_width----
 expect_equal(
   cluster_correction_l(avg_min_distance = 1000, eff_detection_width = 500),
   1
@@ -203,5 +203,24 @@ expect_error(
 expect_error(
   cluster_correction_l(avg_min_distance = 1000, eff_detection_width = NA),
   'Numeric input expected'
+)
+
+## Input validation: mutual exclusivity of avg_min_distance and df_turbines --
+expect_error(
+  cluster_correction_l(eff_detection_width = 500),
+  'Please enter one of avg_min_distance or df_turbines'
+)
+
+two_turbines_l <- data.frame(
+  lon = c(145.947140, 145.94500),
+  lat = c(-38.491772, -38.49100)
+)
+expect_error(
+  cluster_correction_l(
+    eff_detection_width = 500,
+    avg_min_distance = 1000,
+    df_turbines = two_turbines_l
+  ),
+  'Please enter only one of avg_min_distance and df_turbines'
 )
 

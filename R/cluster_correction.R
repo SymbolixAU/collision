@@ -152,11 +152,11 @@ cluster_correction_l <- function(eff_detection_width,
   
   
   if( is.null(avg_min_distance ) & is.null(df_turbines)){
-    stop("Please enter one of eff_detection_width or avg_min_distance")
+    stop("Please enter one of avg_min_distance or df_turbines")
   }
-    
+
   if( !is.null(avg_min_distance) & !is.null(df_turbines)){
-    stop("Please enter only one of eff_detection_width and avg_min_distance")
+    stop("Please enter only one of avg_min_distance and df_turbines")
   }
     
   
