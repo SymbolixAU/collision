@@ -23,8 +23,8 @@ obs_flux(encounter_rate, eff_detection_width, eff_detection_height)
 - eff_detection_width:
 
   numeric; Allows you to manually specify the effective detection width,
-  which is usually 2 x effective detection radius. Must be in the same
-  units as `eff_detection_height`.
+  which is usually 2 x effective detection radius or 2 x effective strip
+  (half) width. Must be in the same units as `eff_detection_height`.
 
 - eff_detection_height:
 

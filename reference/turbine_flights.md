@@ -6,7 +6,7 @@ Convert observed flight flux to number of flights through turbine plane
 ## Usage
 
 ``` r
-turbine_flights(obs_flux, rotor_diameter, hub_height)
+turbine_flights(obs_flux, spatial_correction = 1, rotor_diameter, hub_height)
 ```
 
 ## Arguments
@@ -16,7 +16,17 @@ turbine_flights(obs_flux, rotor_diameter, hub_height)
   numeric; number of flights through one unit area of vertical space per
   unit time as output by
   [`obs_flux()`](https://symbolixau.github.io/collision/reference/obs_flux.md)
-  or similar
+  or similar.
+
+- spatial_correction:
+
+  numeric; factor to correct flux for spatial considerations. Either the
+  cluster correction factor as output by
+  [`cluster_correction_a()`](https://symbolixau.github.io/collision/reference/cluster_correction.md)/
+  [`cluster_correction_l()`](https://symbolixau.github.io/collision/reference/cluster_correction.md)
+  or similar (assuming flat activity across the site) or a correction
+  based on the spatial distribution of flights on the site. Defaults to
+  1.
 
 - rotor_diameter:
 

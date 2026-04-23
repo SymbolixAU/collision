@@ -12,6 +12,7 @@ turbine_flights_year(
   time_units = "min",
   eff_detection_width,
   eff_detection_height,
+  spatial_correction = 1,
   rotor_diameter,
   hub_height,
   prop_day,
@@ -41,8 +42,8 @@ turbine_flights_year(
 - eff_detection_width:
 
   numeric; Allows you to manually specify the effective detection width,
-  which is usually 2 x effective detection radius. Must be in the same
-  units as `eff_detection_height`.
+  which is usually 2 x effective detection radius or 2 x effective strip
+  (half) width. Must be in the same units as `eff_detection_height`.
 
 - eff_detection_height:
 
@@ -58,6 +59,16 @@ turbine_flights_year(
   use another method to estimate an effective detection height but we
   leave this to the analyst's judgement. Must be in the same units as
   `eff_detection_width`.
+
+- spatial_correction:
+
+  numeric; factor to correct flux for spatial considerations. Either the
+  cluster correction factor as output by
+  [`cluster_correction_a()`](https://symbolixau.github.io/collision/reference/cluster_correction.md)/
+  [`cluster_correction_l()`](https://symbolixau.github.io/collision/reference/cluster_correction.md)
+  or similar (assuming flat activity across the site) or a correction
+  based on the spatial distribution of flights on the site. Defaults to
+  1 (no correction).
 
 - rotor_diameter:
 

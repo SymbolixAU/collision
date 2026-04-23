@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">collision</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -368,8 +368,9 @@ surveys).</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setDT.html" class="external-link">setDT</a></span><span class="op">(</span><span class="va">dt_obs</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setDT.html" class="external-link">setDT</a></span><span class="op">(</span><span class="va">dt_survey</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">dt_obs_survey</span> <span class="op">&lt;-</span> <span class="va">dt_obs</span><span class="op">[</span><span class="va">height</span> <span class="op">&lt;=</span> <span class="va">max_rsh</span>, <span class="fu">.</span><span class="op">(</span><span class="st">"size"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">size</span><span class="op">)</span><span class="op">)</span>, <span class="va">survey_id</span><span class="op">]</span><span class="op">[</span><span class="va">dt_survey</span>,</span>
-<span>                                                            on <span class="op">=</span> <span class="st">"survey_id"</span><span class="op">]</span></span>
+<span><span class="va">dt_obs_survey</span> <span class="op">&lt;-</span> <span class="va">dt_obs</span><span class="op">[</span><span class="va">height</span> <span class="op">&lt;=</span> <span class="va">max_rsh</span>, <span class="fu">.</span><span class="op">(</span><span class="st">"size"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">size</span><span class="op">)</span><span class="op">)</span>, <span class="va">survey_id</span></span>
+<span>                        <span class="op">]</span><span class="op">[</span><span class="va">dt_survey</span>,</span>
+<span>                          on <span class="op">=</span> <span class="st">"survey_id"</span><span class="op">]</span></span>
 <span><span class="co"># need sum(size) because we want one row per survey (not observation)</span></span></code></pre></div>
 <p>Now we can use this table in <code><a href="../reference/encounter_rate.html">encounter_rate()</a></code>:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
@@ -394,6 +395,7 @@ flights per minute.</p>
 obtained using <code>edr_dist_model()</code>)</li>
 <li>The size of the turbine (contained in the object made using
 <code><a href="../reference/define_turbine.html">define_turbine()</a></code>)</li>
+<li>The turbine layout</li>
 <li>The proportion of the day active (contained in the object made using
 <code><a href="../reference/define_bird.html">define_bird()</a></code>)</li>
 <li>The proportion of the year active (contained in the object made
@@ -403,7 +405,9 @@ using <code><a href="../reference/define_bird.html">define_bird()</a></code>)</l
 This is in flights per unit time per unit area (assuming we are below
 max turbine height), in this example the units are minutes and metres
 squared, respectively.</p>
-<p>Second we apply this to the “turbine plane” (a rectangular “doorway”
+<p>Second we calculate the cluster correction factor (or the spatial
+flights pdf if you are doing a spatial model).</p>
+<p>We then apply these to the “turbine plane” (a rectangular “doorway”
 defined by the rotor diameter and maximum rotor swept height) using
 <code><a href="../reference/turbine_flights.html">turbine_flights()</a></code> to obtain the flights through the turbine
 plane per minute.</p>
@@ -416,16 +420,21 @@ plane per minute.</p>
 <span>  eff_detection_height <span class="op">=</span> <span class="va">max_rsh</span></span>
 <span><span class="op">)</span></span>
 <span></span>
+<span><span class="va">effective_flux</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cluster_correction.html">cluster_correction_a</a></span><span class="op">(</span></span>
+<span>  eff_detection_width <span class="op">=</span> <span class="fl">2</span><span class="op">*</span><span class="fu"><a href="../reference/data_from_distmodel.html">edr_from_distmodel</a></span><span class="op">(</span><span class="va">ds_model</span><span class="op">)</span>,</span>
+<span>  df_turbines <span class="op">=</span> <span class="va">df_turbines</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co">#flights through turbine / min</span></span>
 <span></span>
 <span><span class="va">turbine_flights_min</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/turbine_flights.html">turbine_flights</a></span><span class="op">(</span></span>
 <span>  obs_flux <span class="op">=</span> <span class="va">obs_flux_min</span>,</span>
+<span>  spatial_correction <span class="op">=</span> <span class="va">effective_flux</span>,</span>
 <span>  rotor_diameter  <span class="op">=</span> <span class="va">v90_single</span><span class="op">$</span><span class="va">rotor_diam</span>,</span>
 <span>  hub_height <span class="op">=</span> <span class="va">v90_single</span><span class="op">$</span><span class="va">hh</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>The observed flight flux is 6.6665046^{-9} flights per square meter
 per minute (below max turbine height). Scaling up to the turbine this
-corresponds to 6.7660221^{-5} flights through the turbine area per
+corresponds to 5.3535438^{-5} flights through the turbine area per
 minute.</p>
 <p>Here we correct it for daily and monthly variability. This can be
 done by hand but the package includes a helper function which can scale
@@ -440,10 +449,14 @@ to a year.</p>
 <ul>
 <li>The units for <code>turbine_flight_year</code> is flights / year
 (per turbine).</li>
-<li>We expect 17.793285 flights through the turbine area each year.</li>
+<li>We expect 14.0787496 flights through the turbine area each
+year.</li>
 </ul>
-<p>This is the expected number of interactions per turbine per year with
-no avoidance.</p>
+<p>This is the expected number of interactions<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;“interaction” just refers to a flight through the
+turbine cylinder. Below the rotor swept height a bird could be a blade
+length from the tower and it would still count as an interaction for our
+purposes. This is then accounted for in the probability of collision.&lt;/p&gt;"><sup>2</sup></a> per turbine per year
+with no avoidance.</p>
 </div>
 <div class="section level4">
 <h4 id="step-3---probability-of-collision-given-interaction">Step 3 - Probability of collision given interaction<a class="anchor" aria-label="anchor" href="#step-3---probability-of-collision-given-interaction"></a>
@@ -516,7 +529,7 @@ number of expected collision per year.</p>
 <span></span>
 <span><span class="co">## For a final result, sum all turbines</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">df_turbines</span><span class="op">$</span><span class="va">n_collision</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.2012758</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.1592574</span></span></code></pre></div>
 <hr>
 </div>
 </div>

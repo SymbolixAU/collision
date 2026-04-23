@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">collision</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">turbine_flights</span><span class="op">(</span><span class="va">obs_flux</span>, <span class="va">rotor_diameter</span>, <span class="va">hub_height</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">turbine_flights</span><span class="op">(</span><span class="va">obs_flux</span>, spatial_correction <span class="op">=</span> <span class="fl">1</span>, <span class="va">rotor_diameter</span>, <span class="va">hub_height</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -53,7 +53,15 @@
 
 <dl><dt id="arg-obs-flux">obs_flux<a class="anchor" aria-label="anchor" href="#arg-obs-flux"></a></dt>
 <dd><p>numeric; number of flights through one unit area of vertical space
-per unit time as output by <code><a href="obs_flux.html">obs_flux()</a></code> or similar</p></dd>
+per unit time as output by <code><a href="obs_flux.html">obs_flux()</a></code> or similar.</p></dd>
+
+
+<dt id="arg-spatial-correction">spatial_correction<a class="anchor" aria-label="anchor" href="#arg-spatial-correction"></a></dt>
+<dd><p>numeric; factor to correct flux for spatial considerations.
+Either the cluster correction factor as output by <code><a href="cluster_correction.html">cluster_correction_a()</a></code>/
+<code><a href="cluster_correction.html">cluster_correction_l()</a></code> or similar (assuming flat activity across the site)
+or a correction based on the spatial distribution of flights on the site.
+Defaults to 1.</p></dd>
 
 
 <dt id="arg-rotor-diameter">rotor_diameter<a class="anchor" aria-label="anchor" href="#arg-rotor-diameter"></a></dt>

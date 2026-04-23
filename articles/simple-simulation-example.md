@@ -149,8 +149,8 @@ NA if you are not including any spatial modelling.
 df_turbines <- data.frame(
   turbine_id = c("T01", "T02", "T03", "T04"),
   model = rep(c("Turbine 180", "Turbine 150"), each = 2),
-  lat = c(-32.512, -32.521, -32.523, -32.516),
-  lon = c(143.441, 143.442, 143.444, 143.447)
+  lat = c(-32.505, -32.521, -32.523, -32.516),
+  lon = c(143.441, 143.442, 143.425, 143.457)
 )
 ```
 
@@ -482,6 +482,9 @@ wish.
 - Step 0 - Set up simulation parameters
 - Step 1 - Sample inputs for bird, turbine, prop at height, prop below
   height, effective detection radius (EDR) and encounter rate.
+- Step 1.5 (optional) - Calculate the `cluster_correction` or any
+  spatial flight corrections. The cluster correction is only needed if
+  the distance between turbines $\leq$ EDR.
 - Step 2 - Calculate
   [`turbine_flights_year()`](https://symbolixau.github.io/collision/reference/turbine_flights_year.md)
   with sampled values - calculate flights through turbine per year
@@ -530,6 +533,13 @@ lst_results <- lapply(1:iterations, function(i) {
   prop_at_height2_i <- 1-prop_below_height2_i
   er2_i <- sample_input(flights_per_min2)
   
+  # Step 1.5 calculate the cluster correction
+  
+  df_turbines_results$cluster_corr <- cluster_correction_a(
+    eff_detection_width = 2*edr_i,
+    df_turbines = df_turbines_results
+  )
+  
   # Step 2 calculate flux through turbine per year
   df_turbines_results[df_turbines_results$model == "Turbine 180",
                       "flight_turbine_year"] <- turbine_flights_year(
@@ -537,6 +547,8 @@ lst_results <- lapply(1:iterations, function(i) {
     encounter_rate = er1_i,
     eff_detection_width = 2*edr_i,
     eff_detection_height = max_rsh1,
+    spatial_correction = df_turbines_results[df_turbines_results$model == "Turbine 180",
+                      "cluster_corr"],
     rotor_diameter = turbines1_i$rotor_diam,
     hub_height = turbines1_i$hh,
     prop_day = bird_i$prop_day,
@@ -549,6 +561,8 @@ lst_results <- lapply(1:iterations, function(i) {
     encounter_rate = er2_i,
     eff_detection_width = 2*edr_i,
     eff_detection_height = max_rsh2,
+    spatial_correction = df_turbines_results[df_turbines_results$model == "Turbine 150",
+                      "cluster_corr"],
     rotor_diameter = turbines2_i$rotor_diam,
     hub_height = turbines2_i$hh,
     prop_day = bird_i$prop_day,

@@ -161,6 +161,10 @@ It estimates:
 - [`check_num_bounds()`](https://symbolixau.github.io/collision/reference/check_num_bounds.md)
   : check input within bounds
 
+- [`cluster_correction_a()`](https://symbolixau.github.io/collision/reference/cluster_correction.md)
+  [`cluster_correction_l()`](https://symbolixau.github.io/collision/reference/cluster_correction.md)
+  : Correct for turbine clustering
+
 - [`collision-package`](https://symbolixau.github.io/collision/reference/collision-package.md)
   [`collision`](https://symbolixau.github.io/collision/reference/collision-package.md)
   : Per-turbine Collision Risk Model for predicting avian collision with
@@ -198,6 +202,9 @@ It estimates:
 
 - [`flights_per_year()`](https://symbolixau.github.io/collision/reference/flights_per_year.md)
   : Convert flights per minute to flights per year
+
+- [`lonlat_to_utm()`](https://symbolixau.github.io/collision/reference/lonlat_to_utm.md)
+  : lon lat to UTM
 
 - [`n_collision()`](https://symbolixau.github.io/collision/reference/n_collision.md)
   : Calculate collision rate with static and dynamic avoidance

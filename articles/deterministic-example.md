@@ -316,8 +316,9 @@ dt_survey <- copy(df_survey)
 setDT(dt_obs)
 setDT(dt_survey)
 
-dt_obs_survey <- dt_obs[height <= max_rsh, .("size" = sum(size)), survey_id][dt_survey,
-                                                            on = "survey_id"]
+dt_obs_survey <- dt_obs[height <= max_rsh, .("size" = sum(size)), survey_id
+                        ][dt_survey,
+                          on = "survey_id"]
 # need sum(size) because we want one row per survey (not observation)
 ```
 
@@ -346,6 +347,7 @@ This is where we account for
   `edr_dist_model()`)
 - The size of the turbine (contained in the object made using
   [`define_turbine()`](https://symbolixau.github.io/collision/reference/define_turbine.md))
+- The turbine layout
 - The proportion of the day active (contained in the object made using
   [`define_bird()`](https://symbolixau.github.io/collision/reference/define_bird.md))
 - The proportion of the year active (contained in the object made using
@@ -356,7 +358,10 @@ is in flights per unit time per unit area (assuming we are below max
 turbine height), in this example the units are minutes and metres
 squared, respectively.
 
-Second we apply this to the “turbine plane” (a rectangular “doorway”
+Second we calculate the cluster correction factor (or the spatial
+flights pdf if you are doing a spatial model).
+
+We then apply these to the “turbine plane” (a rectangular “doorway”
 defined by the rotor diameter and maximum rotor swept height) using
 [`turbine_flights()`](https://symbolixau.github.io/collision/reference/turbine_flights.md)
 to obtain the flights through the turbine plane per minute.
@@ -370,10 +375,15 @@ obs_flux_min <- obs_flux(
   eff_detection_height = max_rsh
 )
 
+effective_flux <- cluster_correction_a(
+  eff_detection_width = 2*edr_from_distmodel(ds_model),
+  df_turbines = df_turbines)
+
 #flights through turbine / min
 
 turbine_flights_min <- turbine_flights(
   obs_flux = obs_flux_min,
+  spatial_correction = effective_flux,
   rotor_diameter  = v90_single$rotor_diam,
   hub_height = v90_single$hh
 )
@@ -381,7 +391,7 @@ turbine_flights_min <- turbine_flights(
 
 The observed flight flux is 6.6665046^{-9} flights per square meter per
 minute (below max turbine height). Scaling up to the turbine this
-corresponds to 6.7660221^{-5} flights through the turbine area per
+corresponds to 5.3535438^{-5} flights through the turbine area per
 minute.
 
 Here we correct it for daily and monthly variability. This can be done
@@ -398,10 +408,10 @@ turbine_flight_year <- flights_per_year(
 ```
 
 - The units for `turbine_flight_year` is flights / year (per turbine).
-- We expect 17.793285 flights through the turbine area each year.
+- We expect 14.0787496 flights through the turbine area each year.
 
-This is the expected number of interactions per turbine per year with no
-avoidance.
+This is the expected number of interactions[²](#fn2) per turbine per
+year with no avoidance.
 
 #### Step 3 - Probability of collision given interaction
 
@@ -478,7 +488,7 @@ df_turbines$n_collision <- n_collision(
 
 ## For a final result, sum all turbines
 sum(df_turbines$n_collision)
-#> [1] 0.2012758
+#> [1] 0.1592574
 ```
 
 ------------------------------------------------------------------------
@@ -500,3 +510,8 @@ Association* 22 (158): 209–12.
 1.  If you have an independent source of flight heights more analysis
     may be required, but the principle remains - we consider only those
     flights below the max rotor swept height
+
+2.  “interaction” just refers to a flight through the turbine cylinder.
+    Below the rotor swept height a bird could be a blade length from the
+    tower and it would still count as an interaction for our purposes.
+    This is then accounted for in the probability of collision.
