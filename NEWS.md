@@ -5,6 +5,7 @@
 * [issue46a](https://github.com/SymbolixAU/collision/issues/46a) added spatial correction to account for turbine clustering when turbine spacing is smaller than the effective survey width/area.
 * [issue40](https://github.com/SymbolixAU/collision/issues/40) improved handling of height of observed flux window to align with the max height of the turbine.
 * [issue41](https://github.com/SymbolixAU/collision/issues/41) bug fix to ensure the proportion of time a turbine is operational is accounted for in the `p_collision_dynamic` function.
+* [issue49](https://github.com/SymbolixAU/collision/tree/issue49) bug fix: corrected coefficient from 0.25 to 0.125 in `eff_blade_thickness` formula.
 
 # collision 1.0.4
 

@@ -128,7 +128,7 @@ dyn_chk <- prob_collision_dynamic(
   prop_operational = 0.8
 )
 
-expect_equal(dyn_chk, 0.036424, tolerance = 0.00001)
+expect_equal(dyn_chk, 0.036425, tolerance = 0.00001)
 
 ## Throws error when prop_at_height and/or prop_below_height are NA/not numeric-----
 expect_error(

@@ -154,17 +154,9 @@ eff_blade_thickness <- function(max_width_nacelle,
       (blade_thickness_narrow - blade_thickness_wide) /
         (blade_length - 0.5*max_width_nacelle) *
         (
-          2*(blade_length**3) + 0.25*(max_width_nacelle**3) -
+          2*(blade_length**3) + 0.125*(max_width_nacelle**3) -
             1.5*max_width_nacelle*(blade_length**2)
         )
-      # (1./6.)*
-      #   (blade_thickness_narrow - blade_thickness_wide) / 
-      #   (blade_length) * 
-      #   (
-      #     2*(blade_length**3) + 0.25*(max_width_nacelle**3) - 
-      #       1.5*max_width_nacelle*(blade_length**2)
-      #   )
-      
     ) + 
       0.5 * blade_thickness_wide * 
       ((blade_length**2) - 0.25 * (max_width_nacelle**2))
