@@ -41,6 +41,7 @@ to sample a value according to the definition.
 ## Examples
 
 ``` r
+
 # sample from standard R functions
 set_random("runif", min = 0, max = 10)
 #> $distr

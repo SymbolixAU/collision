@@ -107,6 +107,7 @@ rotor and nacelle/nosecone.
 
 ``` r
 
+
 # all in metres
 prob_collision_static(
  d_base = 5.0,

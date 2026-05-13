@@ -71,35 +71,35 @@ information, see
 Buckland S, Anderson D, Burnham K, Laake J, Borchers D, Thomas L (2001).
 *Introduction to Distance Sampling: Estimating Abundance of Biological
 Populations*, volume xv. Oxford University Press. ISBN
-978-0-19-850649-2,
+978-0-19-850649-2.
 [doi:10.1093/oso/9780198506492.001.0001](https://doi.org/10.1093/oso/9780198506492.001.0001)
 .  
   
 Miller DL, Rexstad E, Thomas L, Marshall L, Laake JL (2019). “Distance
 Sampling in R.” *Journal of Statistical Software*, **89**, 1–28. ISSN
-1548-7660,
+1548-7660.
 [doi:10.18637/jss.v089.i01](https://doi.org/10.18637/jss.v089.i01) .  
   
 Smales I, Muir S, Meredith C, Baird R (2013). “A Description of the
 Biosis Model to Assess Risk of Bird Collisions with Wind Turbines.”
-*Wildlife Society Bulletin*, **37**(1), 59–65. ISSN 19385463,
+*Wildlife Society Bulletin*, **37**(1), 59–65. ISSN 19385463.
 [doi:10.1002/wsb.257](https://doi.org/10.1002/wsb.257) .
 
 Buckland S, Anderson D, Burnham K, Laake J, Borchers D, Thomas L (2001).
 *Introduction to Distance Sampling: Estimating Abundance of Biological
 Populations*, volume xv. Oxford University Press. ISBN
-978-0-19-850649-2,
+978-0-19-850649-2.
 [doi:10.1093/oso/9780198506492.001.0001](https://doi.org/10.1093/oso/9780198506492.001.0001)
 .  
   
 Miller DL, Rexstad E, Thomas L, Marshall L, Laake JL (2019). “Distance
 Sampling in R.” *Journal of Statistical Software*, **89**, 1–28. ISSN
-1548-7660,
+1548-7660.
 [doi:10.18637/jss.v089.i01](https://doi.org/10.18637/jss.v089.i01) .  
   
 Smales I, Muir S, Meredith C, Baird R (2013). “A Description of the
 Biosis Model to Assess Risk of Bird Collisions with Wind Turbines.”
-*Wildlife Society Bulletin*, **37**(1), 59–65. ISSN 19385463,
+*Wildlife Society Bulletin*, **37**(1), 59–65. ISSN 19385463.
 [doi:10.1002/wsb.257](https://doi.org/10.1002/wsb.257) .
 
 ## See also
@@ -115,6 +115,7 @@ turbine plane
 ## Examples
 
 ``` r
+
 ## A simple example of calculating flux from a point count and
 ## using this to generate the number of flights through a turbine 
 ## in a year

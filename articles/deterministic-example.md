@@ -1,18 +1,24 @@
 # Deterministic example
 
 ``` r
+
 library(knitr)
 library(collision)
 library(ggplot2)
 
 # for easy summarising and joins
 library(data.table)
+#> 
+#> Attaching package: 'data.table'
+#> The following object is masked from 'package:base':
+#> 
+#>     %notin%
 
 # for distance modelling
 library(Distance)
 #> Loading required package: mrds
 #> This is mrds 3.0.1
-#> Built: R 4.5.0; ; 2025-07-06 04:17:12 UTC; unix
+#> Built: R 4.6.0; ; 2026-04-24 22:38:47 UTC; unix
 #> 
 #> Attaching package: 'Distance'
 #> The following object is masked from 'package:mrds':
@@ -38,6 +44,7 @@ Step one is to set up a turbine - here’s an example based on a Vestas
 90, set up using the `define_turbine` function:
 
 ``` r
+
 v90_single <- define_turbine(
   model_id = "Vesta V90",
   blade_length = 44,
@@ -69,6 +76,7 @@ v90_single <- define_turbine(
 Now we need a bird (see `define_bird`)
 
 ``` r
+
 wte <- define_bird(
   species = "Wedge-tailed Eagle",
   bird_length = 0.945,
@@ -92,6 +100,7 @@ defined for use.
 
 ``` r
 
+
 df_turbines <- data.frame(
   turbine_id = c("T01", "T02"),
   model_id = c("Vesta V90"),
@@ -105,14 +114,15 @@ df_turbines <- data.frame(
 The package observations dataset:
 
 ``` r
+
 summary(df_obs)
-#>     distance           size         type               height      
-#>  Min.   :  71.0   Min.   :1.0   Length:120         Min.   :  43.0  
-#>  1st Qu.: 534.8   1st Qu.:1.0   Class :character   1st Qu.: 328.0  
-#>  Median : 763.0   Median :1.0   Mode  :character   Median : 662.0  
-#>  Mean   : 805.4   Mean   :1.3                      Mean   : 730.5  
-#>  3rd Qu.:1027.0   3rd Qu.:2.0                      3rd Qu.: 986.2  
-#>  Max.   :1878.0   Max.   :2.0                      Max.   :2469.0  
+#>     distance           size            type         height      
+#>  Min.   :  71.0   Min.   :1.0   Length   :120   Min.   :  43.0  
+#>  1st Qu.: 534.8   1st Qu.:1.0   N.unique :  1   1st Qu.: 328.0  
+#>  Median : 763.0   Median :1.0   N.blank  :  0   Median : 662.0  
+#>  Mean   : 805.4   Mean   :1.3   Min.nchar:  6   Mean   : 730.5  
+#>  3rd Qu.:1027.0   3rd Qu.:2.0   Max.nchar:  6   3rd Qu.: 986.2  
+#>  Max.   :1878.0   Max.   :2.0                   Max.   :2469.0  
 #>    survey_id          object      
 #>  Min.   :  1.00   Min.   :  1.00  
 #>  1st Qu.: 29.75   1st Qu.: 30.75  
@@ -129,13 +139,14 @@ observation (`distance`)).
 And the package survey dataset:
 
 ``` r
+
 summary(df_survey)
-#>    survey_id      survey_duration survey_type       
-#>  Min.   :  1.00   Min.   :45      Length:100        
-#>  1st Qu.: 25.75   1st Qu.:45      Class :character  
-#>  Median : 50.50   Median :45      Mode  :character  
-#>  Mean   : 50.50   Mean   :45                        
-#>  3rd Qu.: 75.25   3rd Qu.:45                        
+#>    survey_id      survey_duration    survey_type 
+#>  Min.   :  1.00   Min.   :45      Length   :100  
+#>  1st Qu.: 25.75   1st Qu.:45      N.unique :  1  
+#>  Median : 50.50   Median :45      N.blank  :  0  
+#>  Mean   : 50.50   Mean   :45      Min.nchar:  5  
+#>  3rd Qu.: 75.25   3rd Qu.:45      Max.nchar:  5  
 #>  Max.   :100.00   Max.   :45
 ```
 
@@ -168,6 +179,7 @@ the actual survey (which has decaying detectability with distance).
   distance an observer can see out one side of a line transect).
 
 ``` r
+
 ds_model <- ds(
   data = df_obs,
   truncation = max(df_obs$distance, na.rm=TRUE),
@@ -187,6 +199,7 @@ plot(ds_model, pdf=TRUE)
 ![](deterministic-example_files/figure-html/unnamed-chunk-7-1.png)
 
 ``` r
+
 
 print(edr_from_distmodel(ds_model)) # in metres
 #> [1] 1052.974
@@ -209,16 +222,16 @@ the case in vertical space (i.e. the density of flights tends to drop
 off with increasing height).
 
 The simplest way to avoid biasing the estimate by artificially inflating
-or deflating the flux through the turbine is to desktop
-truncate[¹](#fn1) the observations to the maximum tip height of the
-turbine and use that as the effective detection height (all the
-observations can still be used to fit the observer’s detection function
-since it is just used for the horizontal distance correction). Other
-methods for estimating an effective detection height can be used, but
-this method is the most straightforward and will work well in almost all
-cases. In this example (and in most cases) we are desktop truncating the
-observations to the height of the turbine. So `prop_at_height` and
-`prop_below_height` should sum to 1.
+or deflating the flux through the turbine is to desktop truncate[^1] the
+observations to the maximum tip height of the turbine and use that as
+the effective detection height (all the observations can still be used
+to fit the observer’s detection function since it is just used for the
+horizontal distance correction). Other methods for estimating an
+effective detection height can be used, but this method is the most
+straightforward and will work well in almost all cases. In this example
+(and in most cases) we are desktop truncating the observations to the
+height of the turbine. So `prop_at_height` and `prop_below_height`
+should sum to 1.
 
 The proportion of flights at and below rotor swept height account for
 the amount of flights at risk of being struck by the blades of the
@@ -228,6 +241,7 @@ turbine. We only need to calculate a distribution for
 A simple, single value example of this is given below.
 
 ``` r
+
 
 # rotor_diam / 2 is better than using blade length because it 
 # includes the nacelle size 
@@ -246,6 +260,7 @@ ggplot(data = as.data.frame(df_obs),
 ![](deterministic-example_files/figure-html/unnamed-chunk-8-1.png)
 
 ``` r
+
 
 
 # calculate ecdf (empirical cumulative distribution function)
@@ -276,7 +291,7 @@ For a deterministic model, we need the following 4 steps:
   [`prob_collision_static()`](https://symbolixau.github.io/collision/reference/prob_collision_static.md)
   and
   [`prob_collision_dynamic()`](https://symbolixau.github.io/collision/reference/prob_collision_dynamic.md) -
-  calculate $P\left( C|I \right)$ for one interaction
+  calculate $`P(C|I)`$ for one interaction
 - Step 4 - Run `n_collisions()` - calculate number of collisions a year
 
 #### Step 1 - Encounter rate
@@ -285,11 +300,11 @@ This is where we determine the average encounter rate per unit time of
 survey. That is the average number of individuals observed in each
 minute of survey (or whatever unit of time you wish to use). This is
 basically just
-$\frac{total\ individuals\ observed}{total\ survey\ time}$, however the
-function also allows for weighting surveys to account for stratification
-and can apply the Wilson correction ([Wilson 1927](#ref-Wilson1927)) if
-there were no observations. The Wilson correction is an estimate of the
-encounter rate ([mid-point of the 95%
+$`\frac{total\ individuals\ observed}{total\ survey\ time}`$, however
+the function also allows for weighting surveys to account for
+stratification and can apply the Wilson correction ([Wilson
+1927](#ref-Wilson1927)) if there were no observations. The Wilson
+correction is an estimate of the encounter rate ([mid-point of the 95%
 CI](https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval:~:text=known%20as%20the-,%22plus%20four%20rule%22,-.))
 that could result in zero observations.
 
@@ -310,6 +325,7 @@ artificially inflating or deflating the encounter rate
 First let’s make that table (using `data.table`):
 
 ``` r
+
 dt_obs <- copy(df_obs)
 dt_survey <- copy(df_survey)
 
@@ -326,6 +342,7 @@ Now we can use this table in
 [`encounter_rate()`](https://symbolixau.github.io/collision/reference/encounter_rate.md):
 
 ``` r
+
 flights_per_min <- encounter_rate(
   df_obs_summary = dt_obs_survey,
   wilson_correction = TRUE # Default
@@ -368,6 +385,7 @@ to obtain the flights through the turbine plane per minute.
 
 ``` r
 
+
 # flights / m / min
 obs_flux_min <- obs_flux(
   encounter_rate = flights_per_min, # numeric per min
@@ -399,6 +417,7 @@ by hand but the package includes a helper function which can scale to a
 year.
 
 ``` r
+
 turbine_flight_year <- flights_per_year(
   flights_per_time = turbine_flights_min,
   time_units = "min",
@@ -410,22 +429,24 @@ turbine_flight_year <- flights_per_year(
 - The units for `turbine_flight_year` is flights / year (per turbine).
 - We expect 14.0787496 flights through the turbine area each year.
 
-This is the expected number of interactions[²](#fn2) per turbine per
-year with no avoidance.
+This is the expected number of interactions[^2] per turbine per year
+with no avoidance.
 
 #### Step 3 - Probability of collision given interaction
 
 This is the probability a given flight through the turbine window will
 collide, assuming no avoidance.
 
-Our approach considers both the static ($P(C)_{s}$) and dynamic
-components ($P(C)_{dyn}$)
+Our approach considers both the static ($`P(C)_{s}`$) and dynamic
+components ($`P(C)_{dyn}`$)
 
 Without avoidance, and isolated from the overall collision rate
 calculation, the total probability of collision, given interaction is
 the
 
-$$P\left( C|I \right) = P\left( C|I \right)_{static} + P\left( C|I \right)_{dynamic}$$
+``` math
+P(C|I) = P(C|I)_{static} + P(C|I)_{dynamic} 
+```
 
 because the two options are mutually exclusive.
 
@@ -433,6 +454,7 @@ Let’s calculate the collision probability for a Wedge-tailed Eagle and
 the V90 turbine model.
 
 ``` r
+
 df_turbines$p_coll_static <- prob_collision_static(
   d_base = v90_single$d_base,
   d_rotormin = v90_single$d_rotormin,
@@ -478,6 +500,7 @@ number of expected collision per year.
 ``` r
 
 
+
 df_turbines$n_collision <- n_collision(
   avoidance_rate_static = wte$avoidance_static,
   avoidance_rate_dynamic = wte$avoidance_dynamic,
@@ -488,7 +511,7 @@ df_turbines$n_collision <- n_collision(
 
 ## For a final result, sum all turbines
 sum(df_turbines$n_collision)
-#> [1] 0.1592574
+#> [1] 0.159261
 ```
 
 ------------------------------------------------------------------------
@@ -497,7 +520,7 @@ sum(df_turbines$n_collision)
 
 Buckland, S., D. Anderson, K. Burnham, Jeffrey Laake, David Borchers,
 and Len Thomas. 2001. *Introduction to Distance Sampling: Estimating
-Abundance of Biological Populations*. Vol. xv. Oxford University Press.
+Abundance of Biological Populations*. Xv. Oxford University Press.
 <https://doi.org/10.1093/oso/9780198506492.001.0001>.
 
 Wilson, Edwin B. 1927. “Probable Inference, the Law of Succession, and
@@ -505,13 +528,12 @@ Statistical Inference.” *Journal of the American Statistical
 Association* 22 (158): 209–12.
 <https://doi.org/10.1080/01621459.1927.10502953>.
 
-------------------------------------------------------------------------
-
-1.  If you have an independent source of flight heights more analysis
+[^1]: If you have an independent source of flight heights more analysis
     may be required, but the principle remains - we consider only those
     flights below the max rotor swept height
 
-2.  “interaction” just refers to a flight through the turbine cylinder.
-    Below the rotor swept height a bird could be a blade length from the
-    tower and it would still count as an interaction for our purposes.
-    This is then accounted for in the probability of collision.
+[^2]: “interaction” just refers to a flight through the turbine
+    cylinder. Below the rotor swept height a bird could be a blade
+    length from the tower and it would still count as an interaction for
+    our purposes. This is then accounted for in the probability of
+    collision.

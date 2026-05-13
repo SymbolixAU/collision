@@ -39,6 +39,7 @@ sample_input(input, ..., n = 1)
 ## Examples
 
 ``` r
+
 var1 <- set_random("runif", min = 0, max = 10) # sample 1 (default)
 is.randInput(var1) # should be true
 #> [1] TRUE

@@ -26,6 +26,7 @@ Sampling in R." Journal of Statistical Software, 89(1), 1–28. doi:
 ## Examples
 
 ``` r
+
 summary(ds_example) # example data
 #> 
 #> Summary for distance analysis 

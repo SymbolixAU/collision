@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">collision</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.9003</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,12 +78,17 @@
 <span></span>
 <span><span class="co"># for easy summarising and joins</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'data.table'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     %notin%</span></span>
 <span></span>
 <span><span class="co"># for distance modelling</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/DistanceDevelopment/Distance/" class="external-link">Distance</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: mrds</span></span>
 <span><span class="co">#&gt; This is mrds 3.0.1</span></span>
-<span><span class="co">#&gt; Built: R 4.5.0; ; 2025-07-06 04:17:12 UTC; unix</span></span>
+<span><span class="co">#&gt; Built: R 4.6.0; ; 2026-04-24 22:38:47 UTC; unix</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'Distance'</span></span>
 <span><span class="co">#&gt; The following object is masked from 'package:mrds':</span></span>
@@ -172,13 +177,13 @@ turbine you have defined for use.</p>
 <p>The package observations dataset:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">df_obs</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     distance           size         type               height      </span></span>
-<span><span class="co">#&gt;  Min.   :  71.0   Min.   :1.0   Length:120         Min.   :  43.0  </span></span>
-<span><span class="co">#&gt;  1st Qu.: 534.8   1st Qu.:1.0   Class :character   1st Qu.: 328.0  </span></span>
-<span><span class="co">#&gt;  Median : 763.0   Median :1.0   Mode  :character   Median : 662.0  </span></span>
-<span><span class="co">#&gt;  Mean   : 805.4   Mean   :1.3                      Mean   : 730.5  </span></span>
-<span><span class="co">#&gt;  3rd Qu.:1027.0   3rd Qu.:2.0                      3rd Qu.: 986.2  </span></span>
-<span><span class="co">#&gt;  Max.   :1878.0   Max.   :2.0                      Max.   :2469.0  </span></span>
+<span><span class="co">#&gt;     distance           size            type         height      </span></span>
+<span><span class="co">#&gt;  Min.   :  71.0   Min.   :1.0   Length   :120   Min.   :  43.0  </span></span>
+<span><span class="co">#&gt;  1st Qu.: 534.8   1st Qu.:1.0   N.unique :  1   1st Qu.: 328.0  </span></span>
+<span><span class="co">#&gt;  Median : 763.0   Median :1.0   N.blank  :  0   Median : 662.0  </span></span>
+<span><span class="co">#&gt;  Mean   : 805.4   Mean   :1.3   Min.nchar:  6   Mean   : 730.5  </span></span>
+<span><span class="co">#&gt;  3rd Qu.:1027.0   3rd Qu.:2.0   Max.nchar:  6   3rd Qu.: 986.2  </span></span>
+<span><span class="co">#&gt;  Max.   :1878.0   Max.   :2.0                   Max.   :2469.0  </span></span>
 <span><span class="co">#&gt;    survey_id          object      </span></span>
 <span><span class="co">#&gt;  Min.   :  1.00   Min.   :  1.00  </span></span>
 <span><span class="co">#&gt;  1st Qu.: 29.75   1st Qu.: 30.75  </span></span>
@@ -192,12 +197,12 @@ distance at first observation (<code>distance</code>)).</p>
 <p>And the package survey dataset:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">df_survey</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    survey_id      survey_duration survey_type       </span></span>
-<span><span class="co">#&gt;  Min.   :  1.00   Min.   :45      Length:100        </span></span>
-<span><span class="co">#&gt;  1st Qu.: 25.75   1st Qu.:45      Class :character  </span></span>
-<span><span class="co">#&gt;  Median : 50.50   Median :45      Mode  :character  </span></span>
-<span><span class="co">#&gt;  Mean   : 50.50   Mean   :45                        </span></span>
-<span><span class="co">#&gt;  3rd Qu.: 75.25   3rd Qu.:45                        </span></span>
+<span><span class="co">#&gt;    survey_id      survey_duration    survey_type </span></span>
+<span><span class="co">#&gt;  Min.   :  1.00   Min.   :45      Length   :100  </span></span>
+<span><span class="co">#&gt;  1st Qu.: 25.75   1st Qu.:45      N.unique :  1  </span></span>
+<span><span class="co">#&gt;  Median : 50.50   Median :45      N.blank  :  0  </span></span>
+<span><span class="co">#&gt;  Mean   : 50.50   Mean   :45      Min.nchar:  5  </span></span>
+<span><span class="co">#&gt;  3rd Qu.: 75.25   3rd Qu.:45      Max.nchar:  5  </span></span>
 <span><span class="co">#&gt;  Max.   :100.00   Max.   :45</span></span></code></pre></div>
 <p>is a dataset of the metadata for the 100 point count surveys,
 including the duration of each survey.</p>
@@ -328,7 +333,7 @@ year. This can also be done in one step using
 <code>turbine_flux_year()</code>.</li>
 <li>Step 3 - Run <code><a href="../reference/prob_collision_static.html">prob_collision_static()</a></code> and
 <code><a href="../reference/prob_collision_dynamic.html">prob_collision_dynamic()</a></code> - calculate
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>C</mi><mo stretchy="false" form="prefix">|</mo><mi>I</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">P(C|I)</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false" form="prefix">(</mo><mi>C</mi><mo stretchy="false" form="prefix">|</mo><mi>I</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">P(C|I)</annotation></semantics></math>
 for one interaction</li>
 <li>Step 4 - Run <code>n_collisions()</code> - calculate number of
 collisions a year</li>
@@ -464,13 +469,13 @@ with no avoidance.</p>
 <p>This is the probability a given flight through the turbine window
 will collide, assuming no avoidance.</p>
 <p>Our approach considers both the static
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>C</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>s</mi></msub></mrow><annotation encoding="application/x-tex">P(C)_{s}</annotation></semantics></math>)
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false" form="prefix">(</mo><mi>C</mi><msub><mo stretchy="false" form="postfix">)</mo><mi>s</mi></msub></mrow><annotation encoding="application/x-tex">P(C)_{s}</annotation></semantics></math>)
 and dynamic components
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>C</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mi>d</mi><mi>y</mi><mi>n</mi></mrow></msub></mrow><annotation encoding="application/x-tex">P(C)_{dyn}</annotation></semantics></math>)</p>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false" form="prefix">(</mo><mi>C</mi><msub><mo stretchy="false" form="postfix">)</mo><mrow><mi>d</mi><mi>y</mi><mi>n</mi></mrow></msub></mrow><annotation encoding="application/x-tex">P(C)_{dyn}</annotation></semantics></math>)</p>
 <p>Without avoidance, and isolated from the overall collision rate
 calculation, the total probability of collision, given interaction is
 the</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>C</mi><mo stretchy="false" form="prefix">|</mo><mi>I</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>P</mi><msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>C</mi><mo stretchy="false" form="prefix">|</mo><mi>I</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mi>s</mi><mi>t</mi><mi>a</mi><mi>t</mi><mi>i</mi><mi>c</mi></mrow></msub><mo>+</mo><mi>P</mi><msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>C</mi><mo stretchy="false" form="prefix">|</mo><mi>I</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mi>d</mi><mi>y</mi><mi>n</mi><mi>a</mi><mi>m</mi><mi>i</mi><mi>c</mi></mrow></msub></mrow><annotation encoding="application/x-tex">P(C|I) = P(C|I)_{static} + P(C|I)_{dynamic} </annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false" form="prefix">(</mo><mi>C</mi><mo stretchy="false" form="prefix">|</mo><mi>I</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false" form="prefix">(</mo><mi>C</mi><mo stretchy="false" form="prefix">|</mo><mi>I</mi><msub><mo stretchy="false" form="postfix">)</mo><mrow><mi>s</mi><mi>t</mi><mi>a</mi><mi>t</mi><mi>i</mi><mi>c</mi></mrow></msub><mo>+</mo><mi>P</mi><mo stretchy="false" form="prefix">(</mo><mi>C</mi><mo stretchy="false" form="prefix">|</mo><mi>I</mi><msub><mo stretchy="false" form="postfix">)</mo><mrow><mi>d</mi><mi>y</mi><mi>n</mi><mi>a</mi><mi>m</mi><mi>i</mi><mi>c</mi></mrow></msub></mrow><annotation encoding="application/x-tex">P(C|I) = P(C|I)_{static} + P(C|I)_{dynamic} </annotation></semantics></math></p>
 <p>because the two options are mutually exclusive.</p>
 <p>Let’s calculate the collision probability for a Wedge-tailed Eagle
 and the V90 turbine model.</p>
@@ -529,19 +534,19 @@ number of expected collision per year.</p>
 <span></span>
 <span><span class="co">## For a final result, sum all turbines</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">df_turbines</span><span class="op">$</span><span class="va">n_collision</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.1592574</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.159261</span></span></code></pre></div>
 <hr>
 </div>
 </div>
 <div class="section level3">
 <h3 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h3>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Buckland2001" class="csl-entry">
 Buckland, S., D. Anderson, K. Burnham, Jeffrey Laake, David Borchers,
 and Len Thomas. 2001. <em>Introduction to <span>Distance
 Sampling</span>: <span>Estimating Abundance</span> of <span>Biological
-Populations</span></em>. Vol. xv. Oxford University Press. <a href="https://doi.org/10.1093/oso/9780198506492.001.0001" class="external-link">https://doi.org/10.1093/oso/9780198506492.001.0001</a>.
+Populations</span></em>. Xv. Oxford University Press. <a href="https://doi.org/10.1093/oso/9780198506492.001.0001" class="external-link">https://doi.org/10.1093/oso/9780198506492.001.0001</a>.
 </div>
 <div id="ref-Wilson1927" class="csl-entry">
 Wilson, Edwin B. 1927. <span>“Probable Inference, the Law of Succession,

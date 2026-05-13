@@ -64,6 +64,7 @@ using surveys during the activity period.
 ## Examples
 
 ``` r
+
 ## A simple example of calculating flux from a point count and
 ## using this to generate the number of flights through a turbine 
 ## in a year

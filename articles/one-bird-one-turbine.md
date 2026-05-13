@@ -1,6 +1,7 @@
 # One bird, one turbine example
 
 ``` r
+
 library(collision)
 
 # for Band Comparison
@@ -57,6 +58,7 @@ Vestas 90, set up using the `define_turbine` function:
 
 ``` r
 
+
 str(v90_single) 
 #> List of 17
 #>  $ model_id              : chr "Vesta V90"
@@ -83,6 +85,7 @@ Now we need a bird (see `define_bird`)
 
 ``` r
 
+
 str(wte)
 #> List of 7
 #>  $ species          : chr "Wedge-tailed Eagle"
@@ -97,14 +100,16 @@ str(wte)
 
 ### One bird one turbine
 
-Our approach considers both the static ($P(C)_{s}$) and dynamic
-components ($P(C)_{dyn}$)
+Our approach considers both the static ($`P(C)_{s}`$) and dynamic
+components ($`P(C)_{dyn}`$)
 
 Without avoidance, and isolated from the overall collision rate
 calculation, the total probability of collision, given interaction is
 the
 
-$$P\left( C|I \right) = P\left( C|I \right)_{static} + P\left( C|I \right)_{dynamic}$$
+``` math
+P(C|I) = P(C|I)_{static} + P(C|I)_{dynamic} 
+```
 
 because the two options are mutually exclusive.
 
@@ -112,6 +117,7 @@ Let’s calculate the collision probability for a Wedge-tailed Eagle and
 the V90.
 
 ``` r
+
 
 p_coll_static <- prob_collision_static(
   d_base = v90_single$d_base,
@@ -148,7 +154,7 @@ p_coll_dyn <- prob_collision_dynamic(
 )
 
 p_coll_dyn + p_coll_static
-#> [1] 0.07869908
+#> [1] 0.0787001
 ```
 
 #### Hang on - what’s that `edr`?
@@ -170,6 +176,7 @@ itself.
 #### Back to Business - whats’ Band say?
 
 ``` r
+
 
 stochLAB::get_avg_prob_collision(
   flight_speed = wte$bird_speed, #m/s
@@ -207,7 +214,7 @@ collision:::p_collision_band(
 
 Buckland, S., D. Anderson, K. Burnham, Jeffrey Laake, David Borchers,
 and Len Thomas. 2001. *Introduction to Distance Sampling: Estimating
-Abundance of Biological Populations*. Vol. xv. Oxford University Press.
+Abundance of Biological Populations*. Xv. Oxford University Press.
 <https://doi.org/10.1093/oso/9780198506492.001.0001>.
 
 Smales, Ian, Stuart Muir, Charles Meredith, and Robert Baird. 2013. “A

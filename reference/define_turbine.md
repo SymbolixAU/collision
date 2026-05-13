@@ -128,6 +128,7 @@ while the other is operational for 18 hours each day, then
 ## Examples
 
 ``` r
+
 lst_turbine <- define_turbine(
   model_id = "Vesta V90",
   blade_length = 44 ,

@@ -33,6 +33,7 @@ on the log scale. These are the `rlnorm` parameters `meanlog` and
 ## Examples
 
 ``` r
+
 log_rate <- parameterise_lnorm(mean = 0.002, sd = 0.0001)
 
 flight_flux_min <- set_random("rlnorm", 

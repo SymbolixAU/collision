@@ -28,6 +28,7 @@ area of plane of flight in m^2
 ## Examples
 
 ``` r
+
 vertical_flux_plane_area(
   hh = 150,
   rotor_diam = 210

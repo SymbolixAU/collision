@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">collision</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.9003</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -167,13 +167,13 @@ function:</p>
 <h3 id="one-bird-one-turbine">One bird one turbine<a class="anchor" aria-label="anchor" href="#one-bird-one-turbine"></a>
 </h3>
 <p>Our approach considers both the static
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>C</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>s</mi></msub></mrow><annotation encoding="application/x-tex">P(C)_{s}</annotation></semantics></math>)
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false" form="prefix">(</mo><mi>C</mi><msub><mo stretchy="false" form="postfix">)</mo><mi>s</mi></msub></mrow><annotation encoding="application/x-tex">P(C)_{s}</annotation></semantics></math>)
 and dynamic components
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>C</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mi>d</mi><mi>y</mi><mi>n</mi></mrow></msub></mrow><annotation encoding="application/x-tex">P(C)_{dyn}</annotation></semantics></math>)</p>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false" form="prefix">(</mo><mi>C</mi><msub><mo stretchy="false" form="postfix">)</mo><mrow><mi>d</mi><mi>y</mi><mi>n</mi></mrow></msub></mrow><annotation encoding="application/x-tex">P(C)_{dyn}</annotation></semantics></math>)</p>
 <p>Without avoidance, and isolated from the overall collision rate
 calculation, the total probability of collision, given interaction is
 the</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>C</mi><mo stretchy="false" form="prefix">|</mo><mi>I</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>P</mi><msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>C</mi><mo stretchy="false" form="prefix">|</mo><mi>I</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mi>s</mi><mi>t</mi><mi>a</mi><mi>t</mi><mi>i</mi><mi>c</mi></mrow></msub><mo>+</mo><mi>P</mi><msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>C</mi><mo stretchy="false" form="prefix">|</mo><mi>I</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mi>d</mi><mi>y</mi><mi>n</mi><mi>a</mi><mi>m</mi><mi>i</mi><mi>c</mi></mrow></msub></mrow><annotation encoding="application/x-tex">P(C|I) = P(C|I)_{static} + P(C|I)_{dynamic} </annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false" form="prefix">(</mo><mi>C</mi><mo stretchy="false" form="prefix">|</mo><mi>I</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false" form="prefix">(</mo><mi>C</mi><mo stretchy="false" form="prefix">|</mo><mi>I</mi><msub><mo stretchy="false" form="postfix">)</mo><mrow><mi>s</mi><mi>t</mi><mi>a</mi><mi>t</mi><mi>i</mi><mi>c</mi></mrow></msub><mo>+</mo><mi>P</mi><mo stretchy="false" form="prefix">(</mo><mi>C</mi><mo stretchy="false" form="prefix">|</mo><mi>I</mi><msub><mo stretchy="false" form="postfix">)</mo><mrow><mi>d</mi><mi>y</mi><mi>n</mi><mi>a</mi><mi>m</mi><mi>i</mi><mi>c</mi></mrow></msub></mrow><annotation encoding="application/x-tex">P(C|I) = P(C|I)_{static} + P(C|I)_{dynamic} </annotation></semantics></math></p>
 <p>because the two options are mutually exclusive.</p>
 <p>Let’s calculate the collision probability for a Wedge-tailed Eagle
 and the V90.</p>
@@ -214,7 +214,7 @@ and the V90.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">p_coll_dyn</span> <span class="op">+</span> <span class="va">p_coll_static</span></span>
-<span><span class="co">#&gt; [1] 0.07869908</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.0787001</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="hang-on---whats-that-edr">Hang on - what’s that <code>edr</code>?<a class="anchor" aria-label="anchor" href="#hang-on---whats-that-edr"></a>
 </h4>
@@ -269,12 +269,12 @@ itself.</p>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Buckland2001" class="csl-entry">
 Buckland, S., D. Anderson, K. Burnham, Jeffrey Laake, David Borchers,
 and Len Thomas. 2001. <em>Introduction to <span>Distance
 Sampling</span>: <span>Estimating Abundance</span> of <span>Biological
-Populations</span></em>. Vol. xv. Oxford University Press. <a href="https://doi.org/10.1093/oso/9780198506492.001.0001" class="external-link">https://doi.org/10.1093/oso/9780198506492.001.0001</a>.
+Populations</span></em>. Xv. Oxford University Press. <a href="https://doi.org/10.1093/oso/9780198506492.001.0001" class="external-link">https://doi.org/10.1093/oso/9780198506492.001.0001</a>.
 </div>
 <div id="ref-Smales2013" class="csl-entry">
 Smales, Ian, Stuart Muir, Charles Meredith, and Robert Baird. 2013.

@@ -50,7 +50,7 @@ Wilson EB (1927). “Probable Inference, the Law of Succession, and
 Statistical Inference.” *Journal of the American Statistical
 Association*, **22**(158), 209–212.
 [doi:10.1080/01621459.1927.10502953](https://doi.org/10.1080/01621459.1927.10502953)
-, <https://www.jstor.org/stable/2276774>.
+. <https://www.jstor.org/stable/2276774>.
 
 ## See also
 
@@ -63,6 +63,7 @@ plane
 ## Examples
 
 ``` r
+
 ## A simple example of calculating flux from a point count and
 ## using this to generate the number of flights through a turbine 
 ## in a year

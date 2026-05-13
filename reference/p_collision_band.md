@@ -78,6 +78,7 @@ direct reproduction of the publicly available Excel spreadsheet models.
 ## Examples
 
 ``` r
+
 if (FALSE) { # \dontrun{
 p_collision <- p_collision_band(
   max_chord = 3.51,

@@ -1,11 +1,12 @@
 # Simple simulation example
 
 ``` r
+
 library(collision)
 library(Distance) # for distance modelling
 #> Loading required package: mrds
 #> This is mrds 3.0.1
-#> Built: R 4.5.0; ; 2025-07-06 04:17:12 UTC; unix
+#> Built: R 4.6.0; ; 2026-04-24 22:38:47 UTC; unix
 #> 
 #> Attaching package: 'Distance'
 #> The following object is masked from 'package:mrds':
@@ -20,6 +21,11 @@ library(mc2d)  # for the PERT distribution
 #>     pmax, pmin
 library(ggplot2)
 library(data.table) # for easy summarising and joins
+#> 
+#> Attaching package: 'data.table'
+#> The following object is masked from 'package:base':
+#> 
+#>     %notin%
 ```
 
 ## Stochastic Example
@@ -69,6 +75,7 @@ can be defined as probability distributions or as single numbers.
 
 ``` r
 
+
 turbine_model1 <- define_turbine(
   model_id = "Turbine 180",
   blade_length = 88,
@@ -117,6 +124,7 @@ be defined as probability distributions or as single numbers.
 
 ``` r
 
+
 wte <- define_bird(
   species = "Wedge-tailed Eagle",
   bird_length = set_random("rnorm", mean = 0.945, sd = 0.2) ,
@@ -133,8 +141,8 @@ wte <- define_bird(
 Note: the Beta PERT distribution (`rpert`) is a good distribution to use
 if you only have the mode (or mean) and the minimum and maximum
 parameters for a species (eg. mean body length = 0.95m, range:
-0.6-1.2m). See the **Choosing Distributions**[¹](#fn1) for information
-on how to fit the distributions.
+0.6-1.2m). See the **Choosing Distributions**[^1] for information on how
+to fit the distributions.
 
 #### Define a Set of Turbines
 
@@ -146,6 +154,7 @@ For each turbine we need a turbine ID, and a location. Location can be
 NA if you are not including any spatial modelling.
 
 ``` r
+
 df_turbines <- data.frame(
   turbine_id = c("T01", "T02", "T03", "T04"),
   model = rep(c("Turbine 180", "Turbine 150"), each = 2),
@@ -165,14 +174,15 @@ analyst to determine how best to model these parameters.
 The package observations dataset:
 
 ``` r
+
 summary(df_obs)
-#>     distance           size         type               height      
-#>  Min.   :  71.0   Min.   :1.0   Length:120         Min.   :  43.0  
-#>  1st Qu.: 534.8   1st Qu.:1.0   Class :character   1st Qu.: 328.0  
-#>  Median : 763.0   Median :1.0   Mode  :character   Median : 662.0  
-#>  Mean   : 805.4   Mean   :1.3                      Mean   : 730.5  
-#>  3rd Qu.:1027.0   3rd Qu.:2.0                      3rd Qu.: 986.2  
-#>  Max.   :1878.0   Max.   :2.0                      Max.   :2469.0  
+#>     distance           size            type         height      
+#>  Min.   :  71.0   Min.   :1.0   Length   :120   Min.   :  43.0  
+#>  1st Qu.: 534.8   1st Qu.:1.0   N.unique :  1   1st Qu.: 328.0  
+#>  Median : 763.0   Median :1.0   N.blank  :  0   Median : 662.0  
+#>  Mean   : 805.4   Mean   :1.3   Min.nchar:  6   Mean   : 730.5  
+#>  3rd Qu.:1027.0   3rd Qu.:2.0   Max.nchar:  6   3rd Qu.: 986.2  
+#>  Max.   :1878.0   Max.   :2.0                   Max.   :2469.0  
 #>    survey_id          object      
 #>  Min.   :  1.00   Min.   :  1.00  
 #>  1st Qu.: 29.75   1st Qu.: 30.75  
@@ -191,13 +201,14 @@ observation (`distance`).
 And the package survey dataset:
 
 ``` r
+
 summary(df_survey)
-#>    survey_id      survey_duration survey_type       
-#>  Min.   :  1.00   Min.   :45      Length:100        
-#>  1st Qu.: 25.75   1st Qu.:45      Class :character  
-#>  Median : 50.50   Median :45      Mode  :character  
-#>  Mean   : 50.50   Mean   :45                        
-#>  3rd Qu.: 75.25   3rd Qu.:45                        
+#>    survey_id      survey_duration    survey_type 
+#>  Min.   :  1.00   Min.   :45      Length   :100  
+#>  1st Qu.: 25.75   1st Qu.:45      N.unique :  1  
+#>  Median : 50.50   Median :45      N.blank  :  0  
+#>  Mean   : 50.50   Mean   :45      Min.nchar:  5  
+#>  3rd Qu.: 75.25   3rd Qu.:45      Max.nchar:  5  
 #>  Max.   :100.00   Max.   :45
 
 dt_survey <- setDT(copy(df_survey))
@@ -223,6 +234,7 @@ For this example, we assume you have done the required distance
 correction and have arrived at a distance model.
 
 ``` r
+
 summary(ds_raptor)
 #> 
 #> Summary for distance analysis 
@@ -255,6 +267,7 @@ single value) we bootstrap the distance model and the EDR to obtain the
 standard deviation on the estimate of the EDR.
 
 ``` r
+
 ## Define bootstrap-able function
 edr_fun <- function(dt_survey = dt_survey,
                     i = nrow(dt_survey),
@@ -329,6 +342,7 @@ turbine. We only need to calculate a distribution for
 `prop_below_height` since `prop_at_height = 1 - prop_below_height`.
 
 ``` r
+
 min_rsh1 <- turbine_model1$hh - turbine_model1$rotor_diam * 0.5
 max_rsh1 <- turbine_model1$hh + turbine_model1$rotor_diam * 0.5
 
@@ -383,10 +397,10 @@ This is where we determine the average encounter rate per unit time of
 survey. That is the average number of individuals observed in each
 minute of survey (or whatever unit of time you wish to use). This is
 basically just
-$\frac{total\ individuals\ observed}{total\ survey\ time}$, however the
-function also allows for weighting surveys to account for stratification
-and can apply the Wilson correction ([Wilson 1927](#ref-Wilson1927)) if
-there were no observations.
+$`\frac{total\ individuals\ observed}{total\ survey\ time}`$, however
+the function also allows for weighting surveys to account for
+stratification and can apply the Wilson correction ([Wilson
+1927](#ref-Wilson1927)) if there were no observations.
 
 As discussed above, we are desktop truncating to the maximum rotor swept
 height of the turbine, so this encounter rate will be the encounter of
@@ -403,6 +417,7 @@ encounter rate `sum(survey_weight)` must equal the number of surveys).
 First let’s make that table (using `data.table`):
 
 ``` r
+
 # turbine model 1
 dt_obs_survey1 <- dt_obs[height <= max_rsh1, .("size" = sum(size)), survey_id][dt_survey,
                                                             on = "survey_id"]
@@ -419,6 +434,7 @@ Now we can use this table in
 [`encounter_rate()`](https://symbolixau.github.io/collision/reference/encounter_rate.md):
 
 ``` r
+
 
 er_fun <- function(dat, i){
   return(encounter_rate(df_obs_summary = dat[i]))
@@ -448,6 +464,7 @@ hist(encounter_rate_hist1)
 ![](simple-simulation-example_files/figure-html/unnamed-chunk-11-1.png)
 
 ``` r
+
 
 # turbine model 2
 er_boot2 <- boot::boot(data = dt_obs_survey2
@@ -484,7 +501,7 @@ wish.
   height, effective detection radius (EDR) and encounter rate.
 - Step 1.5 (optional) - Calculate the `cluster_correction` or any
   spatial flight corrections. The cluster correction is only needed if
-  the distance between turbines $\leq$ EDR.
+  the distance between turbines $`\leq`$ EDR.
 - Step 2 - Calculate
   [`turbine_flights_year()`](https://symbolixau.github.io/collision/reference/turbine_flights_year.md)
   with sampled values - calculate flights through turbine per year
@@ -492,13 +509,14 @@ wish.
   [`prob_collision_static()`](https://symbolixau.github.io/collision/reference/prob_collision_static.md)
   and
   [`prob_collision_dynamic()`](https://symbolixau.github.io/collision/reference/prob_collision_dynamic.md) -
-  calculate $P\left( C|I \right)$ for one interaction
+  calculate $`P(C|I)`$ for one interaction
 - Step 4 - Run `n_collisions()` - calculate number of collisions a year
 
 For a breakdown of each step see [the deterministic
 example](https://symbolixau.github.io/collision/articles/deterministic-example.md).
 
 ``` r
+
 ## inputs needed:
 ## seed for reproducibility
 ## iterations - how many runs
@@ -664,6 +682,7 @@ the histogram of collision results. This shows the distribution of the
 long-term average annual collision rate for the wind farm.
 
 ``` r
+
 lapply(lst_results, function(x) {
   sum(x$n_collision)
 }) |>
@@ -679,7 +698,7 @@ lapply(lst_results, function(x) {
 
 Buckland, S., D. Anderson, K. Burnham, Jeffrey Laake, David Borchers,
 and Len Thomas. 2001. *Introduction to Distance Sampling: Estimating
-Abundance of Biological Populations*. Vol. xv. Oxford University Press.
+Abundance of Biological Populations*. Xv. Oxford University Press.
 <https://doi.org/10.1093/oso/9780198506492.001.0001>.
 
 Wilson, Edwin B. 1927. “Probable Inference, the Law of Succession, and
@@ -687,6 +706,4 @@ Statistical Inference.” *Journal of the American Statistical
 Association* 22 (158): 209–12.
 <https://doi.org/10.1080/01621459.1927.10502953>.
 
-------------------------------------------------------------------------
-
-1.  Distributions vignette is still in development.
+[^1]: Distributions vignette is still in development.

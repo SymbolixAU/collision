@@ -99,6 +99,6 @@ prob_collision_dynamic(
  prop_at_height = 0.5,
  prop_below_height = 0.2
 )
-#> [1] 0.1064567
+#> [1] 0.1064579
 
 ```

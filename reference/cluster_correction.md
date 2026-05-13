@@ -95,6 +95,7 @@ That approach requires more data and site coverage.
 ## Examples
 
 ``` r
+
 # generate inputs information
 
 df_turbines <- data.frame(
