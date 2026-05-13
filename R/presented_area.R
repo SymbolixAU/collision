@@ -133,10 +133,10 @@ pa_rotor <- function(tilt_deg, max_chord, min_chord,
 #' Using the complete, two-planed rotor shape (flattened taper for convenience), 
 #' integrated fully
 #' 
-#' @param max_width_nacelle (B19)  "Maximum W and Hub Dia (m)" diam of nosecone == nacelle room width (back view)
-#' @param blade_length (B32) blade length
-#' @param blade_thickness_wide (B35) the thickness of the blade (side on) at its widest point
-#' @param blade_thickness_narrow (B36the thickness of the blade (side on) at its thinnest point
+#' @param max_width_nacelle  "Maximum W and Hub Dia (m)" diam of nosecone == nacelle room width (back view)
+#' @param blade_length blade length
+#' @param blade_thickness_wide  the thickness of the blade (side on) at its widest point
+#' @param blade_thickness_narrow the thickness of the blade (side on) at its thinnest point
 #' @param rotor_diam if unspecified, defaults to 2*blade_length + max_width_nacelle
 #' @noRd
 eff_blade_thickness <- function(max_width_nacelle, 
@@ -154,17 +154,9 @@ eff_blade_thickness <- function(max_width_nacelle,
       (blade_thickness_narrow - blade_thickness_wide) /
         (blade_length - 0.5*max_width_nacelle) *
         (
-          2*(blade_length**3) + 0.25*(max_width_nacelle**3) -
+          2*(blade_length**3) + 0.125*(max_width_nacelle**3) -
             1.5*max_width_nacelle*(blade_length**2)
         )
-      # (1./6.)*
-      #   (blade_thickness_narrow - blade_thickness_wide) / 
-      #   (blade_length) * 
-      #   (
-      #     2*(blade_length**3) + 0.25*(max_width_nacelle**3) - 
-      #       1.5*max_width_nacelle*(blade_length**2)
-      #   )
-      
     ) + 
       0.5 * blade_thickness_wide * 
       ((blade_length**2) - 0.25 * (max_width_nacelle**2))
