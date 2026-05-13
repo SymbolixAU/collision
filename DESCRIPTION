@@ -1,7 +1,7 @@
 Package: collision
 Type: Package
 Title: Per-turbine Collision Risk Model for predicting avian collision with on-shore and off-shore wind turbines
-Version: 1.1.9002
+Version: 1.1.9003
 Authors@R: c(
   person("Elizabeth", "Stark", ,"estark@symbolix.com.au", role = c("aut", "cre"), 
     comment = c(ORCID = "0009-0002-6337-5021")),
