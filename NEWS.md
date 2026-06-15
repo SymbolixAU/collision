@@ -2,6 +2,7 @@
 
 # collision 1.1 (in development)
 
+* [issue24](https://github.com/SymbolixAU/collision/issues/24) added population correction as an optional parameter in `n_collision` function.
 * [issue46a](https://github.com/SymbolixAU/collision/issues/46a) added spatial correction to account for turbine clustering when turbine spacing is smaller than the effective survey width/area.
 * [issue40](https://github.com/SymbolixAU/collision/issues/40) improved handling of height of observed flux window to align with the max height of the turbine.
 * [issue41](https://github.com/SymbolixAU/collision/issues/41) bug fix to ensure the proportion of time a turbine is operational is accounted for in the `p_collision_dynamic` function.
