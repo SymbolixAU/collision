@@ -4,11 +4,17 @@
 \alias{turbine_flights}
 \title{Convert observed flight flux to number of flights through turbine plane (i.e. interactions).}
 \usage{
-turbine_flights(obs_flux, rotor_diameter, hub_height)
+turbine_flights(obs_flux, spatial_correction = 1, rotor_diameter, hub_height)
 }
 \arguments{
 \item{obs_flux}{numeric; number of flights through one unit area of vertical space
-per unit time as output by \code{\link[=obs_flux]{obs_flux()}} or similar}
+per unit time as output by \code{\link[=obs_flux]{obs_flux()}} or similar.}
+
+\item{spatial_correction}{numeric; factor to correct flux for spatial considerations.
+Either the cluster correction factor as output by \code{\link[=cluster_correction_a]{cluster_correction_a()}}/
+\code{\link[=cluster_correction_l]{cluster_correction_l()}} or similar (assuming flat activity across the site)
+or a correction based on the spatial distribution of flights on the site.
+Defaults to 1.}
 
 \item{rotor_diameter}{numeric; rotor diameter. Must be in the equivalent units to
 the unit area of \code{obs_flux} (i.e., if the \code{obs_flux} is per m\eqn{^2}, \code{rotor_diameter} must be in m).}
@@ -44,15 +50,19 @@ output flights / min).
 ## # Step by step
 ## 
 
-df_obs <- data.frame(size = c(0, 2 , 3, 0), # four surveys
-                     survey_duration = c(20, 20, 18, 20), # minutes
-                     # Optional survey weights to deal with stratification etc
-                     survey_weight = c(1,1,1,1))
+# four surveys
+# Note the observation data should include observations within max rotor swept height
+df_obs <- data.frame(
+  size = c(0, 2 , 3, 0), #individuals observed per survey (below max rotor swept height)
+  survey_duration = c(20, 20, 18, 20), # minutes
+  # Optional survey weights to deal with stratification etc
+  survey_weight = c(1,1,1,1)
+)
 
 rotor_diameter <- 300
 hub_height <- 200
 edr <- 800 # derive from distance model
-mean_h <- 60 # derive from height distribution
+max_rsh <- hub_height + rotor_diameter/2
 
 # flights observed per minute of survey
 flights_per_min <- encounter_rate(
@@ -64,7 +74,7 @@ flights_per_min <- encounter_rate(
 flights_per_m2_per_min <- obs_flux(
   encounter_rate = flights_per_min,
   eff_detection_width = 2*edr,
-  mean_flight_height = mean_h
+  eff_detection_height = max_rsh
 )
 
 # scale to turbine width and height
@@ -90,7 +100,7 @@ flights_turbine_year2 <- turbine_flights_year(
   encounter_rate = flights_per_min,
   time_units = "min",
   eff_detection_width = 2*edr,
-  mean_flight_height = mean_h,
+  eff_detection_height = max_rsh,
   rotor_diameter = rotor_diameter,
   hub_height = hub_height,
   prop_day = 0.5,  #diurnal species

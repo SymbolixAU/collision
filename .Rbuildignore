@@ -8,3 +8,6 @@
 ^R\/scratch\.R$
 ^doc$
 ^Meta$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

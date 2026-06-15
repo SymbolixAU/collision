@@ -34,9 +34,9 @@ prob_collision_static(
 
 \item{blade_length}{blade length}
 
-\item{max_nac_h}{max nacelle length (side view)}
+\item{max_nac_h}{max nacelle height (side view)}
 
-\item{max_nac_l}{max nacelle height (side view)}
+\item{max_nac_l}{max nacelle length (side view)}
 
 \item{max_width_nacelle}{nacelle room width (back view)}
 
@@ -65,9 +65,9 @@ Probability of collision calculated as the ratio of the sum of static presented
 areas to the total airspace of rotor diameter and rotor swept height.
 }
 \details{
-Presented areas are the sum of static  components, where
+Presented areas are the sum of static components, where
 static components are the tower below rotor height, tower above rotor height,
-rotor and nacelle/nosecone
+rotor and nacelle/nosecone.
 }
 \examples{
 

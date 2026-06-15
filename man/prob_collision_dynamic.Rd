@@ -15,7 +15,8 @@ prob_collision_dynamic(
   bird_length,
   bird_speed,
   prop_at_height,
-  prop_below_height
+  prop_below_height,
+  prop_operational = 1
 )
 }
 \arguments{
@@ -40,6 +41,10 @@ prob_collision_dynamic(
 \item{prop_at_height}{proportion of flights at rotor swept height}
 
 \item{prop_below_height}{proportion of flights below rotor swept height}
+
+\item{prop_operational}{numeric; Proportion of a 24 hour day that turbines
+are operational. A single number or distribution information using
+\link{set_random}. Default 1. See \code{\link[=define_turbine]{define_turbine()}} for more detail.}
 }
 \value{
 numeric; probability of collision with leading edge of blade.

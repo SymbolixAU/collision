@@ -33,17 +33,17 @@ vertical_flux_plane_area <- function(
 #' areas to the total airspace of rotor diameter and rotor swept height.
 #'
 #' @details
-#' Presented areas are the sum of static  components, where
+#' Presented areas are the sum of static components, where
 #'  static components are the tower below rotor height, tower above rotor height,
-#'  rotor and nacelle/nosecone
+#'  rotor and nacelle/nosecone.
 #'
 #' @param d_base diameter of tower at base
 #' @param d_rotormin diameter of tower at base of rotor
 #' @param d_top diameter of tower at top
 #' @param hh hub height
 #' @param blade_length blade length
-#' @param max_nac_h  max nacelle length (side view)
-#' @param max_nac_l  max nacelle height (side view)
+#' @param max_nac_h  max nacelle height (side view)
+#' @param max_nac_l  max nacelle length (side view)
 #' @param max_width_nacelle nacelle room width (back view)
 #' @param rotor_diam rotor diameter (m)
 #' @param tilt_deg Blade tilt in degrees
@@ -133,6 +133,7 @@ prob_collision_static <- function(
 
 
 #' Probability of collision with leading edge of blade
+#' 
 #'
 #' @param rpm rotor speed (RPM)
 #' @param blade_length blade length
@@ -145,6 +146,9 @@ prob_collision_static <- function(
 #' @param bird_speed numeric; Average flight speed (m/sec)
 #' @param prop_at_height proportion of flights at rotor swept height
 #' @param prop_below_height proportion of flights below rotor swept height
+#' @param prop_operational  numeric; Proportion of a 24 hour day that turbines
+#' are operational. A single number or distribution information using 
+#' [set_random]. Default 1. See [define_turbine()] for more detail.
 #'
 #' @return numeric; probability of collision with leading edge of blade.
 #'         Range from 0 to 1
@@ -178,19 +182,20 @@ prob_collision_dynamic <- function(
   bird_length,
   bird_speed,
   prop_at_height,
-  prop_below_height
+  prop_below_height,
+  prop_operational = 1
 ) {
   
-  stopifnot(
-    "prop_at_height and prop_below_height should be numeric" = is.numeric(
-      prop_at_height
-    ) &&
-      is.numeric(prop_below_height)
-  )
-  
 
+  check_num_bounds(x = prop_at_height, min = 0, max = 1)
+  check_num_bounds(x = prop_below_height, min = 0, max = 1)
+  check_num_bounds(x = prop_operational, min = 0, max = 1)
   check_num_bounds(x = prop_at_height + prop_below_height, min = 0, max = 1)
 
+  # props should equal one but allow a tolerance
+  if( prop_at_height + prop_below_height > 1.001)warning(
+    "Expecting prop_at_height + prop_below_height to add up to 1...Please check")
+  
   turbine_plane_area <- vertical_flux_plane_area(hh = hh,
                                               rotor_diam = rotor_diam)
 
@@ -208,5 +213,5 @@ prob_collision_dynamic <- function(
   presented_area <- presented_area * prop_at_height /
     (prop_at_height+prop_below_height)
   
-  return(presented_area/turbine_plane_area)
+  return(presented_area/turbine_plane_area*prop_operational)
 }

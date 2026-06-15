@@ -2,7 +2,7 @@
 % Please edit documentation in R/define_inputs.R
 \name{define_bird}
 \alias{define_bird}
-\title{make a list of bird parameters for input into CRM}
+\title{Make a list of bird parameters for input into CRM}
 \usage{
 define_bird(
   species,
@@ -33,8 +33,7 @@ the bird is active onsite}
 \item{avoidance_static}{avoidance rate relative to a static turbine}
 }
 \value{
-list where items define the value or stochastic distribution f
-or each parameter
+list whose items define the value or stochastic distribution for each parameter
 }
 \description{
 Makes a list of avian biological parameters for the bird(s) being modelled

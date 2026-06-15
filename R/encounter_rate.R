@@ -1,7 +1,9 @@
-#' Calculate uncorrected observed flights / minute of survey from point transects
+#' Calculate uncorrected observed flights / minute of survey from point transects.
 #'
 #' This function converts observed flights (movements) and survey duration into the "encounter rate" per minute of survey. This value is uncorrected for the observer's effective detection radius.
 #'
+#' Note: We recommend to desktop truncating the observation data to the maximum height of the turbine in most cases, as this is the simplest way to avoid artificially inflating or deflating the flux through the turbine.
+#' However, it is up to the analyst discretion and they may choose another method to account for the effective detection height.
 #'
 #' @seealso [turbine_flights()] and [flights_per_year()] for methods to expand the
 #' observer flux into flights through the turbine plane
@@ -10,12 +12,12 @@
 #'   \insertAllCited{}
 #'   
 #' @param df_obs_summary data.frame; a data.frame with one row per survey containing at least columns `size` and 
-#'    `survey_duration` where `size` is the total number of individuals observed in each survey and 
-#'    `survey_duration` is the duration of each survey. It can also optionally include a column `survey_weight` if needed
-#'    to account for stratification etc. The sum of the survey weights must equal the total number of surveys
-#'    (to avoid artificially inflating or deflating the survey effort). When NULL (the default) will 
+#'    `survey_duration` where `size` is the total number of individuals observed **below the maximum height of the turbine**
+#'    in each survey and `survey_duration` is the duration of each survey. It can also optionally include a column 
+#'    `survey_weight` if needed to account for stratification etc. The sum of the survey weights must equal the total 
+#'    number of surveys (to avoid artificially inflating or deflating the survey effort). When NULL (the default) will 
 #'    weight surveys equally.
-#' @param wilson_correction boolean;  Apply wilson correction \insertCite{Wilson1927}{collision} if there are
+#' @param wilson_correction boolean; Apply Wilson correction \insertCite{Wilson1927}{collision} if there are
 #'    no observations. Defaults to TRUE.
 #'   
 #' @return numeric; number of flights observed in one unit time of survey. 
