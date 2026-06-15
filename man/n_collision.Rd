@@ -9,7 +9,8 @@ n_collision(
   avoidance_rate_dynamic,
   n_flights,
   p_coll_static,
-  p_coll_dynamic
+  p_coll_dynamic,
+  population = NULL
 )
 }
 \arguments{
@@ -31,6 +32,11 @@ avoidance is zero. Calculated from
 blade edge turbine components if an interaction occurs
 and avoidance is zero. Calculated from
 \code{\link[=prob_collision_dynamic]{prob_collision_dynamic()}}}
+
+\item{population}{numeric or NULL; the regional population size available to
+replace collided birds. When \code{NULL} (default) the function
+returns the standard infinite-sink estimate. When supplied, a
+finite-population correction is applied.}
 }
 \value{
 numeric; number of collisions per unit time. Time interval
@@ -46,6 +52,16 @@ n_collision(
   n_flights = 100,
   p_coll_static = 0.05,
   p_coll_dynamic = 0.03
+)
+
+# With finite-population correction
+n_collision(
+  avoidance_rate_static = 0.99,
+  avoidance_rate_dynamic = 0.90,
+  n_flights = 100,
+  p_coll_static = 0.05,
+  p_coll_dynamic = 0.03,
+  population = 500
 )
 
 }
