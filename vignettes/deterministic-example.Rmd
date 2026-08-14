@@ -213,7 +213,7 @@ For a deterministic model, we need the following 4 steps:
 
 ### Step 1 - Encounter rate
 
-This is where we determine the average encounter rate per unit time of survey. That is the average number of individuals observed in each minute of survey (or whatever unit of time you wish to use). This is basically just $\frac{total\ individuals\ observed}{total\ survey\ time}$, however the function also allows for weighting surveys to account for stratification and can apply the Wilson correction [@Wilson1927] if there were no observations. The Wilson correction is an estimate of the encounter rate ([mid-point of the 95% CI](https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval:~:text=known%20as%20the-,%22plus%20four%20rule%22,-.)) that could result in zero observations.
+This is where we determine the average encounter rate per unit time of survey. That is the average number of individuals observed in each minute of survey (or whatever unit of time you wish to use). This is basically just $\frac{total\ individuals\ observed}{total\ survey\ time}$, however the function also allows for weighting surveys to account for stratification and can apply the Wilson correction [@Wilson1927] if there were no observations. The Wilson correction is an estimate of the hypothetical encounter rate ([mid-point of the 95% CI](https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval:~:text=known%20as%20the-,%22plus%20four%20rule%22,-.)) that could result in zero observations.
 
 As discussed above, we are desktop truncating to the maximum rotor swept height of the turbine, so this encounter rate will be the encounter of birds at risk height.
 
@@ -258,7 +258,7 @@ This is where we account for
 
 We first calculate the observed flux through a vertical airspace. This is in flights per unit time per unit area (assuming we are below max turbine height), in this example the units are minutes and metres squared, respectively. 
 
-Second we calculate the cluster correction factor (or the spatial flights pdf if you are doing a spatial model). 
+Second we calculate the cluster correction factor (and any spatial flights pdf if you are doing a spatial model). 
 
 We then apply these to the "turbine plane" (a rectangular "doorway" defined by the rotor diameter and maximum rotor swept height) using `turbine_flights()` to obtain the flights through the turbine plane per minute.
 

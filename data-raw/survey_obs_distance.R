@@ -24,7 +24,7 @@ df_obs <- structure(
     distance = round(rweibull(n_obs, shape = 2, scale = 900)), 
     size = round(rpert(n_obs, min = 0.5, mode = 1, max = 3.5, shape = 6)), 
     type = rep("raptor", n_obs), 
-    height = round(rweibull(n_obs, shape = 1.5, scale = 900)),
+    height = round(rweibull(n_obs, shape = 1, scale = 100)),
     survey_id = sort(sample(1:n_survey, n_obs, replace = TRUE)), 
     object = c(1:n_obs)), 
   row.names = c(NA, -n_obs), 
@@ -47,3 +47,4 @@ ds_raptor <- ds(df_obs,
 usethis::use_data(df_obs, overwrite = TRUE)
 usethis::use_data(df_survey, overwrite = TRUE)
 usethis::use_data(ds_raptor, overwrite = TRUE)
+
