@@ -281,7 +281,7 @@ df_turbines <- data.frame(
 )
 ```
 
-Now we calculate the variance in the number of flights through the "turbine cylinder" (a cylinder defined by the rotor diameter and the maximum rotor swept height of the turbine) per unit time. For `collision1 this is the number of interactions (for the turbine as a whole, not just the RSA). This is done in several steps which you can see in more detail in [the deterministic example](deterministic-example.html) (Steps 1 and 2 of running the model).
+Now we calculate the variance in the number of flights through the "turbine cylinder" (a cylinder defined by the rotor diameter and the maximum rotor swept height of the turbine) per unit time. For `collision` this is the number of interactions (for the turbine as a whole, not just the RSA). This is done in several steps which you can see in more detail in [the deterministic example](deterministic-example.html) (Steps 1 and 2 of running the model).
 
 The function takes as input a `df_obs_summary` data.frame. This object has one row per survey and must contain a column named `survey_duration` and a column named `size` which is the **total** number of individuals observed in each **survey** (not observation).
 
