@@ -98,10 +98,19 @@ hist(sample_input(tilt, n = 1000),
 
 #### Proportion of year operational
 
-The proportion of the year that the turbines are operational is typically going to be pretty close to 1, but there may still be some variation in the upper range that you would like to capture. As a proportion, this can be easily modelled by a beta distribution.
+The proportion of the year that the turbines are operational is typically going to be pretty close to 1, but there may still be some variation in the upper range that you would like to capture. As a proportion, this can be easily modelled by a beta distribution. To calculate the beta parameters from a mean and variance (or standard deviation) requires a little bit of algebra using the mean and variance definitions from the `stats::rbeta()` help page, as shown in `shapes_fun` below.
 
 ```{r}
-prop_operational <- set_random("rbeta", shape1 = 15, shape2 = 1.5)
+# some algebra to get the beta parameters from a mean and variance
+shapes_fun <- function(mean, var){
+  a <- mean * (mean * (1 - mean)/var - 1)
+  b <- (1 - mean) * (mean * (1 - mean)/var - 1)
+  return(c(a, b))
+}
+
+po_shapes <- shapes_fun(mean = 0.95, var = 0.05^2)
+
+prop_operational <- set_random("rbeta", shape1 = po_shapes[1], shape2 = po_shapes[2])
 
 hist(sample_input(prop_operational, n = 1000),
      main = "Proportion of year operational", xlim = c(0, 1),
@@ -120,10 +129,23 @@ The bird's physical parameters are the perfect use case for a PERT distribution,
 However, if you prefer not to put hard limits on the distribution, the log-normal distribution is ideal because it can take any positive value. But it will require an estimate of the variance. Note: if you have a list of values that you want to get the log-normal parameters for you can take the mean and standard deviation of the log of the data (as shown in Step 4 of the Interactions section).
 
 ```{r}
-b_speed <- set_random("rlnorm", meanlog = 2.8, sdlog = 0.2)
+# log mean and variance function
+# calculate required meanlog and sdlog to get a log-normal distribution with
+# the desired mean and sd
+lognorm_fun <- function(mean, sd){
+  meanlog <- log(mean^2/sqrt(mean^2+sd^2))
+  sdlog <- log(1 + sd^2/mean^2)
+  return(c(meanlog, sdlog))
+}
+
+b_params <- lognorm_fun(mean = 17.1, sd = 8.89)
+
+b_speed <- set_random("rlnorm", meanlog = b_params[1], sdlog = b_params[2])
 
 hist(sample_input(b_speed, n = 1000),
      main = "Bird speed (m/s)", xlab = "Bird speed log-normal distribution")
+
+
 
 b_length <- set_random("rpert", min = 0.85, max = 1.05, mean = 0.92, shape = 3)
 
@@ -143,11 +165,16 @@ prop_day <- set_random("runif", min = 0.48, max = 0.52)
 hist(sample_input(prop_day, n = 1000),
      main = "Proportion of 24-hr day active", xlab = "Proportion of day uniform distribution")
 
-prop_year <- set_random("rbeta", shape1 = 10, shape2 = 1)
+
+# get beta shape parameters
+py_shapes <- shapes_fun(mean = 0.6, var = 0.068^2) # migratory species
+
+prop_year <- set_random("rbeta", shape1 = py_shapes[1], shape2 = py_shapes[2])
 
 hist(sample_input(prop_year, n = 1000),
      main = "Proportion of year present", xlim = c(0, 1),
      xlab = "Proportion of year beta distribution", breaks = seq(0, 1, 0.05))
+
 
 avoidance_rate <- set_random("rpert", min = 0.88, max = 0.97, mean = 0.92, shape = 2)
 
@@ -157,7 +184,7 @@ hist(sample_input(avoidance_rate, n = 1000),
 
 ### Survey data
 
-Now we need to determine the input values from the observations. In order to determine the error on the estimate of the parameter we use the bootstrap method to repeatedly re-sample the distribution. This is just an example of how you can obtain the distribution, it is up to the analyst to determine how best to model these parameters.
+Now we need to determine the input values from the observations. In order to determine the error on the estimate of the parameter we use the bootstrap method to repeatedly re-sample the surveys. This is just an example of how you can obtain the distribution, it is up to the analyst to determine how best to model these parameters.
 
 The package observations dataset:
 
@@ -180,14 +207,6 @@ dt_survey <- setDT(copy(df_survey))
 
 is a dataset of the metadata for the `r nrow(df_survey)` point count surveys, including the duration of each survey.
 
-It's very important that the field data include any surveys with no sightings as well as positive detections. 
-
-Between the two of them these tables must include:
-
-* Distance to the bird at first sighting in metres. If transect sampling, this is usually the perpendicular (right-angle) distance from the transect line.
-* Duration of the surveys in minutes
-* Count of individuals in each survey (`size`)
-
 
 Bootstrapping is done in the following steps:
 
@@ -200,7 +219,7 @@ Bootstrapping is done in the following steps:
 
 The proportion of flights at and below rotor swept height account for the amount of flights at risk of being struck by the blades of the turbine. Truncating the the maximum turbine height (as discussed in the [deterministic](deterministic-example.html) and [simulation](simple-simulation-example.html) examples) means we only need to calculate a distribution for `prop_below_height` since `prop_at_height = 1 - prop_below_height`. Since the proportion should be bounded at 0 and 1, a beta distribution is a good option.
 
-```{r}
+```{r, message=FALSE}
 min_rsh <- v90_single$hh - v90_single$rotor_diam * 0.5
 max_rsh <- v90_single$hh + v90_single$rotor_diam * 0.5
 
@@ -217,9 +236,14 @@ prop_below <- function(dt_survey = df_survey,
   dt_boot_i <- dt_survey[, .(survey_id = unique(survey_id))][i]
   dt_obs_i <- dt_obs[dt_boot_i, on = .(survey_id), nomatch = 0]
   
-  cdf_dat <- ecdf(dt_obs_i$height)
+  if(nrow(dt_obs_i)==0){
+    h_boot <- 0
+  } else {
+    cdf_dat <- ecdf(dt_obs_i$height)
+    h_boot <- cdf_dat(h)
+  }
   
-  return(cdf_dat(h))
+  return(h_boot)
 }
 
 ## Step 2
@@ -233,12 +257,6 @@ hmin_boot <- boot::boot(
 )
 
 ## Step 4
-# some algebra to get the beta parameters from the bootstrap
-shapes_fun <- function(mean, var){
-  a <- mean * (mean * (1 - mean)/var - 1)
-  b <- (1 - mean) * (mean * (1 - mean)/var - 1)
-  return(c(a, b))
-}
 
 h_shapes <- shapes_fun(mean = hmin_boot$t0, var = var(hmin_boot$t))
 
@@ -285,9 +303,8 @@ Now it can be used in the bootstrap. Since we can't have negative flights, a log
 ## Step 1
 # make a function that takes survey data and outputs the interactions per minute
 n_interactions <- function(df_obs_summary = df_obs_summary,
-                         i = nrow(df_obs_summary),
+                         i = seq_len(nrow(df_obs_summary)),
                          dt_obs = dt_obs,
-                         ds_model = ds_model,
                          rotor_diameter = turbine$rotor_diam,
                          hub_height = turbine$hh,
                          df_turbines = df_turbines){
@@ -301,8 +318,10 @@ n_interactions <- function(df_obs_summary = df_obs_summary,
   ## EDR is one of the largest sources of variance in the CRM and if it is not included 
   ## the simulation will drastically under-estimate the variance of the estimate
   ds_boot <- tryCatch(
+    # make sure these arguments match the ones used to fit your original distance model
     ds(data = dt_obs_i[, -c("object")],
-              key = ds_model$aux$ddfobj$type)
+       key = "hn",
+       dht_group = TRUE)
     , error = function(e) {
       print(e)
       NULL
@@ -319,7 +338,7 @@ n_interactions <- function(df_obs_summary = df_obs_summary,
   # flights / m / min
   obs_flux_boot <- obs_flux(
     encounter_rate = er_boot, # numeric per min
-    eff_detection_width = 2.0*edr_from_distmodel(ds_model),
+    eff_detection_width = 2.0*edr_from_distmodel(ds_boot),
     eff_detection_height = max_rsh
   )
   
@@ -347,7 +366,6 @@ interactions_boot <- boot::boot(data = dt_obs_survey,
                                 statistic = n_interactions, stype = "i",
                                 R = 300,
                                 dt_obs = dt_obs,
-                                ds_model = ds_raptor,
                                 rotor_diameter = v90_single$rotor_diam,
                                 hub_height = v90_single$hh,
                                 df_turbines = df_turbines
