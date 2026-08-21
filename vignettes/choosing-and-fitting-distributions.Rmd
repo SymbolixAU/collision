@@ -184,7 +184,11 @@ hist(sample_input(avoidance_rate, n = 1000),
 
 ### Survey data
 
-Now we need to determine the input values from the observations. In order to determine the error on the estimate of the parameter we use the bootstrap method to repeatedly re-sample the surveys. This is just an example of how you can obtain the distribution, it is up to the analyst to determine how best to model these parameters.
+Now we need to determine the input values from the observations. To understand the uncertainty on complex statistics such as the number of interactions, we suggest using the bootstrap. The bootstrap re-samples from the existing dataset, recalculating the statistic of interest many times. The variance of the re-sampled statistic is used as the estimate of the uncertainty.
+
+The bootstrap is a way of answering the question "If I went out an did this survey again and again, what value would I get"? In order to truly understand this, we need to run the bootstrap at the level of the **survey**, rather than the level of the observation. In this way, entire clusters of observations would be dropped or retained, depending on whether (in a particular run of the bootstrap re-sample) the corresponding survey is retained.
+
+This is just an example of how you can obtain the distribution, it is up to the analyst to determine how best to model these parameters.
 
 The package observations dataset:
 
