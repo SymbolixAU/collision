@@ -152,15 +152,16 @@ eff_blade_thickness <- function(max_width_nacelle,
     
     (1./6.)*(
       (blade_thickness_narrow - blade_thickness_wide) /
-        (blade_length - 0.5*max_width_nacelle) *
+        (0.5*rotor_diam - 0.5*max_width_nacelle) *
         (
-          2*(blade_length**3) + 0.125*(max_width_nacelle**3) -
-            1.5*max_width_nacelle*(blade_length**2)
+          2*((0.5*rotor_diam)**3) + 0.125*(max_width_nacelle**3) -
+            1.5*max_width_nacelle*((0.5*rotor_diam)**2)
         )
     ) + 
       0.5 * blade_thickness_wide * 
-      ((blade_length**2) - 0.25 * (max_width_nacelle**2))
+      (((0.5*rotor_diam)**2) - 0.25 * (max_width_nacelle**2))
   )
+  
   
   rsa <- 0.25 * pi * (rotor_diam**2)
   
@@ -246,9 +247,10 @@ pa_dynamic <- function(s_rot,
   
   swept_area_transit <- min(swept_area_transit, 0.25*pi*rotor_diam^2)
   
+  swept_area_side <- transit_length_m*(blade_length*2*cos(pi/6)) # maximum side profile
   
   return(rotate_areas(swept_area_transit, 
-                      side = transit_length_m*(blade_length*1.5))
+                      side = swept_area_side)
   )
   
 }
