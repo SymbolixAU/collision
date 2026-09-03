@@ -197,8 +197,8 @@ bird_transit_sec <- function(max_width_nacelle,
                                           blade_thickness_narrow,
                                           rotor_diam)
   
-  return( (transit_length_m + 2.*bird_length) / bird_speed )
-  
+  return( (transit_length_m + bird_length) / bird_speed )
+  # used to be 2. * bird_length but we're pretty sure it should just be 1*
 }
 
 
@@ -238,7 +238,8 @@ pa_dynamic <- function(s_rot,
                                           rotor_diam) 
   
   
-  bird_transit_sec <-  (transit_length_m + 2.*bird_length) / bird_speed 
+  bird_transit_sec <-  (transit_length_m + bird_length) / bird_speed 
+  # used to be 2. * bird_length but we're pretty sure it should just be 1*
   
   
   rotor_swept_areapsec <- 0.125 * n_blades * s_rot * rotor_diam**2
