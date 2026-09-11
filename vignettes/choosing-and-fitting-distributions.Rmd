@@ -370,8 +370,8 @@ interactions_boot <- boot::boot(data = dt_obs_survey,
                                 statistic = n_interactions, stype = "i",
                                 R = 300,
                                 dt_obs = dt_obs,
-                                rotor_diameter = rotor_diameter,
-                                hub_height = hub_height,
+                                rotor_diameter = v90_single$rotor_diam,
+                                hub_height = v90_single$hh,
                                 df_turbines = df_turbines
   )
 
