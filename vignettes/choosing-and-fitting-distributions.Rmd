@@ -357,8 +357,8 @@ n_interactions <- function(df_obs_summary = df_obs_summary,
   turbine_flights_boot <- turbine_flights(
     obs_flux = obs_flux_boot,
     spatial_correction = effective_flux,
-    rotor_diameter  = v90_single$rotor_diam,
-    hub_height = v90_single$hh
+    rotor_diameter  = rotor_diameter,
+    hub_height = hub_height
   )
   
   
@@ -370,8 +370,8 @@ interactions_boot <- boot::boot(data = dt_obs_survey,
                                 statistic = n_interactions, stype = "i",
                                 R = 300,
                                 dt_obs = dt_obs,
-                                rotor_diameter = v90_single$rotor_diam,
-                                hub_height = v90_single$hh,
+                                rotor_diameter = rotor_diameter,
+                                hub_height = hub_height,
                                 df_turbines = df_turbines
   )
 
