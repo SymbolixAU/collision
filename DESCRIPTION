@@ -1,9 +1,9 @@
 Package: collision
 Type: Package
 Title: Per-turbine Collision Risk Model for predicting avian collision with on-shore and off-shore wind turbines
-Version: 1.1.9003
+Version: 1.1.0
 Authors@R: c(
-  person("Elizabeth", "Stark", ,"estark@symbolix.com.au", role = c("aut", "cre"), 
+  person("Elizabeth", "Stark", ,"estark@symbolix.com.au", role = c("aut", "cre"),
     comment = c(ORCID = "0009-0002-6337-5021")),
   person("Muir", "Stuart", role = c("aut")),
   person("Yandell", "Peggy", role = c("aut")),
@@ -34,9 +34,9 @@ Suggests:
   boot,
   mc2d,
   parallel,
-  data.table
+  data.table,
+  MASS
 Encoding: UTF-8
-RoxygenNote: 7.3.3
 RdMacros: Rdpack
 Depends: 
     R (>= 3.5.0)
@@ -45,3 +45,4 @@ BugReports: https://github.com/SymbolixAU/collision/issues
 LazyData: true
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
+Config/roxygen2/version: 8.1.0

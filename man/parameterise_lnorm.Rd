@@ -15,7 +15,7 @@ parameterise_lnorm(mean, sd)
 \value{
 \code{list} object with the mean and standard deviation of the
 distribution on the log scale. These are the \code{rlnorm} parameters \code{meanlog}
-and \code{sdlog} used in the \code{\link[stats:Lognormal]{stats::rlnorm()}} function
+and \code{sdlog} used in the \code{\link[stats:rlnorm]{stats::rlnorm()}} function
 }
 \description{
 Given a mean and standard deviation, solves for log normal distribution
@@ -32,5 +32,5 @@ sample_input(flight_flux_min)
 
 }
 \seealso{
-\code{\link[stats:Lognormal]{stats::rlnorm()}}
+\code{\link[stats:rlnorm]{stats::rlnorm()}}
 }
