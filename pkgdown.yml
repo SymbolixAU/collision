@@ -1,11 +1,12 @@
 pandoc: 3.8.3
-pkgdown: 2.2.0
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
+  choosing-and-fitting-distributions: choosing-and-fitting-distributions.html
   deterministic-example: deterministic-example.html
   one-bird-one-turbine: one-bird-one-turbine.html
   simple-simulation-example: simple-simulation-example.html
-last_built: 2026-05-13T05:46Z
+last_built: 2026-09-12T01:11Z
 urls:
   reference: https://symbolixau.github.io/collision/reference
   article: https://symbolixau.github.io/collision/articles

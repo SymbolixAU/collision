@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Simple simulation example">
 </head>
@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">collision</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,7 +38,8 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/deterministic-example.html">Deterministic example</a></li>
+<li><a class="dropdown-item" href="../articles/choosing-and-fitting-distributions.html">Choosing and fitting distributions for a stochastic CRM</a></li>
+    <li><a class="dropdown-item" href="../articles/deterministic-example.html">Deterministic example</a></li>
     <li><a class="dropdown-item" href="../articles/one-bird-one-turbine.html">One bird, one turbine example</a></li>
     <li><a class="dropdown-item" href="../articles/simple-simulation-example.html">Simple simulation example</a></li>
   </ul>
@@ -95,7 +96,8 @@
 <span><span class="co">#&gt; Attaching package: 'data.table'</span></span>
 <span><span class="co">#&gt; The following object is masked from 'package:base':</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     %notin%</span></span></code></pre></div>
+<span><span class="co">#&gt;     %notin%</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.stats.ox.ac.uk/pub/MASS4/" class="external-link">MASS</a></span><span class="op">)</span> <span class="co"># for multivariate normal</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="stochastic-example">Stochastic Example<a class="anchor" aria-label="anchor" href="#stochastic-example"></a>
 </h2>
@@ -134,7 +136,7 @@ we need to:</p>
 to determine the distribution of possible collision outcomes.</li>
 </ul>
 <p>This allows the simulation to more accurately reflect the uncertainty
-due to both natural variance (e.g. bird wingspan) and measurement
+due to both natural variance (e.g. bird body length) and measurement
 uncertainty (e.g. estimated flight heights).</p>
 <div class="section level3">
 <h3 id="define-inputs">Define inputs<a class="anchor" aria-label="anchor" href="#define-inputs"></a>
@@ -162,10 +164,10 @@ numbers.</p>
 <span>  max_nac_h <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  max_nac_l <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  max_width_nacelle <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  rpm <span class="op">=</span> <span class="fu"><a href="../reference/set_random.html">set_random</a></span><span class="op">(</span><span class="st">"rnorm"</span>, mean <span class="op">=</span> <span class="fl">6.5</span>, sd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span>
+<span>  rpm <span class="op">=</span> <span class="fu"><a href="../reference/set_random.html">set_random</a></span><span class="op">(</span><span class="st">"rpert"</span>, min <span class="op">=</span> <span class="fl">0</span>, max <span class="op">=</span> <span class="fl">9</span>, mode <span class="op">=</span> <span class="fl">6.5</span>, shape <span class="op">=</span> <span class="fl">8</span><span class="op">)</span>,</span>
 <span>  rotor_diam <span class="op">=</span> <span class="fl">180</span>,</span>
 <span>  tilt_deg <span class="op">=</span> <span class="fl">6</span>,</span>
-<span>  prop_operational <span class="op">=</span> <span class="fl">0.98</span></span>
+<span>  prop_operational <span class="op">=</span> <span class="fu"><a href="../reference/set_random.html">set_random</a></span><span class="op">(</span><span class="st">"rbeta"</span>, shape1 <span class="op">=</span> <span class="fl">20</span>, shape2 <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">turbine_model2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/define_turbine.html">define_turbine</a></span><span class="op">(</span></span>
@@ -182,10 +184,10 @@ numbers.</p>
 <span>  max_nac_h <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  max_nac_l <span class="op">=</span> <span class="fl">13</span>,</span>
 <span>  max_width_nacelle <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  rpm <span class="op">=</span> <span class="fu"><a href="../reference/set_random.html">set_random</a></span><span class="op">(</span><span class="st">"rnorm"</span>, mean <span class="op">=</span> <span class="fl">9.1</span>, sd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span>
+<span>  rpm <span class="op">=</span> <span class="fu"><a href="../reference/set_random.html">set_random</a></span><span class="op">(</span><span class="st">"rpert"</span>, min <span class="op">=</span> <span class="fl">0</span>, max <span class="op">=</span> <span class="fl">10.8</span>, mode <span class="op">=</span> <span class="fl">9.1</span>, shape <span class="op">=</span> <span class="fl">8</span><span class="op">)</span>,</span>
 <span>  rotor_diam <span class="op">=</span> <span class="fl">150</span>,</span>
 <span>  tilt_deg <span class="op">=</span> <span class="fl">6</span>,</span>
-<span>  prop_operational <span class="op">=</span> <span class="fl">0.98</span></span>
+<span>  prop_operational <span class="op">=</span> <span class="fu"><a href="../reference/set_random.html">set_random</a></span><span class="op">(</span><span class="st">"rbeta"</span>, shape1 <span class="op">=</span> <span class="fl">20</span>, shape2 <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -197,20 +199,20 @@ can be defined as probability distributions or as single numbers.</p>
 <code class="sourceCode R"><span></span>
 <span><span class="va">wte</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/define_bird.html">define_bird</a></span><span class="op">(</span></span>
 <span>  species <span class="op">=</span> <span class="st">"Wedge-tailed Eagle"</span>,</span>
-<span>  bird_length <span class="op">=</span> <span class="fu"><a href="../reference/set_random.html">set_random</a></span><span class="op">(</span><span class="st">"rnorm"</span>, mean <span class="op">=</span> <span class="fl">0.945</span>, sd <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span> ,</span>
-<span>  bird_speed <span class="op">=</span> <span class="fu"><a href="../reference/set_random.html">set_random</a></span><span class="op">(</span><span class="st">"rnorm"</span>, mean <span class="op">=</span> <span class="fl">17</span>, sd <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,</span>
+<span>  bird_length <span class="op">=</span> <span class="fu"><a href="../reference/set_random.html">set_random</a></span><span class="op">(</span><span class="st">"rpert"</span>, min <span class="op">=</span> <span class="fl">0.85</span>, max <span class="op">=</span> <span class="fl">1.05</span>,</span>
+<span>                           mean <span class="op">=</span> <span class="fl">0.945</span>, shape <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> ,</span>
+<span>  bird_speed <span class="op">=</span> <span class="fu"><a href="../reference/set_random.html">set_random</a></span><span class="op">(</span><span class="st">"rlnorm"</span>, meanlog <span class="op">=</span> <span class="fl">2.8</span>, sdlog <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span>,</span>
 <span>  prop_day <span class="op">=</span> <span class="fu"><a href="../reference/set_random.html">set_random</a></span><span class="op">(</span><span class="st">"runif"</span>, min <span class="op">=</span> <span class="fl">0.48</span>, max <span class="op">=</span> <span class="fl">0.52</span><span class="op">)</span>,</span>
 <span>  prop_year <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  avoidance_dynamic <span class="op">=</span> <span class="fu"><a href="../reference/set_random.html">set_random</a></span><span class="op">(</span><span class="st">"rpert"</span>,</span>
-<span>                                 min <span class="op">=</span> <span class="fl">0.88</span>, max <span class="op">=</span> <span class="fl">0.95</span>, </span>
-<span>                                 mode <span class="op">=</span> <span class="fl">0.92</span>, shape <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>,</span>
+<span>  avoidance_dynamic <span class="op">=</span> <span class="fu"><a href="../reference/set_random.html">set_random</a></span><span class="op">(</span><span class="st">"rpert"</span>, min <span class="op">=</span> <span class="fl">0.88</span>, max <span class="op">=</span> <span class="fl">0.95</span>, mode <span class="op">=</span> <span class="fl">0.92</span>,</span>
+<span>                                 shape <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>, <span class="co"># shape = 4 is default</span></span>
 <span>  avoidance_static <span class="op">=</span> <span class="fl">0.9999</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Note: the Beta PERT distribution (<code>rpert</code>) is a good
 distribution to use if you only have the mode (or mean) and the minimum
 and maximum parameters for a species (eg. mean body length = 0.95m,
-range: 0.6-1.2m). See the <strong>Choosing Distributions</strong><a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;Distributions vignette is still in development.&lt;/p&gt;"><sup>1</sup></a> for
-information on how to fit the distributions.</p>
+range: 0.6-1.2m). See the <a href="choosing-and-fitting-distributions.html">distributions
+vignette</a> for guidance on choosing and fitting the distributions.</p>
 </div>
 <div class="section level4">
 <h4 id="define-a-set-of-turbines">Define a Set of Turbines<a class="anchor" aria-label="anchor" href="#define-a-set-of-turbines"></a>
@@ -220,7 +222,10 @@ of turbine inputs. These can be read in from a csv, or you can set them
 up with a few basic pieces of information and the turbine definition
 above.</p>
 <p>For each turbine we need a turbine ID, and a location. Location can
-be NA if you are not including any spatial modelling.</p>
+be NA if you are not including any spatial modelling, although you will
+need the average minimum distance between turbines for
+<code><a href="../reference/cluster_correction.html">cluster_correction_l()</a></code> to obtain an approximate correction
+for turbine clustering.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df_turbines</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  turbine_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"T01"</span>, <span class="st">"T02"</span>, <span class="st">"T03"</span>, <span class="st">"T04"</span><span class="op">)</span>,</span>
@@ -240,19 +245,19 @@ analyst to determine how best to model these parameters.</p>
 <p>The package observations dataset:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">df_obs</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     distance           size            type         height      </span></span>
-<span><span class="co">#&gt;  Min.   :  71.0   Min.   :1.0   Length   :120   Min.   :  43.0  </span></span>
-<span><span class="co">#&gt;  1st Qu.: 534.8   1st Qu.:1.0   N.unique :  1   1st Qu.: 328.0  </span></span>
-<span><span class="co">#&gt;  Median : 763.0   Median :1.0   N.blank  :  0   Median : 662.0  </span></span>
-<span><span class="co">#&gt;  Mean   : 805.4   Mean   :1.3   Min.nchar:  6   Mean   : 730.5  </span></span>
-<span><span class="co">#&gt;  3rd Qu.:1027.0   3rd Qu.:2.0   Max.nchar:  6   3rd Qu.: 986.2  </span></span>
-<span><span class="co">#&gt;  Max.   :1878.0   Max.   :2.0                   Max.   :2469.0  </span></span>
+<span><span class="co">#&gt;     distance           size              type         height      </span></span>
+<span><span class="co">#&gt;  Min.   : 136.0   Min.   :1.000   Length   :120   Min.   :  2.00  </span></span>
+<span><span class="co">#&gt;  1st Qu.: 519.5   1st Qu.:1.000   N.unique :  1   1st Qu.: 33.50  </span></span>
+<span><span class="co">#&gt;  Median : 818.5   Median :1.000   N.blank  :  0   Median : 77.00  </span></span>
+<span><span class="co">#&gt;  Mean   : 852.6   Mean   :1.283   Min.nchar:  6   Mean   : 97.63  </span></span>
+<span><span class="co">#&gt;  3rd Qu.:1134.2   3rd Qu.:2.000   Max.nchar:  6   3rd Qu.:122.00  </span></span>
+<span><span class="co">#&gt;  Max.   :2334.0   Max.   :2.000                   Max.   :518.00  </span></span>
 <span><span class="co">#&gt;    survey_id          object      </span></span>
-<span><span class="co">#&gt;  Min.   :  1.00   Min.   :  1.00  </span></span>
-<span><span class="co">#&gt;  1st Qu.: 29.75   1st Qu.: 30.75  </span></span>
-<span><span class="co">#&gt;  Median : 60.00   Median : 60.50  </span></span>
-<span><span class="co">#&gt;  Mean   : 53.91   Mean   : 60.50  </span></span>
-<span><span class="co">#&gt;  3rd Qu.: 78.00   3rd Qu.: 90.25  </span></span>
+<span><span class="co">#&gt;  Min.   :  2.00   Min.   :  1.00  </span></span>
+<span><span class="co">#&gt;  1st Qu.: 27.25   1st Qu.: 30.75  </span></span>
+<span><span class="co">#&gt;  Median : 54.50   Median : 60.50  </span></span>
+<span><span class="co">#&gt;  Mean   : 53.56   Mean   : 60.50  </span></span>
+<span><span class="co">#&gt;  3rd Qu.: 77.25   3rd Qu.: 90.25  </span></span>
 <span><span class="co">#&gt;  Max.   :100.00   Max.   :120.00</span></span>
 <span><span class="co"># converting to data.table for ease of joining and summarising</span></span>
 <span><span class="va">dt_obs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setDT.html" class="external-link">setDT</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">df_obs</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -284,11 +289,46 @@ the transect line.</li>
 <li>Count of individuals in each survey (<code>size</code>)</li>
 </ul>
 <div class="section level5">
-<h5 id="effective-detection-radius">Effective Detection Radius<a class="anchor" aria-label="anchor" href="#effective-detection-radius"></a>
+<h5 id="flight-heights">Flight heights<a class="anchor" aria-label="anchor" href="#flight-heights"></a>
+</h5>
+<p>In order to determine the flight flux we need an effective detection
+height, but unlike with the EDR we can’t fit a distance model to the
+heights because distance modelling relies on the assumption that the
+birds are uniformly distributed at all distances, which we know is not
+the case in vertical space (i.e. the density of flights tends to drop
+off with increasing height). The simplest way to avoid biasing the
+estimate by artificially inflating or deflating the flux through the
+turbine is to desktop truncate the observations to the maximum tip
+height of the turbine and use that as the effective detection height
+(all the observations can still be used to fit the observer’s detection
+function since it is just used for the horizontal distance correction).
+Other methods for estimating an effective detection height can be used,
+but this method is the most straightforward and will work well in almost
+all cases. Truncating the the maximum turbine height also means that the
+proportion of flights at rotor swept height
+(<code>prop_at_height</code>) and below rotor swept height
+(<code>prop_below_height</code>) sum to 1.</p>
+<p>The proportion of flights at and below rotor swept height account for
+the amount of flights at risk of being struck by the blades of the
+turbine. We only need to calculate a distribution for
+<code>prop_below_height</code> since
+<code>prop_at_height = 1 - prop_below_height</code>. Since the
+proportion should be bounded at 0 and 1, a beta distribution is a good
+option.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># see distributions vignette for guidance on (one way) to fit the prop_below_height distribution</span></span>
+<span><span class="co"># turbine1</span></span>
+<span><span class="va">prop_below_height1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_random.html">set_random</a></span><span class="op">(</span><span class="st">"rbeta"</span>, shape1 <span class="op">=</span> <span class="fl">6.86</span>, shape2 <span class="op">=</span> <span class="fl">35.3</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># turbine2</span></span>
+<span><span class="va">prop_below_height2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_random.html">set_random</a></span><span class="op">(</span><span class="st">"rbeta"</span>, shape1 <span class="op">=</span> <span class="fl">2.65</span>, shape2 <span class="op">=</span> <span class="fl">42.5</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level5">
+<h5 id="interactions">Interactions<a class="anchor" aria-label="anchor" href="#interactions"></a>
 </h5>
 <p>For this example, we assume you have done the required distance
 correction and have arrived at a distance model.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ds_raptor</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Summary for distance analysis </span></span>
@@ -314,214 +354,17 @@ correction and have arrived at a distance model.</p>
 <span><span class="co">#&gt;                        Estimate        SE        CV</span></span>
 <span><span class="co">#&gt; Average p             0.6314592  0.141781 0.2245292</span></span>
 <span><span class="co">#&gt; N in covered region 190.0360410 43.949117 0.2312673</span></span></code></pre></div>
-<p>Rather than extracting the EDR from this model (which would give us a
-single value) we bootstrap the distance model and the EDR to obtain the
-standard deviation on the estimate of the EDR.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## Define bootstrap-able function</span></span>
-<span><span class="va">edr_fun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">dt_survey</span> <span class="op">=</span> <span class="va">dt_survey</span>,</span>
-<span>                    <span class="va">i</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dt_survey</span><span class="op">)</span>,</span>
-<span>                    <span class="va">dt_obs</span> <span class="op">=</span> <span class="va">dt_obs</span><span class="op">)</span><span class="op">{</span></span>
-<span>  </span>
-<span>  <span class="va">dt_boot_i</span> <span class="op">&lt;-</span> <span class="va">dt_survey</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">survey_id</span><span class="op">)</span><span class="op">]</span></span>
-<span>  <span class="va">dt_obs_i</span> <span class="op">&lt;-</span> <span class="va">dt_obs</span><span class="op">[</span><span class="va">dt_boot_i</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">survey_id</span><span class="op">)</span><span class="op">]</span></span>
-<span>                     , on <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">survey_id</span><span class="op">)</span></span>
-<span>                     , nomatch <span class="op">=</span> <span class="fl">0</span><span class="op">]</span></span>
-<span>  </span>
-<span>  <span class="va">ds_CI</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/pkg/Distance/man/ds.html" class="external-link">ds</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">dt_obs_i</span><span class="op">[</span>, <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"object"</span><span class="op">)</span><span class="op">]</span>,</span>
-<span>       formula <span class="op">=</span> <span class="op">~</span> <span class="fl">1</span>,</span>
-<span>       key <span class="op">=</span> <span class="st">"hn"</span>,</span>
-<span>       dht_group <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># same arguments used to fit the original distance model (ds_raptor)</span></span>
-<span>    , error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="op">{</span></span>
-<span>      <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
-<span>      <span class="cn">NULL</span></span>
-<span>    <span class="op">}</span></span>
-<span>  <span class="op">)</span></span>
-<span></span>
-<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">ds_CI</span><span class="op">)</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">NA</span><span class="op">)</span></span>
-<span>  <span class="va">edr_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/data_from_distmodel.html">edr_from_distmodel</a></span><span class="op">(</span><span class="va">ds_CI</span><span class="op">)</span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">edr_boot</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="va">ds_boot</span> <span class="op">&lt;-</span> <span class="fu">boot</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/boot/man/boot.html" class="external-link">boot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">dt_survey</span></span>
-<span>                , statistic <span class="op">=</span> <span class="va">edr_fun</span>,</span>
-<span>                , sim <span class="op">=</span> <span class="st">"ordinary"</span></span>
-<span>                , stype <span class="op">=</span> <span class="st">"i"</span></span>
-<span>                , R <span class="op">=</span> <span class="fl">150</span></span>
-<span>                , dt_obs <span class="op">=</span> <span class="va">dt_obs</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co"># bootstraps need to be checked for convergence to make sure you've done enough replicates</span></span>
-<span><span class="co"># which is not done in this example</span></span>
-<span></span>
-<span><span class="co">## Define EDR</span></span>
-<span><span class="va">edr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_random.html">set_random</a></span><span class="op">(</span><span class="st">"rnorm"</span>, <span class="co"># normally distributed per CLT</span></span>
-<span>                  mean <span class="op">=</span> <span class="va">ds_boot</span><span class="op">$</span><span class="va">t0</span>,</span>
-<span>                  sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">ds_boot</span><span class="op">$</span><span class="va">t</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span>                  <span class="op">)</span></span>
-<span></span>
-<span><span class="co">## visual check of distribution</span></span>
-<span><span class="va">EDR_hist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">1000</span>, FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="fu">collision</span><span class="fu">::</span><span class="fu"><a href="../reference/sample_input.html">sample_input</a></span><span class="op">(</span><span class="va">edr</span><span class="op">)</span> <span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">EDR_hist</span><span class="op">)</span></span></code></pre></div>
-<p><img src="simple-simulation-example_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="700"></p>
-</div>
-<div class="section level5">
-<h5 id="flight-heights">Flight heights<a class="anchor" aria-label="anchor" href="#flight-heights"></a>
-</h5>
-<p>In order to determine the flight flux we need an effective detection
-height, but unlike with the EDR we can’t fit a distance model to the
-heights because distance modelling relies on the assumption that the
-birds are uniformly distributed at all distances, which we know is not
-the case in vertical space (i.e. the density of flights tends to drop
-off with increasing height). The simplest way to avoid biasing the
-estimate by artificially inflating or deflating the flux through the
-turbine is to desktop truncate the observations to the maximum tip
-height of the turbine and use that as the effective detection height
-(all the observations can still be used to fit the observer’s detection
-function since it is just used for the horizontal distance correction).
-Other methods for estimating an effective detection height can be used,
-but this method is the most straightforward and will work well in almost
-all cases. Truncating the the maximum turbine height also means that the
-proportion of flights at rotor swept height
-(<code>prop_at_height</code>) and below rotor swept height
-(<code>prop_below_height</code>) sum to 1.</p>
-<p>The proportion of flights at and below rotor swept height account for
-the amount of flights at risk of being struck by the blades of the
-turbine. We only need to calculate a distribution for
-<code>prop_below_height</code> since
-<code>prop_at_height = 1 - prop_below_height</code>.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">min_rsh1</span> <span class="op">&lt;-</span> <span class="va">turbine_model1</span><span class="op">$</span><span class="va">hh</span> <span class="op">-</span> <span class="va">turbine_model1</span><span class="op">$</span><span class="va">rotor_diam</span> <span class="op">*</span> <span class="fl">0.5</span></span>
-<span><span class="va">max_rsh1</span> <span class="op">&lt;-</span> <span class="va">turbine_model1</span><span class="op">$</span><span class="va">hh</span> <span class="op">+</span> <span class="va">turbine_model1</span><span class="op">$</span><span class="va">rotor_diam</span> <span class="op">*</span> <span class="fl">0.5</span></span>
-<span></span>
-<span><span class="va">min_rsh2</span> <span class="op">&lt;-</span> <span class="va">turbine_model2</span><span class="op">$</span><span class="va">hh</span> <span class="op">-</span> <span class="va">turbine_model2</span><span class="op">$</span><span class="va">rotor_diam</span> <span class="op">*</span> <span class="fl">0.5</span></span>
-<span><span class="va">max_rsh2</span> <span class="op">&lt;-</span> <span class="va">turbine_model2</span><span class="op">$</span><span class="va">hh</span> <span class="op">+</span> <span class="va">turbine_model2</span><span class="op">$</span><span class="va">rotor_diam</span> <span class="op">*</span> <span class="fl">0.5</span></span>
-<span></span>
-<span><span class="co">## calculate ecdf</span></span>
-<span><span class="co"># Note - this is a simple example; it's up to the analyst how best to fit the height distribution</span></span>
-<span></span>
-<span><span class="va">prop_below</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">dt_survey</span> <span class="op">=</span> <span class="va">dt_survey</span>,</span>
-<span>                       <span class="va">i</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dt_survey</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>                       <span class="va">dt_obs</span> <span class="op">=</span> <span class="va">dt_obs</span>, <span class="co"># filter by max_rsh</span></span>
-<span>                       <span class="va">h</span> <span class="op">=</span> <span class="va">max_rsh</span><span class="op">)</span><span class="op">{</span></span>
-<span>  </span>
-<span>  <span class="va">dt_boot_i</span> <span class="op">&lt;-</span> <span class="va">dt_survey</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>survey_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">survey_id</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="va">i</span><span class="op">]</span></span>
-<span>  <span class="va">dt_obs_i</span> <span class="op">&lt;-</span> <span class="va">dt_obs</span><span class="op">[</span><span class="va">dt_boot_i</span>, on <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">survey_id</span><span class="op">)</span>, nomatch <span class="op">=</span> <span class="fl">0</span><span class="op">]</span></span>
-<span>  </span>
-<span>  <span class="va">cdf_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/ecdf.html" class="external-link">ecdf</a></span><span class="op">(</span><span class="va">dt_obs_i</span><span class="op">$</span><span class="va">height</span><span class="op">)</span></span>
-<span>  </span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">cdf_dat</span><span class="op">(</span><span class="va">h</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co"># turbine model 1</span></span>
-<span><span class="co">## bootstrap prop below min RSH</span></span>
-<span><span class="va">hmin_boot1</span> <span class="op">&lt;-</span> <span class="fu">boot</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/boot/man/boot.html" class="external-link">boot</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">dt_survey</span>,</span>
-<span>  statistic <span class="op">=</span> <span class="va">prop_below</span>, stype <span class="op">=</span> <span class="st">"i"</span>,</span>
-<span>  R <span class="op">=</span> <span class="fl">900</span>,</span>
-<span>  h <span class="op">=</span> <span class="va">min_rsh1</span>,</span>
-<span>  dt_obs <span class="op">=</span> <span class="va">dt_obs</span><span class="op">[</span><span class="va">height</span> <span class="op">&lt;=</span> <span class="va">max_rsh1</span><span class="op">]</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">prop_below_height1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_random.html">set_random</a></span><span class="op">(</span><span class="st">"rnorm"</span>, mean <span class="op">=</span> <span class="va">hmin_boot1</span><span class="op">$</span><span class="va">t0</span>, sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">hmin_boot1</span><span class="op">$</span><span class="va">t</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co"># you may need to use a bounded distribution if the proportion is near 0 or 1</span></span>
-<span></span>
-<span><span class="co"># turbine model 2</span></span>
-<span><span class="co">## bootstrap prop below min RSH</span></span>
-<span><span class="va">hmin_boot2</span> <span class="op">&lt;-</span> <span class="fu">boot</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/boot/man/boot.html" class="external-link">boot</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="va">dt_survey</span>,</span>
-<span>  statistic <span class="op">=</span> <span class="va">prop_below</span>, stype <span class="op">=</span> <span class="st">"i"</span>,</span>
-<span>  R <span class="op">=</span> <span class="fl">900</span>,</span>
-<span>  h <span class="op">=</span> <span class="va">min_rsh2</span>,</span>
-<span>  dt_obs <span class="op">=</span> <span class="va">dt_obs</span><span class="op">[</span><span class="va">height</span> <span class="op">&lt;=</span> <span class="va">max_rsh2</span><span class="op">]</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">prop_below_height2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_random.html">set_random</a></span><span class="op">(</span><span class="st">"rnorm"</span>, mean <span class="op">=</span> <span class="va">hmin_boot2</span><span class="op">$</span><span class="va">t0</span>, sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">hmin_boot2</span><span class="op">$</span><span class="va">t</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level5">
-<h5 id="encounter-rate">Encounter Rate<a class="anchor" aria-label="anchor" href="#encounter-rate"></a>
-</h5>
-<p>This is where we determine the average encounter rate per unit time
-of survey. That is the average number of individuals observed in each
-minute of survey (or whatever unit of time you wish to use). This is
-basically just
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mrow><mi>t</mi><mi>o</mi><mi>t</mi><mi>a</mi><mi>l</mi><mspace width="0.222em"></mspace><mi>i</mi><mi>n</mi><mi>d</mi><mi>i</mi><mi>v</mi><mi>i</mi><mi>d</mi><mi>u</mi><mi>a</mi><mi>l</mi><mi>s</mi><mspace width="0.222em"></mspace><mi>o</mi><mi>b</mi><mi>s</mi><mi>e</mi><mi>r</mi><mi>v</mi><mi>e</mi><mi>d</mi></mrow><mrow><mi>t</mi><mi>o</mi><mi>t</mi><mi>a</mi><mi>l</mi><mspace width="0.222em"></mspace><mi>s</mi><mi>u</mi><mi>r</mi><mi>v</mi><mi>e</mi><mi>y</mi><mspace width="0.222em"></mspace><mi>t</mi><mi>i</mi><mi>m</mi><mi>e</mi></mrow></mfrac><annotation encoding="application/x-tex">\frac{total\ individuals\ observed}{total\ survey\ time}</annotation></semantics></math>,
-however the function also allows for weighting surveys to account for
-stratification and can apply the Wilson correction <span class="citation">(<a href="#ref-Wilson1927">Wilson 1927</a>)</span> if
-there were no observations.</p>
 <p>As discussed above, we are desktop truncating to the maximum rotor
-swept height of the turbine, so this encounter rate will be the
-encounter of birds at risk height.</p>
-<p>This function takes as input a <code>df_obs_summary</code>
-data.frame. This object has one row per survey and must contain a column
-named <code>survey_duration</code> and a column named <code>size</code>
-which is the <strong>total</strong> number of individuals observed in
-each <strong>survey</strong> (not observation). Optionally, it can
-contain a column named <code>survey_weight</code> which has the
-associated relative weights of each survey (to avoid artificially
-inflating or deflating the encounter rate
-<code>sum(survey_weight)</code> must equal the number of surveys).</p>
-<p>First let’s make that table (using <code>data.table</code>):</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># turbine model 1</span></span>
-<span><span class="va">dt_obs_survey1</span> <span class="op">&lt;-</span> <span class="va">dt_obs</span><span class="op">[</span><span class="va">height</span> <span class="op">&lt;=</span> <span class="va">max_rsh1</span>, <span class="fu">.</span><span class="op">(</span><span class="st">"size"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">size</span><span class="op">)</span><span class="op">)</span>, <span class="va">survey_id</span><span class="op">]</span><span class="op">[</span><span class="va">dt_survey</span>,</span>
-<span>                                                            on <span class="op">=</span> <span class="st">"survey_id"</span><span class="op">]</span></span>
-<span><span class="co"># need sum(size) because we want one row per survey (not observation)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/nafill.html" class="external-link">setnafill</a></span><span class="op">(</span><span class="va">dt_obs_survey1</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"size"</span><span class="op">)</span>, fill <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="co"># set size to 0 for surveys with no observations</span></span>
+swept height of the turbine, so the <code>df_obs_summary</code> used to
+calculate the interaction needs to be filtered to just birds at at-risk
+height (see other vignettes for more detail).</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># see distributions vignette for guidance on (one way) to fit the turbine flights distribution</span></span>
+<span><span class="co"># turbine1</span></span>
+<span><span class="va">n_interactions1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_random.html">set_random</a></span><span class="op">(</span><span class="st">"rlnorm"</span>, meanlog <span class="op">=</span> <span class="op">-</span><span class="fl">8.5</span>, sdlog <span class="op">=</span> <span class="fl">0.19</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># turbine model 2</span></span>
-<span><span class="va">dt_obs_survey2</span> <span class="op">&lt;-</span> <span class="va">dt_obs</span><span class="op">[</span><span class="va">height</span> <span class="op">&lt;=</span> <span class="va">max_rsh2</span>, <span class="fu">.</span><span class="op">(</span><span class="st">"size"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">size</span><span class="op">)</span><span class="op">)</span>, <span class="va">survey_id</span><span class="op">]</span><span class="op">[</span><span class="va">dt_survey</span>,</span>
-<span>                                                            on <span class="op">=</span> <span class="st">"survey_id"</span><span class="op">]</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/nafill.html" class="external-link">setnafill</a></span><span class="op">(</span><span class="va">dt_obs_survey2</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"size"</span><span class="op">)</span>, fill <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
-<p>Now we can use this table in <code><a href="../reference/encounter_rate.html">encounter_rate()</a></code>:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="va">er_fun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">dat</span>, <span class="va">i</span><span class="op">)</span><span class="op">{</span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="../reference/encounter_rate.html">encounter_rate</a></span><span class="op">(</span>df_obs_summary <span class="op">=</span> <span class="va">dat</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co"># turbine model 1</span></span>
-<span><span class="va">er_boot1</span> <span class="op">&lt;-</span> <span class="fu">boot</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/boot/man/boot.html" class="external-link">boot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">dt_obs_survey1</span></span>
-<span>                , statistic <span class="op">=</span> <span class="va">er_fun</span>,</span>
-<span>                , sim <span class="op">=</span> <span class="st">"ordinary"</span></span>
-<span>                , stype <span class="op">=</span> <span class="st">"i"</span></span>
-<span>                , R <span class="op">=</span> <span class="fl">200</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span></span>
-<span><span class="co">## Define Encounter rate</span></span>
-<span><span class="va">flights_per_min1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_random.html">set_random</a></span><span class="op">(</span><span class="st">"rnorm"</span>,</span>
-<span>                               mean <span class="op">=</span> <span class="va">er_boot1</span><span class="op">$</span><span class="va">t0</span>,</span>
-<span>                               sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">er_boot1</span><span class="op">$</span><span class="va">t</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span>                               <span class="op">)</span></span>
-<span></span>
-<span><span class="co">## take a look</span></span>
-<span></span>
-<span><span class="va">encounter_rate_hist1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">1000</span>, FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="fu">collision</span><span class="fu">::</span><span class="fu"><a href="../reference/sample_input.html">sample_input</a></span><span class="op">(</span><span class="va">flights_per_min1</span><span class="op">)</span> <span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">encounter_rate_hist1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="simple-simulation-example_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="" width="700"></p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># turbine model 2</span></span>
-<span><span class="va">er_boot2</span> <span class="op">&lt;-</span> <span class="fu">boot</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/boot/man/boot.html" class="external-link">boot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">dt_obs_survey2</span></span>
-<span>                , statistic <span class="op">=</span> <span class="va">er_fun</span>,</span>
-<span>                , sim <span class="op">=</span> <span class="st">"ordinary"</span></span>
-<span>                , stype <span class="op">=</span> <span class="st">"i"</span></span>
-<span>                , R <span class="op">=</span> <span class="fl">200</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span></span>
-<span><span class="co">## Define Encounter rate</span></span>
-<span><span class="va">flights_per_min2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_random.html">set_random</a></span><span class="op">(</span><span class="st">"rnorm"</span>,</span>
-<span>                               mean <span class="op">=</span> <span class="va">er_boot2</span><span class="op">$</span><span class="va">t0</span>,</span>
-<span>                               sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">er_boot2</span><span class="op">$</span><span class="va">t</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span>                               <span class="op">)</span></span>
-<span></span>
-<span><span class="co">## take a look</span></span>
-<span></span>
-<span><span class="va">encounter_rate_hist2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">1000</span>, FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="fu">collision</span><span class="fu">::</span><span class="fu"><a href="../reference/sample_input.html">sample_input</a></span><span class="op">(</span><span class="va">flights_per_min2</span><span class="op">)</span> <span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">encounter_rate_hist2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="simple-simulation-example_files/figure-html/unnamed-chunk-11-2.png" class="r-plt" alt="" width="700"></p>
+<span><span class="co"># turbine2</span></span>
+<span><span class="va">n_interactions2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_random.html">set_random</a></span><span class="op">(</span><span class="st">"rlnorm"</span>, meanlog <span class="op">=</span> <span class="op">-</span><span class="fl">8.7</span>, sdlog <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level4">
@@ -534,12 +377,7 @@ wish.</p>
 <ul>
 <li>Step 0 - Set up simulation parameters</li>
 <li>Step 1 - Sample inputs for bird, turbine, prop at height, prop below
-height, effective detection radius (EDR) and encounter rate.</li>
-<li>Step 1.5 (optional) - Calculate the <code>cluster_correction</code>
-or any spatial flight corrections. The cluster correction is only needed
-if the distance between turbines
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>≤</mo><annotation encoding="application/x-tex">\leq</annotation></semantics></math>
-EDR.</li>
+height and interactions per turbine per minute.</li>
 <li>Step 2 - Calculate <code><a href="../reference/turbine_flights_year.html">turbine_flights_year()</a></code> with sampled
 values - calculate flights through turbine per year</li>
 <li>Step 3 - Run <code><a href="../reference/prob_collision_static.html">prob_collision_static()</a></code> and
@@ -550,18 +388,15 @@ for one interaction</li>
 collisions a year</li>
 </ul>
 <p>For a breakdown of each step see <a href="deterministic-example.html">the deterministic example</a>.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## inputs needed:</span></span>
 <span><span class="co">## seed for reproducibility</span></span>
 <span><span class="co">## iterations - how many runs</span></span>
 <span><span class="co">## df_turbines  - class `data.frame`</span></span>
 <span><span class="co">## wte - class `birdInput`</span></span>
-<span><span class="co">## v90_single - class `turbineInput`</span></span>
-<span><span class="co">## prop_at_height - class `randomInput`</span></span>
+<span><span class="co">## turbine_model - class `turbineInput`</span></span>
 <span><span class="co">## prop_below_height - class `randomInput`</span></span>
-<span><span class="co">## edr - class `randomInput`</span></span>
-<span><span class="co">## encounter rate - class `randomInput`</span></span>
-<span><span class="co">## mean height - class `randomInput`</span></span>
+<span><span class="co">## n_interactions - class `randomInput`</span></span>
 <span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
@@ -572,53 +407,32 @@ collisions a year</li>
 <span></span>
 <span>  <span class="co"># Step 1 - Sample inputs for bird, turbine, prop at height and prop below height</span></span>
 <span>  <span class="va">bird_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sample_input.html">sample_input</a></span><span class="op">(</span><span class="va">wte</span><span class="op">)</span></span>
-<span>  <span class="va">edr_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sample_input.html">sample_input</a></span><span class="op">(</span><span class="va">edr</span><span class="op">)</span></span>
 <span>  </span>
 <span>  <span class="va">turbines1_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sample_input.html">sample_input</a></span><span class="op">(</span><span class="va">turbine_model1</span><span class="op">)</span></span>
-<span>  <span class="va">prop_below_height1_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span> <span class="fu"><a href="../reference/sample_input.html">sample_input</a></span><span class="op">(</span><span class="va">prop_below_height1</span><span class="op">)</span>, <span class="fl">0</span><span class="op">)</span></span>
+<span>  <span class="va">prop_below_height1_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sample_input.html">sample_input</a></span><span class="op">(</span><span class="va">prop_below_height1</span><span class="op">)</span></span>
 <span>  <span class="va">prop_at_height1_i</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">-</span><span class="va">prop_below_height1_i</span></span>
-<span>  </span>
-<span>  <span class="va">er1_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sample_input.html">sample_input</a></span><span class="op">(</span><span class="va">flights_per_min1</span><span class="op">)</span></span>
+<span>  <span class="va">interactions1_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sample_input.html">sample_input</a></span><span class="op">(</span><span class="va">n_interactions1</span><span class="op">)</span></span>
 <span>  </span>
 <span>  <span class="va">turbines2_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sample_input.html">sample_input</a></span><span class="op">(</span><span class="va">turbine_model2</span><span class="op">)</span></span>
 <span>  <span class="va">prop_below_height2_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sample_input.html">sample_input</a></span><span class="op">(</span><span class="va">prop_below_height2</span><span class="op">)</span></span>
 <span>  <span class="va">prop_at_height2_i</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">-</span><span class="va">prop_below_height2_i</span></span>
-<span>  <span class="va">er2_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sample_input.html">sample_input</a></span><span class="op">(</span><span class="va">flights_per_min2</span><span class="op">)</span></span>
-<span>  </span>
-<span>  <span class="co"># Step 1.5 calculate the cluster correction</span></span>
-<span>  </span>
-<span>  <span class="va">df_turbines_results</span><span class="op">$</span><span class="va">cluster_corr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cluster_correction.html">cluster_correction_a</a></span><span class="op">(</span></span>
-<span>    eff_detection_width <span class="op">=</span> <span class="fl">2</span><span class="op">*</span><span class="va">edr_i</span>,</span>
-<span>    df_turbines <span class="op">=</span> <span class="va">df_turbines_results</span></span>
-<span>  <span class="op">)</span></span>
+<span>  <span class="va">interactions2_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sample_input.html">sample_input</a></span><span class="op">(</span><span class="va">n_interactions2</span><span class="op">)</span></span>
 <span>  </span>
 <span>  <span class="co"># Step 2 calculate flux through turbine per year</span></span>
 <span>  <span class="va">df_turbines_results</span><span class="op">[</span><span class="va">df_turbines_results</span><span class="op">$</span><span class="va">model</span> <span class="op">==</span> <span class="st">"Turbine 180"</span>,</span>
-<span>                      <span class="st">"flight_turbine_year"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/turbine_flights_year.html">turbine_flights_year</a></span><span class="op">(</span></span>
-<span>    survey_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"point"</span><span class="op">)</span>,</span>
-<span>    encounter_rate <span class="op">=</span> <span class="va">er1_i</span>,</span>
-<span>    eff_detection_width <span class="op">=</span> <span class="fl">2</span><span class="op">*</span><span class="va">edr_i</span>,</span>
-<span>    eff_detection_height <span class="op">=</span> <span class="va">max_rsh1</span>,</span>
-<span>    spatial_correction <span class="op">=</span> <span class="va">df_turbines_results</span><span class="op">[</span><span class="va">df_turbines_results</span><span class="op">$</span><span class="va">model</span> <span class="op">==</span> <span class="st">"Turbine 180"</span>,</span>
-<span>                      <span class="st">"cluster_corr"</span><span class="op">]</span>,</span>
-<span>    rotor_diameter <span class="op">=</span> <span class="va">turbines1_i</span><span class="op">$</span><span class="va">rotor_diam</span>,</span>
-<span>    hub_height <span class="op">=</span> <span class="va">turbines1_i</span><span class="op">$</span><span class="va">hh</span>,</span>
+<span>                      <span class="st">"flight_turbine_year"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/flights_per_year.html">flights_per_year</a></span><span class="op">(</span></span>
+<span>    flights_per_time <span class="op">=</span> <span class="va">interactions1_i</span>,</span>
+<span>    time_units <span class="op">=</span> <span class="st">"min"</span>,</span>
 <span>    prop_day <span class="op">=</span> <span class="va">bird_i</span><span class="op">$</span><span class="va">prop_day</span>,</span>
-<span>    prop_year <span class="op">=</span> <span class="va">bird_i</span><span class="op">$</span><span class="va">prop_year</span></span>
+<span>    prop_year <span class="op">=</span> <span class="va">bird_i</span><span class="op">$</span><span class="va">prop_year</span> <span class="co"># present all year</span></span>
 <span>  <span class="op">)</span></span>
 <span>  </span>
 <span>  <span class="va">df_turbines_results</span><span class="op">[</span><span class="va">df_turbines_results</span><span class="op">$</span><span class="va">model</span> <span class="op">==</span> <span class="st">"Turbine 150"</span>,</span>
-<span>                      <span class="st">"flight_turbine_year"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/turbine_flights_year.html">turbine_flights_year</a></span><span class="op">(</span></span>
-<span>    survey_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"point"</span><span class="op">)</span>,</span>
-<span>    encounter_rate <span class="op">=</span> <span class="va">er2_i</span>,</span>
-<span>    eff_detection_width <span class="op">=</span> <span class="fl">2</span><span class="op">*</span><span class="va">edr_i</span>,</span>
-<span>    eff_detection_height <span class="op">=</span> <span class="va">max_rsh2</span>,</span>
-<span>    spatial_correction <span class="op">=</span> <span class="va">df_turbines_results</span><span class="op">[</span><span class="va">df_turbines_results</span><span class="op">$</span><span class="va">model</span> <span class="op">==</span> <span class="st">"Turbine 150"</span>,</span>
-<span>                      <span class="st">"cluster_corr"</span><span class="op">]</span>,</span>
-<span>    rotor_diameter <span class="op">=</span> <span class="va">turbines2_i</span><span class="op">$</span><span class="va">rotor_diam</span>,</span>
-<span>    hub_height <span class="op">=</span> <span class="va">turbines2_i</span><span class="op">$</span><span class="va">hh</span>,</span>
+<span>                      <span class="st">"flight_turbine_year"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/flights_per_year.html">flights_per_year</a></span><span class="op">(</span></span>
+<span>    flights_per_time <span class="op">=</span> <span class="va">interactions2_i</span>,</span>
+<span>    time_units <span class="op">=</span> <span class="st">"min"</span>,</span>
 <span>    prop_day <span class="op">=</span> <span class="va">bird_i</span><span class="op">$</span><span class="va">prop_day</span>,</span>
-<span>    prop_year <span class="op">=</span> <span class="va">bird_i</span><span class="op">$</span><span class="va">prop_year</span></span>
+<span>    prop_year <span class="op">=</span> <span class="va">bird_i</span><span class="op">$</span><span class="va">prop_year</span> <span class="co"># present all year</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
 <span>  <span class="co"># Step 3 - Run `p_collisions()` - calculate $P(C|I)$ for one interaction</span></span>
@@ -712,13 +526,13 @@ collisions a year</li>
 <p>Now we have the output of each simulation. We can use them to plot
 out the histogram of collision results. This shows the distribution of
 the long-term average annual collision rate for the wind farm.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">lst_results</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">n_collision</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">_</span>, xlab <span class="op">=</span> <span class="st">"n_collision"</span>, main <span class="op">=</span> <span class="st">"Histogram of collision results"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="simple-simulation-example_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="simple-simulation-example_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="" width="700"></p>
 <hr>
 </div>
 </div>
@@ -732,15 +546,9 @@ and Len Thomas. 2001. <em>Introduction to <span>Distance
 Sampling</span>: <span>Estimating Abundance</span> of <span>Biological
 Populations</span></em>. Xv. Oxford University Press. <a href="https://doi.org/10.1093/oso/9780198506492.001.0001" class="external-link">https://doi.org/10.1093/oso/9780198506492.001.0001</a>.
 </div>
-<div id="ref-Wilson1927" class="csl-entry">
-Wilson, Edwin B. 1927. <span>“Probable Inference, the Law of Succession,
-and Statistical Inference.”</span> <em>Journal of the American
-Statistical Association</em> 22 (158): 209–12. <a href="https://doi.org/10.1080/01621459.1927.10502953" class="external-link">https://doi.org/10.1080/01621459.1927.10502953</a>.
 </div>
 </div>
 </div>
-</div>
-
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
@@ -752,7 +560,7 @@ Statistical Association</em> 22 (158): 209–12. <a href="https://doi.org/10.108
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

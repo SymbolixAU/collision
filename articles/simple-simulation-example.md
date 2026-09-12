@@ -26,6 +26,7 @@ library(data.table) # for easy summarising and joins
 #> The following object is masked from 'package:base':
 #> 
 #>     %notin%
+library(MASS) # for multivariate normal
 ```
 
 ## Stochastic Example
@@ -62,7 +63,7 @@ define single or stochastic inputs. So we need to:
   determine the distribution of possible collision outcomes.
 
 This allows the simulation to more accurately reflect the uncertainty
-due to both natural variance (e.g. bird wingspan) and measurement
+due to both natural variance (e.g. bird body length) and measurement
 uncertainty (e.g. estimated flight heights).
 
 ### Define inputs
@@ -90,10 +91,10 @@ turbine_model1 <- define_turbine(
   max_nac_h = 3,
   max_nac_l = 20,
   max_width_nacelle = 3,
-  rpm = set_random("rnorm", mean = 6.5, sd = 2),
+  rpm = set_random("rpert", min = 0, max = 9, mode = 6.5, shape = 8),
   rotor_diam = 180,
   tilt_deg = 6,
-  prop_operational = 0.98
+  prop_operational = set_random("rbeta", shape1 = 20, shape2 = 0.5)
 )
 
 turbine_model2 <- define_turbine(
@@ -110,10 +111,10 @@ turbine_model2 <- define_turbine(
   max_nac_h = 3,
   max_nac_l = 13,
   max_width_nacelle = 3,
-  rpm = set_random("rnorm", mean = 9.1, sd = 2),
+  rpm = set_random("rpert", min = 0, max = 10.8, mode = 9.1, shape = 8),
   rotor_diam = 150,
   tilt_deg = 6,
-  prop_operational = 0.98
+  prop_operational = set_random("rbeta", shape1 = 20, shape2 = 0.5)
 )
 ```
 
@@ -127,13 +128,13 @@ be defined as probability distributions or as single numbers.
 
 wte <- define_bird(
   species = "Wedge-tailed Eagle",
-  bird_length = set_random("rnorm", mean = 0.945, sd = 0.2) ,
-  bird_speed = set_random("rnorm", mean = 17, sd = 3),
+  bird_length = set_random("rpert", min = 0.85, max = 1.05,
+                           mean = 0.945, shape = 2) ,
+  bird_speed = set_random("rlnorm", meanlog = 2.8, sdlog = 0.2),
   prop_day = set_random("runif", min = 0.48, max = 0.52),
   prop_year = 1,
-  avoidance_dynamic = set_random("rpert",
-                                 min = 0.88, max = 0.95, 
-                                 mode = 0.92, shape = 4),
+  avoidance_dynamic = set_random("rpert", min = 0.88, max = 0.95, mode = 0.92,
+                                 shape = 4), # shape = 4 is default
   avoidance_static = 0.9999
 )
 ```
@@ -141,8 +142,9 @@ wte <- define_bird(
 Note: the Beta PERT distribution (`rpert`) is a good distribution to use
 if you only have the mode (or mean) and the minimum and maximum
 parameters for a species (eg. mean body length = 0.95m, range:
-0.6-1.2m). See the **Choosing Distributions**[^1] for information on how
-to fit the distributions.
+0.6-1.2m). See the [distributions
+vignette](https://symbolixau.github.io/collision/articles/choosing-and-fitting-distributions.md)
+for guidance on choosing and fitting the distributions.
 
 #### Define a Set of Turbines
 
@@ -151,7 +153,10 @@ inputs. These can be read in from a csv, or you can set them up with a
 few basic pieces of information and the turbine definition above.
 
 For each turbine we need a turbine ID, and a location. Location can be
-NA if you are not including any spatial modelling.
+NA if you are not including any spatial modelling, although you will
+need the average minimum distance between turbines for
+[`cluster_correction_l()`](https://symbolixau.github.io/collision/reference/cluster_correction.md)
+to obtain an approximate correction for turbine clustering.
 
 ``` r
 
@@ -176,19 +181,19 @@ The package observations dataset:
 ``` r
 
 summary(df_obs)
-#>     distance           size            type         height      
-#>  Min.   :  71.0   Min.   :1.0   Length   :120   Min.   :  43.0  
-#>  1st Qu.: 534.8   1st Qu.:1.0   N.unique :  1   1st Qu.: 328.0  
-#>  Median : 763.0   Median :1.0   N.blank  :  0   Median : 662.0  
-#>  Mean   : 805.4   Mean   :1.3   Min.nchar:  6   Mean   : 730.5  
-#>  3rd Qu.:1027.0   3rd Qu.:2.0   Max.nchar:  6   3rd Qu.: 986.2  
-#>  Max.   :1878.0   Max.   :2.0                   Max.   :2469.0  
+#>     distance           size              type         height      
+#>  Min.   : 136.0   Min.   :1.000   Length   :120   Min.   :  2.00  
+#>  1st Qu.: 519.5   1st Qu.:1.000   N.unique :  1   1st Qu.: 33.50  
+#>  Median : 818.5   Median :1.000   N.blank  :  0   Median : 77.00  
+#>  Mean   : 852.6   Mean   :1.283   Min.nchar:  6   Mean   : 97.63  
+#>  3rd Qu.:1134.2   3rd Qu.:2.000   Max.nchar:  6   3rd Qu.:122.00  
+#>  Max.   :2334.0   Max.   :2.000                   Max.   :518.00  
 #>    survey_id          object      
-#>  Min.   :  1.00   Min.   :  1.00  
-#>  1st Qu.: 29.75   1st Qu.: 30.75  
-#>  Median : 60.00   Median : 60.50  
-#>  Mean   : 53.91   Mean   : 60.50  
-#>  3rd Qu.: 78.00   3rd Qu.: 90.25  
+#>  Min.   :  2.00   Min.   :  1.00  
+#>  1st Qu.: 27.25   1st Qu.: 30.75  
+#>  Median : 54.50   Median : 60.50  
+#>  Mean   : 53.56   Mean   : 60.50  
+#>  3rd Qu.: 77.25   3rd Qu.: 90.25  
 #>  Max.   :100.00   Max.   :120.00
 # converting to data.table for ease of joining and summarising
 dt_obs <- setDT(copy(df_obs))
@@ -228,7 +233,43 @@ Between the two of them these tables must include:
 - Duration of the surveys in minutes
 - Count of individuals in each survey (`size`)
 
-##### Effective Detection Radius
+##### Flight heights
+
+In order to determine the flight flux we need an effective detection
+height, but unlike with the EDR we can’t fit a distance model to the
+heights because distance modelling relies on the assumption that the
+birds are uniformly distributed at all distances, which we know is not
+the case in vertical space (i.e. the density of flights tends to drop
+off with increasing height). The simplest way to avoid biasing the
+estimate by artificially inflating or deflating the flux through the
+turbine is to desktop truncate the observations to the maximum tip
+height of the turbine and use that as the effective detection height
+(all the observations can still be used to fit the observer’s detection
+function since it is just used for the horizontal distance correction).
+Other methods for estimating an effective detection height can be used,
+but this method is the most straightforward and will work well in almost
+all cases. Truncating the the maximum turbine height also means that the
+proportion of flights at rotor swept height (`prop_at_height`) and below
+rotor swept height (`prop_below_height`) sum to 1.
+
+The proportion of flights at and below rotor swept height account for
+the amount of flights at risk of being struck by the blades of the
+turbine. We only need to calculate a distribution for
+`prop_below_height` since `prop_at_height = 1 - prop_below_height`.
+Since the proportion should be bounded at 0 and 1, a beta distribution
+is a good option.
+
+``` r
+
+# see distributions vignette for guidance on (one way) to fit the prop_below_height distribution
+# turbine1
+prop_below_height1 <- set_random("rbeta", shape1 = 6.86, shape2 = 35.3)
+
+# turbine2
+prop_below_height2 <- set_random("rbeta", shape1 = 2.65, shape2 = 42.5)
+```
+
+##### Interactions
 
 For this example, we assume you have done the required distance
 correction and have arrived at a distance model.
@@ -262,232 +303,20 @@ summary(ds_raptor)
 #> N in covered region 190.0360410 43.949117 0.2312673
 ```
 
-Rather than extracting the EDR from this model (which would give us a
-single value) we bootstrap the distance model and the EDR to obtain the
-standard deviation on the estimate of the EDR.
-
-``` r
-
-## Define bootstrap-able function
-edr_fun <- function(dt_survey = dt_survey,
-                    i = nrow(dt_survey),
-                    dt_obs = dt_obs){
-  
-  dt_boot_i <- dt_survey[i][order(survey_id)]
-  dt_obs_i <- dt_obs[dt_boot_i[, .(survey_id)]
-                     , on = .(survey_id)
-                     , nomatch = 0]
-  
-  ds_CI <- tryCatch(
-    ds(data = dt_obs_i[, -c("object")],
-       formula = ~ 1,
-       key = "hn",
-       dht_group = TRUE) # same arguments used to fit the original distance model (ds_raptor)
-    , error = function(e) {
-      print(e)
-      NULL
-    }
-  )
-
-  if (is.null(ds_CI)) return(NA)
-  edr_boot <- edr_from_distmodel(ds_CI)
-  return(edr_boot)
-}
-
-ds_boot <- boot::boot(data = dt_survey
-                , statistic = edr_fun,
-                , sim = "ordinary"
-                , stype = "i"
-                , R = 150
-                , dt_obs = dt_obs
-)
-# bootstraps need to be checked for convergence to make sure you've done enough replicates
-# which is not done in this example
-
-## Define EDR
-edr <- set_random("rnorm", # normally distributed per CLT
-                  mean = ds_boot$t0,
-                  sd = sd(ds_boot$t, na.rm = TRUE)
-                  )
-
-## visual check of distribution
-EDR_hist <- sapply(1:1000, FUN = function(i) collision::sample_input(edr) )
-hist(EDR_hist)
-```
-
-![](simple-simulation-example_files/figure-html/unnamed-chunk-8-1.png)
-
-##### Flight heights
-
-In order to determine the flight flux we need an effective detection
-height, but unlike with the EDR we can’t fit a distance model to the
-heights because distance modelling relies on the assumption that the
-birds are uniformly distributed at all distances, which we know is not
-the case in vertical space (i.e. the density of flights tends to drop
-off with increasing height). The simplest way to avoid biasing the
-estimate by artificially inflating or deflating the flux through the
-turbine is to desktop truncate the observations to the maximum tip
-height of the turbine and use that as the effective detection height
-(all the observations can still be used to fit the observer’s detection
-function since it is just used for the horizontal distance correction).
-Other methods for estimating an effective detection height can be used,
-but this method is the most straightforward and will work well in almost
-all cases. Truncating the the maximum turbine height also means that the
-proportion of flights at rotor swept height (`prop_at_height`) and below
-rotor swept height (`prop_below_height`) sum to 1.
-
-The proportion of flights at and below rotor swept height account for
-the amount of flights at risk of being struck by the blades of the
-turbine. We only need to calculate a distribution for
-`prop_below_height` since `prop_at_height = 1 - prop_below_height`.
-
-``` r
-
-min_rsh1 <- turbine_model1$hh - turbine_model1$rotor_diam * 0.5
-max_rsh1 <- turbine_model1$hh + turbine_model1$rotor_diam * 0.5
-
-min_rsh2 <- turbine_model2$hh - turbine_model2$rotor_diam * 0.5
-max_rsh2 <- turbine_model2$hh + turbine_model2$rotor_diam * 0.5
-
-## calculate ecdf
-# Note - this is a simple example; it's up to the analyst how best to fit the height distribution
-
-prop_below <- function(dt_survey = dt_survey,
-                       i = seq_len(nrow(dt_survey)),
-                       dt_obs = dt_obs, # filter by max_rsh
-                       h = max_rsh){
-  
-  dt_boot_i <- dt_survey[, .(survey_id = unique(survey_id))][i]
-  dt_obs_i <- dt_obs[dt_boot_i, on = .(survey_id), nomatch = 0]
-  
-  cdf_dat <- ecdf(dt_obs_i$height)
-  
-  return(cdf_dat(h))
-}
-
-# turbine model 1
-## bootstrap prop below min RSH
-hmin_boot1 <- boot::boot(
-  data = dt_survey,
-  statistic = prop_below, stype = "i",
-  R = 900,
-  h = min_rsh1,
-  dt_obs = dt_obs[height <= max_rsh1]
-)
-
-prop_below_height1 <- set_random("rnorm", mean = hmin_boot1$t0, sd = sd(hmin_boot1$t))
-# you may need to use a bounded distribution if the proportion is near 0 or 1
-
-# turbine model 2
-## bootstrap prop below min RSH
-hmin_boot2 <- boot::boot(
-  data = dt_survey,
-  statistic = prop_below, stype = "i",
-  R = 900,
-  h = min_rsh2,
-  dt_obs = dt_obs[height <= max_rsh2]
-)
-
-prop_below_height2 <- set_random("rnorm", mean = hmin_boot2$t0, sd = sd(hmin_boot2$t))
-```
-
-##### Encounter Rate
-
-This is where we determine the average encounter rate per unit time of
-survey. That is the average number of individuals observed in each
-minute of survey (or whatever unit of time you wish to use). This is
-basically just
-$`\frac{total\ individuals\ observed}{total\ survey\ time}`$, however
-the function also allows for weighting surveys to account for
-stratification and can apply the Wilson correction ([Wilson
-1927](#ref-Wilson1927)) if there were no observations.
-
 As discussed above, we are desktop truncating to the maximum rotor swept
-height of the turbine, so this encounter rate will be the encounter of
-birds at risk height.
-
-This function takes as input a `df_obs_summary` data.frame. This object
-has one row per survey and must contain a column named `survey_duration`
-and a column named `size` which is the **total** number of individuals
-observed in each **survey** (not observation). Optionally, it can
-contain a column named `survey_weight` which has the associated relative
-weights of each survey (to avoid artificially inflating or deflating the
-encounter rate `sum(survey_weight)` must equal the number of surveys).
-
-First let’s make that table (using `data.table`):
+height of the turbine, so the `df_obs_summary` used to calculate the
+interaction needs to be filtered to just birds at at-risk height (see
+other vignettes for more detail).
 
 ``` r
 
-# turbine model 1
-dt_obs_survey1 <- dt_obs[height <= max_rsh1, .("size" = sum(size)), survey_id][dt_survey,
-                                                            on = "survey_id"]
-# need sum(size) because we want one row per survey (not observation)
-setnafill(dt_obs_survey1, cols = c("size"), fill = 0) # set size to 0 for surveys with no observations
+# see distributions vignette for guidance on (one way) to fit the turbine flights distribution
+# turbine1
+n_interactions1 <- set_random("rlnorm", meanlog = -8.5, sdlog = 0.19)
 
-# turbine model 2
-dt_obs_survey2 <- dt_obs[height <= max_rsh2, .("size" = sum(size)), survey_id][dt_survey,
-                                                            on = "survey_id"]
-setnafill(dt_obs_survey2, cols = c("size"), fill = 0)
+# turbine2
+n_interactions2 <- set_random("rlnorm", meanlog = -8.7, sdlog = 0.2)
 ```
-
-Now we can use this table in
-[`encounter_rate()`](https://symbolixau.github.io/collision/reference/encounter_rate.md):
-
-``` r
-
-
-er_fun <- function(dat, i){
-  return(encounter_rate(df_obs_summary = dat[i]))
-}
-
-# turbine model 1
-er_boot1 <- boot::boot(data = dt_obs_survey1
-                , statistic = er_fun,
-                , sim = "ordinary"
-                , stype = "i"
-                , R = 200
-)
-
-
-## Define Encounter rate
-flights_per_min1 <- set_random("rnorm",
-                               mean = er_boot1$t0,
-                               sd = sd(er_boot1$t, na.rm = TRUE)
-                               )
-
-## take a look
-
-encounter_rate_hist1 <- sapply(1:1000, FUN = function(i) collision::sample_input(flights_per_min1) )
-hist(encounter_rate_hist1)
-```
-
-![](simple-simulation-example_files/figure-html/unnamed-chunk-11-1.png)
-
-``` r
-
-
-# turbine model 2
-er_boot2 <- boot::boot(data = dt_obs_survey2
-                , statistic = er_fun,
-                , sim = "ordinary"
-                , stype = "i"
-                , R = 200
-)
-
-
-## Define Encounter rate
-flights_per_min2 <- set_random("rnorm",
-                               mean = er_boot2$t0,
-                               sd = sd(er_boot2$t, na.rm = TRUE)
-                               )
-
-## take a look
-
-encounter_rate_hist2 <- sapply(1:1000, FUN = function(i) collision::sample_input(flights_per_min2) )
-hist(encounter_rate_hist2)
-```
-
-![](simple-simulation-example_files/figure-html/unnamed-chunk-11-2.png)
 
 #### Run the simulation
 
@@ -498,10 +327,7 @@ wish.
 
 - Step 0 - Set up simulation parameters
 - Step 1 - Sample inputs for bird, turbine, prop at height, prop below
-  height, effective detection radius (EDR) and encounter rate.
-- Step 1.5 (optional) - Calculate the `cluster_correction` or any
-  spatial flight corrections. The cluster correction is only needed if
-  the distance between turbines $`\leq`$ EDR.
+  height and interactions per turbine per minute.
 - Step 2 - Calculate
   [`turbine_flights_year()`](https://symbolixau.github.io/collision/reference/turbine_flights_year.md)
   with sampled values - calculate flights through turbine per year
@@ -522,12 +348,9 @@ example](https://symbolixau.github.io/collision/articles/deterministic-example.m
 ## iterations - how many runs
 ## df_turbines  - class `data.frame`
 ## wte - class `birdInput`
-## v90_single - class `turbineInput`
-## prop_at_height - class `randomInput`
+## turbine_model - class `turbineInput`
 ## prop_below_height - class `randomInput`
-## edr - class `randomInput`
-## encounter rate - class `randomInput`
-## mean height - class `randomInput`
+## n_interactions - class `randomInput`
 
 
 set.seed(1234)
@@ -538,53 +361,32 @@ lst_results <- lapply(1:iterations, function(i) {
 
   # Step 1 - Sample inputs for bird, turbine, prop at height and prop below height
   bird_i <- sample_input(wte)
-  edr_i <- sample_input(edr)
   
   turbines1_i <- sample_input(turbine_model1)
-  prop_below_height1_i <- max( sample_input(prop_below_height1), 0)
+  prop_below_height1_i <- sample_input(prop_below_height1)
   prop_at_height1_i <- 1-prop_below_height1_i
-  
-  er1_i <- sample_input(flights_per_min1)
+  interactions1_i <- sample_input(n_interactions1)
   
   turbines2_i <- sample_input(turbine_model2)
   prop_below_height2_i <- sample_input(prop_below_height2)
   prop_at_height2_i <- 1-prop_below_height2_i
-  er2_i <- sample_input(flights_per_min2)
-  
-  # Step 1.5 calculate the cluster correction
-  
-  df_turbines_results$cluster_corr <- cluster_correction_a(
-    eff_detection_width = 2*edr_i,
-    df_turbines = df_turbines_results
-  )
+  interactions2_i <- sample_input(n_interactions2)
   
   # Step 2 calculate flux through turbine per year
   df_turbines_results[df_turbines_results$model == "Turbine 180",
-                      "flight_turbine_year"] <- turbine_flights_year(
-    survey_type = c("point"),
-    encounter_rate = er1_i,
-    eff_detection_width = 2*edr_i,
-    eff_detection_height = max_rsh1,
-    spatial_correction = df_turbines_results[df_turbines_results$model == "Turbine 180",
-                      "cluster_corr"],
-    rotor_diameter = turbines1_i$rotor_diam,
-    hub_height = turbines1_i$hh,
+                      "flight_turbine_year"] <- flights_per_year(
+    flights_per_time = interactions1_i,
+    time_units = "min",
     prop_day = bird_i$prop_day,
-    prop_year = bird_i$prop_year
+    prop_year = bird_i$prop_year # present all year
   )
   
   df_turbines_results[df_turbines_results$model == "Turbine 150",
-                      "flight_turbine_year"] <- turbine_flights_year(
-    survey_type = c("point"),
-    encounter_rate = er2_i,
-    eff_detection_width = 2*edr_i,
-    eff_detection_height = max_rsh2,
-    spatial_correction = df_turbines_results[df_turbines_results$model == "Turbine 150",
-                      "cluster_corr"],
-    rotor_diameter = turbines2_i$rotor_diam,
-    hub_height = turbines2_i$hh,
+                      "flight_turbine_year"] <- flights_per_year(
+    flights_per_time = interactions2_i,
+    time_units = "min",
     prop_day = bird_i$prop_day,
-    prop_year = bird_i$prop_year
+    prop_year = bird_i$prop_year # present all year
   )
 
   # Step 3 - Run `p_collisions()` - calculate $P(C|I)$ for one interaction
@@ -690,7 +492,7 @@ lapply(lst_results, function(x) {
   hist(x = _, xlab = "n_collision", main = "Histogram of collision results")
 ```
 
-![](simple-simulation-example_files/figure-html/unnamed-chunk-13-1.png)
+![](simple-simulation-example_files/figure-html/unnamed-chunk-11-1.png)
 
 ------------------------------------------------------------------------
 
@@ -700,10 +502,3 @@ Buckland, S., D. Anderson, K. Burnham, Jeffrey Laake, David Borchers,
 and Len Thomas. 2001. *Introduction to Distance Sampling: Estimating
 Abundance of Biological Populations*. Xv. Oxford University Press.
 <https://doi.org/10.1093/oso/9780198506492.001.0001>.
-
-Wilson, Edwin B. 1927. “Probable Inference, the Law of Succession, and
-Statistical Inference.” *Journal of the American Statistical
-Association* 22 (158): 209–12.
-<https://doi.org/10.1080/01621459.1927.10502953>.
-
-[^1]: Distributions vignette is still in development.

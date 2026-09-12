@@ -1,7 +1,11 @@
 # Changelog
 
-## collision 1.1 (in development)
+## collision 1.1.0
 
+- [issue13 and
+  issue52](https://github.com/SymbolixAU/collision/issues/52) updated
+  stochastic vignette and added choosing distributions vignette with
+  smoother workflow and advise on best practice for distributions.
 - [issue46a](https://github.com/SymbolixAU/collision/issues/46a) added
   spatial correction to account for turbine clustering when turbine
   spacing is smaller than the effective survey width/area.

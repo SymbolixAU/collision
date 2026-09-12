@@ -116,19 +116,19 @@ The package observations dataset:
 ``` r
 
 summary(df_obs)
-#>     distance           size            type         height      
-#>  Min.   :  71.0   Min.   :1.0   Length   :120   Min.   :  43.0  
-#>  1st Qu.: 534.8   1st Qu.:1.0   N.unique :  1   1st Qu.: 328.0  
-#>  Median : 763.0   Median :1.0   N.blank  :  0   Median : 662.0  
-#>  Mean   : 805.4   Mean   :1.3   Min.nchar:  6   Mean   : 730.5  
-#>  3rd Qu.:1027.0   3rd Qu.:2.0   Max.nchar:  6   3rd Qu.: 986.2  
-#>  Max.   :1878.0   Max.   :2.0                   Max.   :2469.0  
+#>     distance           size              type         height      
+#>  Min.   : 136.0   Min.   :1.000   Length   :120   Min.   :  2.00  
+#>  1st Qu.: 519.5   1st Qu.:1.000   N.unique :  1   1st Qu.: 33.50  
+#>  Median : 818.5   Median :1.000   N.blank  :  0   Median : 77.00  
+#>  Mean   : 852.6   Mean   :1.283   Min.nchar:  6   Mean   : 97.63  
+#>  3rd Qu.:1134.2   3rd Qu.:2.000   Max.nchar:  6   3rd Qu.:122.00  
+#>  Max.   :2334.0   Max.   :2.000                   Max.   :518.00  
 #>    survey_id          object      
-#>  Min.   :  1.00   Min.   :  1.00  
-#>  1st Qu.: 29.75   1st Qu.: 30.75  
-#>  Median : 60.00   Median : 60.50  
-#>  Mean   : 53.91   Mean   : 60.50  
-#>  3rd Qu.: 78.00   3rd Qu.: 90.25  
+#>  Min.   :  2.00   Min.   :  1.00  
+#>  1st Qu.: 27.25   1st Qu.: 30.75  
+#>  Median : 54.50   Median : 60.50  
+#>  Mean   : 53.56   Mean   : 60.50  
+#>  3rd Qu.: 77.25   3rd Qu.: 90.25  
 #>  Max.   :100.00   Max.   :120.00
 ```
 
@@ -190,7 +190,7 @@ ds_model <- ds(
   nadj = 0
   )
 #> Fitting hazard-rate key function
-#> AIC= 1772.74
+#> AIC= 1790.852
 #> No survey area information supplied, only estimating detection function.
 
 plot(ds_model, pdf=TRUE)
@@ -202,9 +202,9 @@ plot(ds_model, pdf=TRUE)
 
 
 print(edr_from_distmodel(ds_model)) # in metres
-#> [1] 1052.974
+#> [1] 1132.655
 print(w_from_distmodel(ds_model)) # truncation distance / max distance in m
-#> [1] 1878
+#> [1] 2334
 ```
 
 ### Flight heights
@@ -272,8 +272,8 @@ prop_below_height <- cdf_height(min_rsh)
 prop_at_height <- 1 - prop_below_height
 ```
 
-- Proportion at height: 1
-- Proportion below height: 0
+- Proportion at height: 0.8139535
+- Proportion below height: 0.1860465
 
 ### Run the model
 
@@ -304,7 +304,8 @@ $`\frac{total\ individuals\ observed}{total\ survey\ time}`$, however
 the function also allows for weighting surveys to account for
 stratification and can apply the Wilson correction ([Wilson
 1927](#ref-Wilson1927)) if there were no observations. The Wilson
-correction is an estimate of the encounter rate ([mid-point of the 95%
+correction is an estimate of the hypothetical encounter rate ([mid-point
+of the 95%
 CI](https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval:~:text=known%20as%20the-,%22plus%20four%20rule%22,-.))
 that could result in zero observations.
 
@@ -354,7 +355,7 @@ flights_per_min <- encounter_rate(
 Any surveys with `NA` observations are assumed to have zero
 observations, which, if you left join to the survey table by `survey_id`
 (like we did above), should be correct. The average number of movements
-observed per minute of survey is 0.0015556 flights per minute.
+observed per minute of survey is 0.0248889 flights per minute.
 
 #### Step 2 - Flux through turbine
 
@@ -375,7 +376,7 @@ is in flights per unit time per unit area (assuming we are below max
 turbine height), in this example the units are minutes and metres
 squared, respectively.
 
-Second we calculate the cluster correction factor (or the spatial
+Second we calculate the cluster correction factor (and any spatial
 flights pdf if you are doing a spatial model).
 
 We then apply these to the “turbine plane” (a rectangular “doorway”
@@ -407,9 +408,9 @@ turbine_flights_min <- turbine_flights(
 )
 ```
 
-The observed flight flux is 6.6665046^{-9} flights per square meter per
+The observed flight flux is 9.9160323^{-8} flights per square meter per
 minute (below max turbine height). Scaling up to the turbine this
-corresponds to 5.3535438^{-5} flights through the turbine area per
+corresponds to 7.7724725^{-4} flights through the turbine area per
 minute.
 
 Here we correct it for daily and monthly variability. This can be done
@@ -427,7 +428,7 @@ turbine_flight_year <- flights_per_year(
 ```
 
 - The units for `turbine_flight_year` is flights / year (per turbine).
-- We expect 14.0787496 flights through the turbine area each year.
+- We expect 204.400481 flights through the turbine area each year.
 
 This is the expected number of interactions[^2] per turbine per year
 with no avoidance.
@@ -511,7 +512,7 @@ df_turbines$n_collision <- n_collision(
 
 ## For a final result, sum all turbines
 sum(df_turbines$n_collision)
-#> [1] 0.159261
+#> [1] 1.882086
 ```
 
 ------------------------------------------------------------------------
