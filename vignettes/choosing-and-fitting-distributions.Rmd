@@ -129,18 +129,10 @@ The bird's physical parameters are the perfect use case for a PERT distribution,
 However, if you prefer not to put hard limits on the distribution, the log-normal distribution is ideal because it can take any positive value. But it will require an estimate of the variance. Note: if you have a list of values that you want to get the log-normal parameters for you can take the mean and standard deviation of the log of the data (as shown in Step 4 of the Interactions section).
 
 ```{r}
-# log mean and variance function
-# calculate required meanlog and sdlog to get a log-normal distribution with
-# the desired mean and sd
-lognorm_fun <- function(mean, sd){
-  meanlog <- log(mean^2/sqrt(mean^2+sd^2))
-  sdlog <- log(1 + sd^2/mean^2)
-  return(c(meanlog, sdlog))
-}
 
-b_params <- lognorm_fun(mean = 17.1, sd = 8.89)
+b_params <- parameterise_lnorm(mean = 17.1, sd = 8.89)
 
-b_speed <- set_random("rlnorm", meanlog = b_params[1], sdlog = b_params[2])
+b_speed <- set_random("rlnorm", meanlog = b_params$meanlog, sdlog = b_params$sdlog)
 
 hist(sample_input(b_speed, n = 1000),
      main = "Bird speed (m/s)", xlab = "Bird speed log-normal distribution")
